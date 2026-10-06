@@ -277,6 +277,7 @@ $(function () {
             { data: 'deleted' },
             {
                 data: 'id',
+                responsivePriority: 1,
                 orderable: false,
                 render: function (data, type, row) {
                     // if (row.status == 'Inactive') {

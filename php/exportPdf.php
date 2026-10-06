@@ -5,6 +5,9 @@ require_once 'requires/permissions.php';
 $plantId = $_SESSION['plant'];
 
 $searchQuery = "";
+// Cancellation & Amendment report: cancelled records filter on transaction date, edited records on tare date (same as the report screen)
+$cancelDateQuery = "";
+$editDateQuery = "";
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
     $formatted_date = $dateTime->format('Y-m-d H:i:00');
@@ -12,7 +15,8 @@ if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate']
     
     if($_POST['reportType'] == 'CANCEL'){
         if($_POST["file"] == 'weight'){
-            $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
+            $cancelDateQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
+            $editDateQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
         }
         else{
             $searchQuery .= " and count.transaction_date >= '".$formatted_date."'";
@@ -35,7 +39,8 @@ if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''
     
     if($_POST['reportType'] == 'CANCEL'){
         if($_POST["file"] == 'weight'){
-            $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
+            $cancelDateQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
+            $editDateQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
         }
         else{
             $searchQuery .= " and count.transaction_date <= '".$formatted_date."'";
@@ -777,7 +782,7 @@ if(isset($_POST["file"])){
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead style="border-bottom: 1px solid black;">
-                                                    <tr><th colspan="'.(hasModulePermission('Report', $reportStatus, ['include_price']) ? 12 : 4).'" class="text-center" style="border-top: 1px solid black;">Other Product</th></tr>q
+                                                    <tr><th colspan="'.(hasModulePermission('Report', $reportStatus, ['include_price']) ? 12 : 4).'" class="text-center" style="border-top: 1px solid black;">Other Product</th></tr>
                                                     <tr class="text-center" style="border-top: 1px solid black;">
                                                         <th rowspan="2" class="text-start">Product Description</th>
                                                         <th rowspan="2">Total Loads</th>
@@ -1088,7 +1093,7 @@ if(isset($_POST["file"])){
                                                 
                                                 
                                                 $message .= '<tr style="font-size: 10px; text-align: center;">
-                                                    <td>' . $row['transaction_id'] . '</td>
+                                                    <td>' . $row['transaction_id'] . (($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
                                                     <td>' . $formattedtransactionDate . '</td>
                                                     <td>' . $row['lorry_plate_no1'] . '</td>';
                                                     
@@ -1378,7 +1383,7 @@ if(isset($_POST["file"])){
 
                                             $message .= '<tr style="text-align:center; font-size: 11px;"">
                                                 <td>' . $noCount . '</td>
-                                                <td>' . $row['transaction_id'] . '</td>
+                                                <td>' . $row['transaction_id'] . (($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
                                                 <td>' . $formattedtransactionDate . '</td>
                                                 <td>' . $row['lorry_plate_no1'] . '</td>';
                                                 
@@ -1452,11 +1457,16 @@ if(isset($_POST["file"])){
             }          
         }
         else if ($_POST['reportType'] == 'CANCEL') {
+            // The shared status filter covers Purchase and Local together, so narrow it down for the Public report
+            if ($_POST['status'] == 'Local') {
+                $searchQuery .= " and Weight.transaction_status = 'Local'";
+            }
+
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY delivery_no ASC";
+                $sql = "select * from Weight WHERE id IN ($id) AND (is_cancel = 'Y' OR is_edit = 'Y') ORDER BY delivery_no ASC";
             }else{
-                $sql = "select * from Weight WHERE is_cancel = 'Y'".$searchQuery.' ORDER BY delivery_no ASC';
+                $sql = "select * from Weight WHERE ((is_cancel = 'Y'".$cancelDateQuery.") OR (is_edit = 'Y' AND is_complete = 'Y' AND is_cancel <> 'Y'".$editDateQuery."))".$searchQuery.' ORDER BY delivery_no ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)) {
@@ -1564,22 +1574,33 @@ if(isset($_POST["file"])){
                                         <i class="fas fa-print"></i>
                                         Print Report
                                     </button>
+                                    ';
+
+                    // Split the records into a cancelled section and an edited (amended) section
+                    $cancelledRows = array();
+                    $editedRows = array();
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['is_cancel'] == 'Y') {
+                            $cancelledRows[] = $row;
+                        }
+                        else if (($row['is_edit'] ?? '') == 'Y') {
+                            $editedRows[] = $row;
+                        }
+                    }
+
+                    // Sales and Public records hold customer / product, Purchase records hold supplier / raw material
+                    $isSalesReport = ($_POST['status'] == 'Sales' || $_POST['status'] == 'Local');
+                    $buildSection = function ($title, $rows, $isCancelSection) use ($isSalesReport) {
+                        $section = '<h4 style="font-family: sans-serif; margin: 20px 0 8px 0;">' . $title . ' (' . count($rows) . ')</h4>
                                     <table style="width:100%;">
                                         <thead>
                                             <tr style="font-size: 9px;">
                                                 <th>NO</th>
                                                 <th>TRANSACTION <br>ID</th>
                                                 <th>TRANSACTION <br>DATE</th>
-                                                <th>LORRY <br>NO.</th>';
-                                                
-                                            if($_POST['status'] == 'Sales'){
-                                                $message .= '<th>CUSTOMER</th>';
-                                            }
-                                            else{
-                                                $message .= '<th>SUPPLIER</th>';
-                                            }
-                                                
-                                                $message .= '<th>'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MATERIAL').'</th>
+                                                <th>LORRY <br>NO.</th>
+                                                <th>' . ($isSalesReport ? 'CUSTOMER' : 'SUPPLIER') . '</th>
+                                                <th>' . ($isSalesReport ? 'PRODUCT' : 'RAW MATERIAL') . '</th>
                                                 <th>EXQ/DEL</th>
                                                 <th>BATCH/DRUM</th>
                                                 <th>PO NO.</th>
@@ -1587,56 +1608,53 @@ if(isset($_POST["file"])){
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
                                                 <th>NETT <br>(MT)</th>
-                                                <th>IS CANCEL</th>
-                                                <th>CANCEL <br>REASON</th>
+                                                <th>' . ($isCancelSection ? 'IS CANCEL' : 'IS EDITED') . '</th>
+                                                <th>' . ($isCancelSection ? 'CANCEL <br>REASON' : 'EDIT <br>REASON') . '</th>
                                             </tr>
                                         </thead>
                                         <tbody>';
-                                        
-                                        $noCount = 0;
-                                        while ($row = $result->fetch_assoc()) {
-                                            $noCount++;
-                                            $transactionDate =  new DateTime($row['transaction_date']);
-                                            $formattedtransactionDate = $transactionDate->format('d/m/Y');
-                                            $exDel = '';
-                                            
-                                            if ($row['ex_del'] == 'EX'){
-                                                $exDel = 'E';
-                                            }else{
-                                                $exDel = 'D';
-                                            }
 
-                                            $message .= '<tr style="text-align:center; font-size: 8px;"">
-                                                <td>' . $noCount . '</td>
-                                                <td>' . $row['transaction_id'] . '</td>
-                                                <td>' . $formattedtransactionDate . '</td>
-                                                <td>' . $row['lorry_plate_no1'] . '</td>';
-                                                
-                                                if($_POST['status'] == 'Sales'){
-                                                    $message .= '<td>' . $row['customer_name'] . '</td>';
-                                                }
-                                                else{
-                                                    $message .= '<td>' . $row['supplier_name'] . '</td>';
-                                                }
-                                                
-                                                $message .= '
-                                                <td>' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
-                                                <td>' . $exDel . '</td>
-                                                <td>' . $row['batch_drum'] . '</td>
-                                                <td>' . $row['purchase_order'] . '</td>
-                                                <td>' . $row['delivery_no'] . '</td>
-                                                <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
-                                                <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
-                                                <td>' . $row['is_cancel'] . '</td>
-                                                <td>' . $row['cancelled_reason'] . '</td>
-                                            </tr>';
-                                            
-                                        }
-                                                                                
-                                    $message .= '
+                        if (count($rows) == 0) {
+                            $section .= '<tr style="text-align:center; font-size: 8px;"><td colspan="15">No records found</td></tr>';
+                        }
+
+                        $noCount = 0;
+                        foreach ($rows as $row) {
+                            $noCount++;
+                            $transactionDate =  new DateTime($row['transaction_date']);
+                            $formattedtransactionDate = $transactionDate->format('d/m/Y');
+                            $exDel = ($row['ex_del'] == 'EX' ? 'E' : 'D');
+
+                            $section .= '<tr style="text-align:center; font-size: 8px;">
+                                <td>' . $noCount . '</td>
+                                <td>' . $row['transaction_id'] . ($isCancelSection && ($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
+                                <td>' . $formattedtransactionDate . '</td>
+                                <td>' . $row['lorry_plate_no1'] . '</td>
+                                <td>' . ($isSalesReport ? $row['customer_name'] : $row['supplier_name']) . '</td>
+                                <td>' . ($isSalesReport ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                <td>' . $exDel . '</td>
+                                <td>' . $row['batch_drum'] . '</td>
+                                <td>' . $row['purchase_order'] . '</td>
+                                <td>' . $row['delivery_no'] . '</td>
+                                <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
+                                <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
+                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                <td>' . ($isCancelSection ? $row['is_cancel'] : ($row['is_edit'] ?? '')) . '</td>
+                                <td>' . ($isCancelSection ? $row['cancelled_reason'] : ($row['edit_reason'] ?? '')) . '</td>
+                            </tr>';
+                        }
+
+                        $section .= '
                                         </tbody>
-                                    </table>
+                                    </table>';
+
+                        return $section;
+                    };
+
+                    $message .= $buildSection('CANCELLED RECORDS', $cancelledRows, true);
+                    $message .= $buildSection('EDITED RECORDS', $editedRows, false);
+
+                    $message .= '
                                 </body>
                             </html>';
     
@@ -1879,7 +1897,7 @@ if(isset($_POST["file"])){
                                                 
                                                 
                                                 $message .= '<tr style="font-size: 10px; text-align: center;">
-                                                    <td>' . $row['transaction_id'] . '</td>
+                                                    <td>' . $row['transaction_id'] . (($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
                                                     <td>' . $formattedtransactionDate . '</td>
                                                     <td>' . $row['lorry_plate_no1'] . '</td>';
                                                     

@@ -234,6 +234,8 @@ if(isset($_POST['userID'])){
                         $message['tare_weight1_date'] = !empty($row['tare_weight1_date']) ? date("d/m/Y H:i:s", strtotime($row['tare_weight1_date'])) : '';
                         $message['created_date'] = !empty($row['created_date']) ? date("d/m/Y H:i:s", strtotime($row['created_date'] . ' +8 hours')) : '';
                         $message['manual_weight_reason'] = $row['manual_weight_reason'] ?? '';
+                        $message['is_edit'] = $row['is_edit'] ?? 'N';
+                        $message['edit_reason'] = $row['edit_reason'] ?? '';
                         $message['gross_weight1'] = $row['gross_weight1'] ?? '';
                         $message['tare_weight1'] = $row['tare_weight1'] ?? '';
                         $message['nett_weight1'] = $row['nett_weight1'] ?? '';
@@ -410,6 +412,8 @@ if(isset($_POST['userID'])){
                         $message['final_weight'] = $row['final_weight'];
                         $message['weight_different'] = $row['weight_different'];
                         $message['is_complete'] = $row['is_complete'];
+                        $message['is_edit'] = $row['is_edit'];
+                        $message['edit_reason'] = $row['edit_reason'];
                         $message['is_cancel'] = $row['is_cancel'];
                         $message['manual_weight'] = $row['manual_weight'];
                         $message['indicator_id'] = $row['indicator_id'];

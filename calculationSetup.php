@@ -757,6 +757,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                 { data: 'batch_drum' },
                 {
                     data: 'id',
+                    responsivePriority: 1,
                     class: 'action-button',
                     orderable: false,
                     render: function (data, type, row) {
@@ -830,6 +831,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                     { data: 'batch_drum' },
                     {
                         data: 'id',
+                        responsivePriority: 1,
                         class: 'action-button',
                         orderable: false,
                         render: function (data, type, row) {

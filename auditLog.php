@@ -104,6 +104,7 @@
                                                             <option value="Weight">Weighing</option>
                                                             <option value="SO">Sales Order</option>
                                                             <option value="PO">Purchase Order</option>
+                                                            <option value="Login">Login</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -207,6 +208,12 @@
                                                     <div class="mb-3">
                                                         <label for="poNo" class="form-label">P/O No</label>
                                                         <input type="text" class="form-control" placeholder="P/O No" name="poNo" id="poNo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode loginInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="loginUsername" class="form-label">Username</label>
+                                                        <input type="text" class="form-control" placeholder="Username" name="loginUsername" id="loginUsername">
                                                     </div>
                                                 </div>
                                             </div>
@@ -511,6 +518,11 @@ $(function () {
             $('.inputCode').hide();
             $('.poInput').show();
         }
+        else if($(this).val() == "Login")
+        {
+            $('.inputCode').hide();
+            $('.loginInput').show();
+        }
         
     });
 
@@ -621,6 +633,7 @@ $(function () {
                 custPoNo: $('#custPoNo').val(),
                 soNo: $('#soNo').val(),
                 poNo: $('#poNo').val(),
+                loginUsername: $('#loginUsername').val(),
             },
             dataType: "json",
             success: function (response) {
@@ -720,11 +733,12 @@ $(function () {
         var custPoNo = $('#custPoNo').val() || '';
         var soNo = $('#soNo').val() || '';
         var poNo = $('#poNo').val() || '';
+        var loginUsername = $('#loginUsername').val() || '';
 
         window.open("php/exportAuditExcel.php?selectedValue="+selectedValue+"&fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+
         "&customerCode="+customerCode+"&destinationCode="+destinationCode+"&productCode="+productCode+"&rawMatCode="+rawMatCode+"&supplierCode="+supplierCode+
         "&vehicleNo="+vehicleNo+"&agentCode="+agentCode+"&transporterCode="+transporterCode+"&unit="+unit+"&userCode="+userCode+"&plantCode="+plantCode+
-        "&siteCode="+siteCode+"&weight="+weight+"&doNo="+doNo+"&custPoNo="+custPoNo+"&soNo="+soNo+"&poNo="+poNo);
+        "&siteCode="+siteCode+"&weight="+weight+"&doNo="+doNo+"&custPoNo="+custPoNo+"&soNo="+soNo+"&poNo="+poNo+"&loginUsername="+encodeURIComponent(loginUsername));
     });
 
     // $('#exportExcel').click(function() {

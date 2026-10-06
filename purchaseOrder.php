@@ -848,6 +848,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 { data: 'modified_date' },
                 {
                     data: 'id',
+                    responsivePriority: 1,
                     class: 'action-button',
                     orderable: false,
                     render: function (data, type, row) {
@@ -963,6 +964,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                     { data: 'modified_date' },
                     {
                         data: 'id',
+                        responsivePriority: 1,
                         class: 'action-button',
                         orderable: false,
                         render: function (data, type, row) {

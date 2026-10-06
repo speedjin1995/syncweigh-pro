@@ -87,8 +87,16 @@ function parseReportDate($value, $isEndDate = false) {
     return null;
 }
  
+// Cancellation & Amendment report: cancelled records filter on transaction date, edited records on tare date (same as the PDF report)
+$isCancelReport = (getRequestValue('reportType') == 'CANCEL');
+$cancelDateQuery = "";
+$editDateQuery = "";
+
 // Excel file name for download 
-if(getRequestValue("file") == 'weight'){
+if($isCancelReport){
+    $fileName = "Cancellation-Amendment_" . date('Y-m-d') . ".xls";
+}
+else if(getRequestValue("file") == 'weight'){
     $fileName = "Weight-data_" . date('Y-m-d') . ".xls";
 }else{
     $fileName = "Count-data_" . date('Y-m-d') . ".xls";
@@ -100,7 +108,11 @@ $reportStatus = getRequestValue('status', 'Sales');
 
 $fromDate = parseReportDate(getRequestValue('fromDate'), false);
 if($fromDate !== null){
-    if(getRequestValue("file") == 'weight'){
+    if($isCancelReport){
+        $cancelDateQuery .= " and Weight.transaction_date >= '".$fromDate."'";
+        $editDateQuery .= " and Weight.tare_weight1_date >= '".$fromDate."'";
+    }
+    else if(getRequestValue("file") == 'weight'){
         $searchQuery .= " and Weight.tare_weight1_date >= '".$fromDate."'";
     }
     else{
@@ -110,7 +122,11 @@ if($fromDate !== null){
 
 $toDate = parseReportDate(getRequestValue('toDate'), true);
 if($toDate !== null){
-    if(getRequestValue("file") == 'weight'){
+    if($isCancelReport){
+        $cancelDateQuery .= " and Weight.transaction_date <= '".$toDate."'";
+        $editDateQuery .= " and Weight.tare_weight1_date <= '".$toDate."'";
+    }
+    else if(getRequestValue("file") == 'weight'){
         $searchQuery .= " and Weight.tare_weight1_date <= '".$toDate."'";
     }
     else{
@@ -236,14 +252,14 @@ if (!hasModulePermission('Report', $reportStatus, ['include_price'])){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'EDITED', 'EDIT REASON', 
             'PLANT CODE', 'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
     else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'EDITED', 'EDIT REASON', 'PLANT CODE', 
             'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
 }
@@ -252,24 +268,40 @@ else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE','CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'EDITED', 'EDIT REASON', 'PLANT CODE', 
             'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'EDITED', 'EDIT REASON', 'PLANT CODE', 
             'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }
 }
 
 
+// Cancellation & Amendment report also shows the cancel reason, next to CANCELLED
+$cancelReasonPos = array_search('CANCELLED', $fields) + 1;
+if ($isCancelReport) {
+    array_splice($fields, $cancelReasonPos, 0, array('CANCEL REASON'));
+}
+
 // Display column names as first row 
 $excelData = implode("\t", array_values($fields)) . "\n";
+$cancelLines = array();
+$editLines = array();
 
 // Fetch records from database
 if($_GET["file"] == 'weight'){
-    if ($isMulti == 'Y'){
+    if ($isCancelReport){
+        if ($isMulti == 'Y'){
+            $id = $_GET['id']; 
+            $sql = "select * from Weight WHERE id IN ($id) AND (is_cancel = 'Y' OR is_edit = 'Y') ORDER BY delivery_no ASC";
+        }else{
+            $sql = "select * from Weight WHERE ((Weight.is_cancel = 'Y'".$cancelDateQuery.") OR (Weight.is_edit = 'Y' AND Weight.is_complete = 'Y' AND Weight.is_cancel <> 'Y'".$editDateQuery."))".$searchQuery." ORDER BY delivery_no ASC";
+        }
+    }
+    else if ($isMulti == 'Y'){
         $id = $_GET['id']; 
         $sql = "select * from Weight WHERE id IN ($id)";
     }else{
@@ -314,7 +346,7 @@ if($query->num_rows > 0){
                     number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                     ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
                     number_format((float)$row['weight_different'] / 1000, 2, '.', ''), $row['gross_weight1_date'], $row['tare_weight1_date'], 
-                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $row['created_by'], $row['remarks'])
+                    $row['manual_weight'], $row['is_cancel'], ($row['is_edit'] ?? 'N'), ($row['edit_reason'] ?? ''), $row['plant_code'], $row['plant_name'], $row['created_by'], $row['remarks'])
                 );
             }
             else{
@@ -362,7 +394,7 @@ if($query->num_rows > 0){
                     number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                     ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
                     number_format((float)$row['weight_different'] / 1000, 2, '.', ''), $row['gross_weight1_date'], $row['tare_weight1_date'], 
-                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $unitPrice, $totalPrice, $row['created_by'], $row['remarks'])
+                    $row['manual_weight'], $row['is_cancel'], ($row['is_edit'] ?? 'N'), ($row['edit_reason'] ?? ''), $row['plant_code'], $row['plant_name'], $unitPrice, $totalPrice, $row['created_by'], $row['remarks'])
                 );
             }
         }
@@ -374,14 +406,70 @@ if($query->num_rows > 0){
 
         # Added checking to fix duplicated issue
         if (!empty($lineData)) {
-            array_walk($lineData, 'filterData'); 
-            $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+            if ($isCancelReport) {
+                array_splice($lineData, $cancelReasonPos, 0, array($row['cancelled_reason'] ?? ''));
+
+                if ($row['is_cancel'] == 'Y') {
+                    $cancelLines[] = $lineData;
+                }
+                else {
+                    $editLines[] = $lineData;
+                }
+            }
+            else {
+                array_walk($lineData, 'filterData'); 
+                $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+            }
         }
     } 
 
     $db->close();
-}else{ 
+}else if (!$isCancelReport){ 
     $excelData .= 'No records found...'. "\n"; 
+}
+
+// Cancellation & Amendment report: one sheet for cancelled records and one for edited records.
+// A tab separated file only holds one sheet, so this is written as an Excel XML workbook.
+if ($isCancelReport) {
+    $xmlCell = function ($value, $isNumber = false, $style = '') {
+        $styleAttr = ($style != '' ? ' ss:StyleID="' . $style . '"' : '');
+        if ($isNumber && is_numeric($value)) {
+            return '<Cell' . $styleAttr . '><Data ss:Type="Number">' . $value . '</Data></Cell>';
+        }
+        return '<Cell' . $styleAttr . '><Data ss:Type="String">' . htmlspecialchars((string) $value, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</Data></Cell>';
+    };
+
+    $xmlSheet = function ($sheetName, $lines) use ($fields, $xmlCell) {
+        $sheet = '<Worksheet ss:Name="' . $sheetName . '"><Table><Row>';
+        foreach ($fields as $field) {
+            $sheet .= $xmlCell($field, false, 'header');
+        }
+        $sheet .= '</Row>';
+
+        if (count($lines) == 0) {
+            $sheet .= '<Row>' . $xmlCell('No records found...') . '</Row>';
+        }
+
+        foreach ($lines as $line) {
+            $sheet .= '<Row>';
+            foreach (array_values($line) as $index => $value) {
+                // Weight and price columns are numbers, everything else stays text (keeps leading zeros in codes / PO no.)
+                $isNumber = (strpos($fields[$index], '(MT)') !== false || strpos($fields[$index], '(RM)') !== false);
+                $sheet .= $xmlCell($value, $isNumber);
+            }
+            $sheet .= '</Row>';
+        }
+
+        return $sheet . '</Table></Worksheet>';
+    };
+
+    $excelData = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+        . '<?mso-application progid="Excel.Sheet"?>' . "\n"
+        . '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
+        . '<Styles><Style ss:ID="header"><Font ss:Bold="1"/></Style></Styles>'
+        . $xmlSheet('Cancelled Records', $cancelLines)
+        . $xmlSheet('Edited Records', $editLines)
+        . '</Workbook>';
 }
  
 // Headers for download 

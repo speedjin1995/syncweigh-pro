@@ -1201,6 +1201,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 // { data: 'totalPgSevenNine' },
                 { 
                     data: 'id',
+                    responsivePriority: 1,
                     orderable: false,
                     render: function ( data, type, row ) {
                         var buttons = '';
@@ -1290,6 +1291,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     // { data: 'totalPgSevenNine' },
                     { 
                         data: 'id',
+                        responsivePriority: 1,
                         orderable: false,
                         render: function ( data, type, row ) {
                             var buttons = '';

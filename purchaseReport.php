@@ -447,177 +447,12 @@ else{
     </div>
     <!-- END layout-wrapper -->
     
-    <div class="modal fade" id="exportPdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Weighing Records</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="exportPdfForm" class="needs-validation" novalidate autocomplete="off">
-                        <div class="row col-12">
-                            <div class="col-12">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <input type="hidden" class="form-control" id="id" name="id"> 
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <label for="reportType" class="col-sm-4 col-form-label">Report Type *</label>
-                                                    <div class="col-sm-8">
-                                                        <select id="reportType" name="reportType" class="form-select" required>
-                                                            <!-- <option value="CUSTOMER">Customer Report</option> -->
-                                                            <option value="SUMMARY">Summary Report</option>
-                                                            <option value="PRODUCT">Product Report</option>
-                                                            <option value="S&P">Overall Report - Product</option>
-                                                            <option value="S&PC">Overall Report - Customer</option>
-                                                            <option value="DO">Overall Report - DO</option>
-                                                        </select>   
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" class="form-control" id="fromDate" name="fromDate">                                   
-                                            <input type="hidden" class="form-control" id="toDate" name="toDate">                                   
-                                            <input type="hidden" class="form-control" id="status" name="status">                                   
-                                            <input type="hidden" class="form-control" id="customer" name="customer">     
-                                            <input type="hidden" class="form-control" id="supplier" name="supplier"> 
-                                            <input type="hidden" class="form-control" id="vehicle" name="vehicle">     
-                                            <input type="hidden" class="form-control" id="weighingType" name="weighingType">     
-                                            <input type="hidden" class="form-control" id="customerType" name="customerType">     
-                                            <input type="hidden" class="form-control" id="product" name="product">  
-                                            <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
-                                            <input type="hidden" class="form-control" id="destination" name="destination">     
-                                            <input type="hidden" class="form-control" id="plant" name="plant">     
-                                            <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
-                                            <input type="hidden" class="form-control" id="file" name="file">     
-                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-lg-12">
-                            <div class="hstack gap-2 justify-content-end">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
-                            </div>
-                        </div><!--end col-->                                                               
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
+    <?php
+    $exportReportTypes = array('PRODUCT', 'S&P', 'S&PC', 'DO', 'CANCEL');
+    $exportGroupReport = 'Purchase';
+    include 'component/ReportExportModal/modal.php';
+    ?>
     
-    <div class="modal fade" id="exportPoRepModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Purchase Report</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="exportPoRepForm" class="needs-validation" novalidate autocomplete="off">
-                        <div class="row col-12">
-                            <div class="col-12">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <input type="hidden" class="form-control" id="id" name="id"> 
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="form-group col-4 mb-3">
-                                                        <label for="group1">Group 1</label>
-                                                        <select id="group1" name="group1" class="form-select">
-                                                            <option value=""></option>
-                                                            <option value="supplier_code">Supplier</option>
-                                                            <option value="raw_mat_code">Raw Material</option>
-                                                            <option value="lorry_plate_no1">Vehicle</option>
-                                                            <option value="destination_code">Destination</option>
-                                                            <option value="transporter_code">Transporter</option>
-                                                            <option value="plant_code">Plant</option>
-                                                            <option value="batch_drum">Batch/Drum</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group col-4 mb-3">
-                                                        <label for="group2">Group 2</label>
-                                                        <select id="group2" name="group2" class="form-select">
-                                                            <option value=""></option>
-                                                            <option value="supplier_code">Supplier</option>
-                                                            <option value="raw_mat_code">Raw Material</option>
-                                                            <option value="lorry_plate_no1">Vehicle</option>
-                                                            <option value="destination_code">Destination</option>
-                                                            <option value="transporter_code">Transporter</option>
-                                                            <option value="plant_code">Plant</option>
-                                                            <option value="batch_drum">Batch/Drum</option>
-                                                        </select>
-                                                    </div>
-                                                    
-                                                    <div class="form-group col-4 mb-3">
-                                                        <label for="group3">Group 3</label>
-                                                        <select id="group3" name="group3" class="form-select">
-                                                            <option value=""></option>
-                                                            <option value="supplier_code">Supplier</option>
-                                                            <option value="raw_mat_code">Raw Material</option>
-                                                            <option value="lorry_plate_no1">Vehicle</option>
-                                                            <option value="destination_code">Destination</option>
-                                                            <option value="transporter_code">Transporter</option>
-                                                            <option value="plant_code">Plant</option>
-                                                            <option value="batch_drum">Batch/Drum</option>
-                                                        </select>
-                                                    </div>
-                                                    
-                                                    <div class="form-group col-4 mb-3">
-                                                        <label for="group4">Group 4</label>
-                                                        <select id="group4" name="group4" class="form-select">
-                                                            <option value=""></option>
-                                                            <option value="supplier_code">Supplier</option>
-                                                            <option value="raw_mat_code">Raw Material</option>
-                                                            <option value="lorry_plate_no1">Vehicle</option>
-                                                            <option value="destination_code">Destination</option>
-                                                            <option value="transporter_code">Transporter</option>
-                                                            <option value="plant_code">Plant</option>
-                                                            <option value="batch_drum">Batch/Drum</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" class="form-control" id="fromDate" name="fromDate">                                   
-                                            <input type="hidden" class="form-control" id="toDate" name="toDate">                                   
-                                            <input type="hidden" class="form-control" id="status" name="status">                                   
-                                            <input type="hidden" class="form-control" id="customer" name="customer">     
-                                            <input type="hidden" class="form-control" id="supplier" name="supplier"> 
-                                            <input type="hidden" class="form-control" id="vehicle" name="vehicle">     
-                                            <input type="hidden" class="form-control" id="weighingType" name="weighingType">     
-                                            <input type="hidden" class="form-control" id="customerType" name="customerType">     
-                                            <input type="hidden" class="form-control" id="product" name="product">  
-                                            <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
-                                            <input type="hidden" class="form-control" id="destination" name="destination">     
-                                            <input type="hidden" class="form-control" id="plant" name="plant">     
-                                            <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
-                                            <input type="hidden" class="form-control" id="type" name="type">     
-                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-lg-12">
-                            <div class="hstack gap-2 justify-content-end">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
-                            </div>
-                        </div><!--end col-->                                                               
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
     <?php include 'layouts/customizer.php'; ?>
     <?php include 'layouts/vendor-scripts.php'; ?>
     <!-- apexcharts -->
@@ -645,7 +480,10 @@ else{
     <!-- Additional js -->
     <script src="assets/js/additional.js"></script>
 
+    <?php include 'component/ReportExportModal/script.php'; ?>
+
     <script type="text/javascript">
+    var table = null;
 
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
@@ -703,184 +541,10 @@ else{
             checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
         });
 
-        var fromDateI = $('#fromDateSearch').val();
-        var toDateI = $('#toDateSearch').val();
-        var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-        var supplierNoI = $('#supplierSearch').val() || [];
-        var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-        var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-        var rawMatI = $('#rawMatSearch').val() || [];
-        var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
-        var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-        var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
-        var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
-
-        var table = $("#weightTable").DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            'processing': true,
-            'serverSide': true,
-            'searching': true,
-            'serverMethod': 'post',
-            'ajax': {
-                'url':'php/filterReports.php',
-                'data': {
-                    fromDate: fromDateI,
-                    toDate: toDateI,
-                    status: statusI,
-                    customer: customerNoI,
-                    supplier: supplierNoI,
-                    vehicle: vehicleNoI,
-                    customerType: customerTypeI,
-                    product: productI,
-                    rawMaterial: rawMatI,
-                    destination: destinationI,
-                    plant: plantI,
-                    purchaseOrder: poI,
-                    batchDrum: batchDrumSearchI
-                } 
-            },
-            'columns': [
-                {
-                    // Add a checkbox with a unique ID for each row
-                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-                    className: 'select-checkbox',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
-                    }
-                },
-                { 
-                    data: 'transaction_id',
-                    class: 'transaction-column'
-                },
-                { data: 'transaction_status' },
-                { data: 'customer' },
-                { data: 'lorry_plate_no1' },
-                { data: 'product_name' },
-                { data: 'purchase_order' },
-                { data: 'delivery_no' },
-                { data: 'gross_weight1' },
-                { data: 'gross_weight1_date' },
-                { data: 'tare_weight1' },
-                { data: 'tare_weight1_date' },
-                { data: 'nett_weight1' },
-                { 
-                    data: 'id',
-                    class: 'action-button',
-                    orderable: false,
-                    render: function ( data, type, row ) {
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                        if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
-                        }
-
-                        return '';
-                    }
-                }
-            ],
-            "drawCallback": function(settings) {
-                $('#salesInfo').text(settings.json.salesTotal);
-                $('#purchaseInfo').text(settings.json.purchaseTotal);
-                $('#localInfo').text(settings.json.localTotal);
-            }   
-        });
+        loadWeightTable();
 
         $('#filterSearch').on('click', function(){
-            var fromDateI = $('#fromDateSearch').val();
-            var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
-            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
-            var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
-            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
-            var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
-
-            //Destroy the old Datatable
-            $("#weightTable").DataTable().clear().destroy();
-
-            //Create new Datatable
-            table = $("#weightTable").DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                'processing': true,
-                'serverSide': true,
-                'searching': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url':'php/filterReports.php',
-                    'data': {
-                        fromDate: fromDateI,
-                        toDate: toDateI,
-                        status: statusI,
-                        customer: customerNoI,
-                        supplier: supplierNoI,
-                        vehicle: vehicleNoI,
-                        customerType: customerTypeI,
-                        product: productI,
-                        rawMaterial: rawMatI,
-                        destination: destinationI,
-                        plant: plantI,
-                        purchaseOrder: poI,
-                        batchDrum: batchDrumSearchI
-                    } 
-                },
-                'columns': [
-                    {
-                        // Add a checkbox with a unique ID for each row
-                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-                        className: 'select-checkbox',
-                        orderable: false,
-                        render: function (data, type, row) {
-                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
-                        }
-                    },
-                    { 
-                        data: 'transaction_id',
-                        class: 'transaction-column'
-                    }, 
-                    { data: 'transaction_status' },
-                    { data: 'customer' },
-                    { data: 'lorry_plate_no1' },
-                    { data: 'product_name' },
-                    { data: 'purchase_order' },
-                    { data: 'delivery_no' },
-                    { data: 'gross_weight1' },
-                    { data: 'gross_weight1_date' },
-                    { data: 'tare_weight1' },
-                    { data: 'tare_weight1_date' },
-                    { data: 'nett_weight1' },
-                    { 
-                        data: 'id',
-                        class: 'action-button',
-                        orderable: false,
-                        render: function ( data, type, row ) {
-                            // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                            if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
-                                return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
-                            }
-
-                            return '';
-                        }
-                    }
-                ],
-                "drawCallback": function(settings) {
-                    $('#salesInfo').text(settings.json.salesTotal);
-                    $('#purchaseInfo').text(settings.json.purchaseTotal);
-                    $('#localInfo').text(settings.json.localTotal);
-                }   
-            });
+            loadWeightTable();
         });
 
         // Add event listener for opening and closing details on row click
@@ -908,197 +572,22 @@ else{
             }
         });
 
-        $.validator.setDefaults({
-            submitHandler: function () {
-                if($('#exportPdfModal').hasClass('show')){   
-                    var fromDateI = $('#fromDateSearch').val();
-                    var toDateI = $('#toDateSearch').val();
-                    var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-                    var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-                    var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
-                    var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-                    var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-                    var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-                    var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
-                    var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
-                    var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-                    var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
-
-                    var selectedIds = []; // An array to store the selected 'id' values
-                    $("#weightTable tbody input[type='checkbox']").each(function () {
-                        if (this.checked) {
-                            selectedIds.push($(this).val());
-                        }
-                    });
-
-                    if (selectedIds.length > 0) {
-                        $('#exportPdfForm').find('#id').val(selectedIds);
-                        $('#exportPdfForm').find('#isMulti').val('Y');
-                    }else{
-                        $('#exportPdfForm').find('#isMulti').val('N');
-                    }
-
-                    $('#exportPdfForm').find('#fromDate').val(fromDateI);
-                    $('#exportPdfForm').find('#toDate').val(toDateI);
-                    $('#exportPdfForm').find('#status').val(statusI);
-                    $('#exportPdfForm').find('#customer').val(customerNoI);
-                    $('#exportPdfForm').find('#supplier').val(supplierNoI);
-                    $('#exportPdfForm').find('#vehicle').val(vehicleNoI);
-                    $('#exportPdfForm').find('#customerType').val(customerTypeI);
-                    $('#exportPdfForm').find('#product').val(productI);
-                    $('#exportPdfForm').find('#rawMat').val(rawMatI);
-                    $('#exportPdfForm').find('#destination').val(destinationI);
-                    $('#exportPdfForm').find('#plant').val(plantI);
-                    $('#exportPdfForm').find('#batchDrum').val(batchDrumSearchI);
-                    $('#exportPdfForm').find('#file').val('weight');
-                    $('#exportPdfModal').modal('hide');
-
-                    $.post('php/exportPdf.php', $('#exportPdfForm').serialize(), function(response){
-                        var obj = JSON.parse(response);
-
-                        if(obj.status === 'success'){
-                            var previewWindow = window.open('', '_blank');
-                            previewWindow.document.write(obj.message);
-                            previewWindow.document.close();
-                        }
-                        else if(obj.status === 'failed'){
-                            toastr["error"](obj.message, "Failed:");
-                        }
-                        else{
-                            toastr["error"]("Something wrong when activate", "Failed:");
-                        }
-                    }).fail(function(error){
-                        console.error("Error exporting PDF:", error);
-                        alert("An error occurred while generating the PDF.");
-                    });
-                }
-                else if($('#exportPoRepModal').hasClass('show')){   
-                    var group1 = $('#exportPoRepModal').find('#group1').val();
-                    var group2 = $('#exportPoRepModal').find('#group2').val();
-                    var group3 = $('#exportPoRepModal').find('#group3').val();
-                    var group4 = $('#exportPoRepModal').find('#group4').val();
-
-                    // Added checking to ensure previous group is selected
-                    if (group2 && !group1) {
-                        alert("Please select Group 1 before selecting Group 2.");
-                        return;
-                    }
-                    if (group3 && (!group1 || !group2)) {
-                        alert("Please select Group 1 and Group 2 before selecting Group 3.");
-                        return;
-                    }
-                    if (group4 && (!group1 || !group2 || !group3)) {
-                        alert("Please select Group 1, Group 2, and Group 3 before selecting Group 4.");
-                        return;
-                    }
-
-                    var fromDateI = $('#fromDateSearch').val();
-                    var toDateI = $('#toDateSearch').val();
-                    var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-                    var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-                    var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
-                    var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-                    var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-                    var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-                    var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
-                    var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
-                    var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-                    var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
-
-                    var selectedIds = []; // An array to store the selected 'id' values
-                    $("#weightTable tbody input[type='checkbox']").each(function () {
-                        if (this.checked) {
-                            selectedIds.push($(this).val());
-                        }
-                    });
-
-                    if (selectedIds.length > 0) {
-                        $('#exportPoRepForm').find('#id').val(selectedIds);
-                        $('#exportPoRepForm').find('#isMulti').val('Y');
-                    }else{
-                        $('#exportPoRepForm').find('#isMulti').val('N');
-                    }
-
-                    $('#exportPoRepForm').find('#fromDate').val(fromDateI);
-                    $('#exportPoRepForm').find('#toDate').val(toDateI);
-                    $('#exportPoRepForm').find('#status').val(statusI);
-                    $('#exportPoRepForm').find('#customer').val(customerNoI);
-                    $('#exportPoRepForm').find('#supplier').val(supplierNoI);
-                    $('#exportPoRepForm').find('#vehicle').val(vehicleNoI);
-                    $('#exportPoRepForm').find('#customerType').val(customerTypeI);
-                    $('#exportPoRepForm').find('#product').val(productI);
-                    $('#exportPoRepForm').find('#rawMat').val(rawMatI);
-                    $('#exportPoRepForm').find('#destination').val(destinationI);
-                    $('#exportPoRepForm').find('#plant').val(plantI);
-                    $('#exportPoRepForm').find('#batchDrum').val(batchDrumSearchI);
-                    $('#exportPoRepForm').find('#type').val('Purchase');
-                    $('#exportPoRepModal').modal('hide');
-
-                    $.post('php/exportSoPoReport.php', $('#exportPoRepForm').serialize(), function(response){
-                        var obj = JSON.parse(response);
-
-                        if(obj.status === 'success'){
-                            var previewWindow = window.open('', '_blank');
-                            previewWindow.document.write(obj.message);
-                            previewWindow.document.close();
-                        }
-                        else if(obj.status === 'failed'){
-                            toastr["error"](obj.message, "Failed:");
-                        }
-                        else{
-                            toastr["error"]("Something wrong when activate", "Failed:");
-                        }
-                    }).fail(function(error){
-                        console.error("Error exporting PDF:", error);
-                        alert("An error occurred while generating the PDF.");
-                    });
-                }
-            }
-        });
-
         $('#exportSummaryPdf').on('click', function(){
-            $("#exportPdfModal").find('#reportType').val('');
-            $("#exportPdfModal").modal("show");
-
-            $('#exportPdfForm').validate({
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                }
-            });
+            openReportExportPdf();
         });
         
         $('#exportPurchasePdf').on('click', function(){
-            $("#exportPoRepModal").find('#group1').val('');
-            $("#exportPoRepModal").find('#group2').val('');
-            $("#exportPoRepModal").find('#group3').val('');
-            $("#exportPoRepModal").find('#group4').val('');
-            $("#exportPoRepModal").find('select[id^="group"] option').prop('disabled', false);
-            $("#exportPoRepModal").modal("show");
-
-            $('#exportPoRepForm').validate({
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                }
-            });
+            openReportExportGroup();
         });
 
         $('#exportExcel').on('click', function(){
+            openReportExportExcel();
+        });
+
+        $('#exportExcelSubmit').on('click', function(){
+            var excelReportTypeI = $('#excelReportType').val();
+            $('#exportExcelModal').modal('hide');
+
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -1120,12 +609,12 @@ else{
             });
 
             if (selectedIds.length > 0) {
-                window.open("php/export.php?file=weight&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
+                window.open("php/export.php?file=weight&reportType="+excelReportTypeI+"&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
                 "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
                 "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI+"&id="+selectedIds);
             }else{
-                window.open("php/export.php?file=weight&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
+                window.open("php/export.php?file=weight&reportType="+excelReportTypeI+"&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
                 "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
                 "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
@@ -1155,12 +644,115 @@ else{
                 $('#productSearchDisplay').show();
             }
         });
-
-        // Trigger the function on change
-        $('select[id^="group"]').on('change', function () {
-            updateSelects();
-        });
     });
+
+    // Load (or reload) the report table using the current search filters
+    function loadWeightTable() {
+        var fromDateI = $('#fromDateSearch').val();
+        var toDateI = $('#toDateSearch').val();
+        var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var supplierNoI = $('#supplierSearch').val() || [];
+        var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+        var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var rawMatI = $('#rawMatSearch').val() || [];
+        var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+        var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+        var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+
+        // Destroy the old Datatable
+        if ($.fn.DataTable.isDataTable('#weightTable')) {
+            $("#weightTable").DataTable().clear().destroy();
+        }
+
+        table = $("#weightTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'searching': true,
+            'serverMethod': 'post',
+            'ajax': {
+                'url':'php/filterReports.php',
+                'data': {
+                    fromDate: fromDateI,
+                    toDate: toDateI,
+                    status: statusI,
+                    customer: customerNoI,
+                    supplier: supplierNoI,
+                    vehicle: vehicleNoI,
+                    customerType: customerTypeI,
+                    product: productI,
+                    rawMaterial: rawMatI,
+                    destination: destinationI,
+                    plant: plantI,
+                    purchaseOrder: poI,
+                    batchDrum: batchDrumSearchI,
+                    includeCancel: 'Y'
+                } 
+            },
+            'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
+                { 
+                    data: 'transaction_id',
+                    class: 'transaction-column',
+                    render: function (data, type, row) {
+                        if (type === 'display') {
+                            if (row.is_edit == 'Y') {
+                                data += ' <span class="badge bg-warning-subtle text-warning fw-bold" title="' + $('<div>').text(row.edit_reason || '').html().replace(/"/g, '&quot;') + '">Edited</span>';
+                            }
+                            if (row.is_cancel == 'Y') {
+                                data += ' <span class="badge bg-danger-subtle text-danger fw-bold" title="' + $('<div>').text(row.cancelled_reason || '').html().replace(/"/g, '&quot;') + '">Cancelled</span>';
+                            }
+                        }
+                        return data;
+                    }
+                },
+                { data: 'transaction_status' },
+                { data: 'customer' },
+                { data: 'lorry_plate_no1' },
+                { data: 'product_name' },
+                { data: 'purchase_order' },
+                { data: 'delivery_no' },
+                { data: 'gross_weight1' },
+                { data: 'gross_weight1_date' },
+                { data: 'tare_weight1' },
+                { data: 'tare_weight1_date' },
+                { data: 'nett_weight1' },
+                { 
+                    data: 'id',
+                    responsivePriority: 1,
+                    class: 'action-button',
+                    orderable: false,
+                    render: function ( data, type, row ) {
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
+                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                        }
+
+                        return '';
+                    }
+                }
+            ],
+            "drawCallback": function(settings) {
+                $('#salesInfo').text(settings.json.salesTotal);
+                $('#purchaseInfo').text(settings.json.purchaseTotal);
+                $('#localInfo').text(settings.json.localTotal);
+            }   
+        });
+    }
 
     function format (row) {
         var returnString = `
@@ -1369,37 +961,6 @@ else{
             else{
                 toastr["error"]("Something wrong when activate", "Failed:");
             }
-        });
-    }
-
-    function updateSelects() { //Function to disable duplicated group
-        const selectedValues = [
-            $('#exportPoRepModal').find('#group1').val(),
-            $('#exportPoRepModal').find('#group2').val(),
-            $('#exportPoRepModal').find('#group3').val(),
-            $('#exportPoRepModal').find('#group4').val(),
-        ];
-
-        $('select[id^="group"]').each(function () {
-            const currentSelect = $(this);
-            const currentValue = currentSelect.val();
-
-            currentSelect.find('option').each(function () {
-                const option = $(this);
-                const optionValue = option.val();
-
-                if (optionValue === '') return; // Skip blank option (if any)
-
-                // Disable if selected in other select, enable otherwise
-                if (
-                    selectedValues.includes(optionValue) &&
-                    optionValue !== currentValue
-                ) {
-                    option.prop('disabled', true);
-                } else {
-                    option.prop('disabled', false);
-                }
-            });
         });
     }
     </script>

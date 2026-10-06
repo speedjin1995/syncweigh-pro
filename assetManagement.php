@@ -476,6 +476,7 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
                 { data: 'diameter' },
                 {
                     data: 'id',
+                    responsivePriority: 1,
                     class: 'action-button',
                     orderable: false,
                     render: function (data, type, row) {
@@ -553,6 +554,7 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
                     { data: 'diameter' },
                     {
                         data: 'id',
+                        responsivePriority: 1,
                         class: 'action-button',
                         orderable: false,
                         render: function (data, type, row) {

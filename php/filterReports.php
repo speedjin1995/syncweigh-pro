@@ -16,6 +16,9 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = "";
 
+// Report screens that pass includeCancel = 'Y' also list cancelled records
+$cancelCondition = (isset($_POST['includeCancel']) && $_POST['includeCancel'] == 'Y') ? "" : " AND is_cancel <> 'Y'";
+
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
   $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
   $fromDateTime = $dateTime->format('Y-m-d H:i:00');
@@ -96,11 +99,11 @@ if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
-$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'";
+$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y'".$cancelCondition;
 // if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 if (($_POST['status'] == 'Sales' && !hasModulePermission('Report', 'Sales', ['view_all_plants'])) || ($_POST['status'] == 'Purchase' && !hasModulePermission('Report', 'Purchase', ['view_all_plants'])) || ($_POST['status'] == 'Local' && !hasModulePermission('Report', 'Public', ['view_all_plants']))){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')";
+  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y'".$cancelCondition." and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery); 
@@ -108,11 +111,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y'".$cancelCondition.$searchQuery;
 // if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 if (($_POST['status'] == 'Sales' && !hasModulePermission('Report', 'Sales', ['view_all_plants'])) || ($_POST['status'] == 'Purchase' && !hasModulePermission('Report', 'Purchase', ['view_all_plants'])) || ($_POST['status'] == 'Local' && !hasModulePermission('Report', 'Public', ['view_all_plants']))){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y'".$cancelCondition." and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -129,11 +132,11 @@ if ($columnName == 'customer') {
 }
 
 ## Fetch records
-$empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where is_complete = 'Y'".$cancelCondition.$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 // if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 if (($_POST['status'] == 'Sales' && !hasModulePermission('Report', 'Sales', ['view_all_plants'])) || ($_POST['status'] == 'Purchase' && !hasModulePermission('Report', 'Purchase', ['view_all_plants'])) || ($_POST['status'] == 'Local' && !hasModulePermission('Report', 'Public', ['view_all_plants']))){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where is_complete = 'Y'".$cancelCondition." and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery); 
@@ -192,6 +195,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "weight_different"=>$row['weight_different'],
     "is_complete"=>$row['is_complete'],
     "is_cancel"=>$row['is_cancel'],
+    "is_edit"=>$row['is_edit'],
+    "edit_reason"=>$row['edit_reason'],
+    "cancelled_reason"=>$row['cancelled_reason'],
     "manual_weight"=>$row['manual_weight'],
     "indicator_id"=>$row['indicator_id'],
     "weighbridge_id"=>$row['weighbridge_id'],
