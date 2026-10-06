@@ -581,6 +581,13 @@ else{
         });
 
         $('#exportExcel').on('click', function(){
+            openReportExportExcel();
+        });
+
+        $('#exportExcelSubmit').on('click', function(){
+            var excelReportTypeI = $('#excelReportType').val();
+            $('#exportExcelModal').modal('hide');
+
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -604,6 +611,7 @@ else{
 
             var params = new URLSearchParams();
             params.append('file', 'weight');
+            params.append('reportType', excelReportTypeI);
             params.append('isMulti', selectedIds.length > 0 ? 'Y' : 'N');
             params.append('fromDate', fromDateI);
             params.append('toDate', toDateI);
@@ -701,7 +709,8 @@ else{
                     destination: destinationI,
                     plant: plantI,
                     purchaseOrder: soI,
-                    batchDrum: batchDrumSearchI
+                    batchDrum: batchDrumSearchI,
+                    includeCancel: 'Y'
                 } 
             },
             'columns': [
@@ -718,8 +727,13 @@ else{
                     data: 'transaction_id',
                     class: 'transaction-column',
                     render: function (data, type, row) {
-                        if (type === 'display' && row.is_edit == 'Y') {
-                            return data + ' <span class="badge bg-danger-subtle text-danger" title="' + $('<div>').text(row.edit_reason || '').html().replace(/"/g, '&quot;') + '">Edited</span>';
+                        if (type === 'display') {
+                            if (row.is_edit == 'Y') {
+                                data += ' <span class="badge bg-warning-subtle text-warning fw-bold" title="' + $('<div>').text(row.edit_reason || '').html().replace(/"/g, '&quot;') + '">Edited</span>';
+                            }
+                            if (row.is_cancel == 'Y') {
+                                data += ' <span class="badge bg-danger-subtle text-danger fw-bold" title="' + $('<div>').text(row.cancelled_reason || '').html().replace(/"/g, '&quot;') + '">Cancelled</span>';
+                            }
                         }
                         return data;
                     }

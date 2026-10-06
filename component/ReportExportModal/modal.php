@@ -16,7 +16,13 @@ $exportReportTypeLabels = array(
     'S&P' => 'Overall Report - Product',
     'S&PC' => 'Overall Report - Customer',
     'DO' => 'Overall Report - DO',
-    'CANCEL' => 'Cancellation Report'
+    'CANCEL' => 'Cancellation & Amendment Report'
+);
+
+// Excel export types (Export Excel button)
+$exportExcelTypeLabels = array(
+    'WEIGHING' => 'Weighing Records',
+    'CANCEL' => 'Cancellation & Amendment Report'
 );
 
 $exportReportTypes = isset($exportReportTypes) ? $exportReportTypes : array_keys($exportReportTypeLabels);
@@ -88,6 +94,45 @@ $exportGroupOptions += array(
                             </div>
                         </div><!--end col-->
                     </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" role="dialog" aria-labelledby="exportExcelModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exportExcelModalTitle">Export Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row col-12">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <label for="excelReportType" class="col-sm-4 col-form-label">Report Type *</label>
+                                        <div class="col-sm-8">
+                                            <select id="excelReportType" name="excelReportType" class="form-select">
+                                                <?php foreach ($exportExcelTypeLabels as $excelTypeCode => $excelTypeLabel) { ?>
+                                                    <option value="<?= htmlspecialchars($excelTypeCode) ?>"><?= htmlspecialchars($excelTypeLabel) ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="hstack gap-2 justify-content-end">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" id="exportExcelSubmit">Submit</button>
+                        </div>
+                    </div><!--end col-->
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

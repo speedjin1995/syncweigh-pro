@@ -448,7 +448,7 @@ else{
     <!-- END layout-wrapper -->
     
     <?php
-    $exportReportTypes = array('PRODUCT', 'S&P', 'S&PC', 'DO');
+    $exportReportTypes = array('PRODUCT', 'S&P', 'S&PC', 'DO', 'CANCEL');
     $exportGroupReport = 'Purchase';
     include 'component/ReportExportModal/modal.php';
     ?>
@@ -581,6 +581,13 @@ else{
         });
 
         $('#exportExcel').on('click', function(){
+            openReportExportExcel();
+        });
+
+        $('#exportExcelSubmit').on('click', function(){
+            var excelReportTypeI = $('#excelReportType').val();
+            $('#exportExcelModal').modal('hide');
+
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -602,12 +609,12 @@ else{
             });
 
             if (selectedIds.length > 0) {
-                window.open("php/export.php?file=weight&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
+                window.open("php/export.php?file=weight&reportType="+excelReportTypeI+"&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
                 "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
                 "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI+"&id="+selectedIds);
             }else{
-                window.open("php/export.php?file=weight&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
+                window.open("php/export.php?file=weight&reportType="+excelReportTypeI+"&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
                 "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
                 "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
@@ -682,7 +689,8 @@ else{
                     destination: destinationI,
                     plant: plantI,
                     purchaseOrder: poI,
-                    batchDrum: batchDrumSearchI
+                    batchDrum: batchDrumSearchI,
+                    includeCancel: 'Y'
                 } 
             },
             'columns': [
@@ -699,8 +707,13 @@ else{
                     data: 'transaction_id',
                     class: 'transaction-column',
                     render: function (data, type, row) {
-                        if (type === 'display' && row.is_edit == 'Y') {
-                            return data + ' <span class="badge bg-danger-subtle text-danger" title="' + $('<div>').text(row.edit_reason || '').html().replace(/"/g, '&quot;') + '">Edited</span>';
+                        if (type === 'display') {
+                            if (row.is_edit == 'Y') {
+                                data += ' <span class="badge bg-warning-subtle text-warning fw-bold" title="' + $('<div>').text(row.edit_reason || '').html().replace(/"/g, '&quot;') + '">Edited</span>';
+                            }
+                            if (row.is_cancel == 'Y') {
+                                data += ' <span class="badge bg-danger-subtle text-danger fw-bold" title="' + $('<div>').text(row.cancelled_reason || '').html().replace(/"/g, '&quot;') + '">Cancelled</span>';
+                            }
                         }
                         return data;
                     }

@@ -6,6 +6,7 @@
  * Page buttons call:
  *   openReportExportPdf()    PDF export (#exportPdfModal)
  *   openReportExportGroup()  grouped SO/PO report (#exportGroupRepModal)
+ *   openReportExportExcel()  Excel report type (#exportExcelModal); the page handles #exportExcelSubmit
  */
 ?>
     <script type="text/javascript">
@@ -83,6 +84,11 @@
         $("#exportPdfModal").find('#reportType').val('');
         $("#exportPdfModal").modal("show");
         validateReportExportForm($('#exportPdfForm'));
+    }
+
+    function openReportExportExcel() {
+        $("#exportExcelModal").find('#excelReportType').val('WEIGHING');
+        $("#exportExcelModal").modal("show");
     }
 
     function openReportExportGroup() {
