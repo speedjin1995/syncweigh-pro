@@ -1257,7 +1257,8 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             </div>`;
                         }
 
-                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('cancelled'))) {
+                        var cancelPerm = (row.is_complete == 'Y') ? 'cancel_after_complete' : 'cancel_before_complete';
+                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes(cancelPerm))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
