@@ -3668,3 +3668,16 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_SO` BEFORE UPDATE ON `Sales_Order`
 END
 $$
 DELIMITER ;
+
+-- 09/10/2026 --
+INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
+(36, 'cancel_before_complete', '[\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(37, 'cancel_after_complete', '[\"3\",\"2\",\"5\",\"1\",\"4\"]');
+
+INSERT INTO role_permissions (role_id, module_id, permission_id)
+SELECT role_id, module_id, 36 FROM role_permissions WHERE permission_id = 7 AND module_id IN (1, 2, 3, 4, 5);
+INSERT INTO role_permissions (role_id, module_id, permission_id)
+SELECT role_id, module_id, 37 FROM role_permissions WHERE permission_id = 7 AND module_id IN (1, 2, 3, 4, 5);
+DELETE FROM role_permissions WHERE permission_id = 7 AND module_id IN (1, 2, 3, 4, 5);
+
+UPDATE permissions SET modules = '[\"8\",\"6\",\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"31\",\"14\",\"15\",\"36\",\"37\",\"35\",\"34\",\"39\"]' WHERE id = 7;
