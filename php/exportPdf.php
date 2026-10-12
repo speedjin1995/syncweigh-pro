@@ -1210,9 +1210,9 @@ if(isset($_POST["file"])){
         else if ($_POST['reportType'] == 'DO') {
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY delivery_no ASC";
+                $sql = "select * from Weight WHERE id IN ($id) AND is_cancel = 'N' ORDER BY delivery_no ASC";
             }else{
-                $sql = "select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY delivery_no ASC';
+                $sql = "select * from Weight WHERE is_complete = 'Y' AND is_cancel = 'N'".$searchQuery.' ORDER BY delivery_no ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)) {
