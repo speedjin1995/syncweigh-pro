@@ -50,3 +50,19 @@ function formatDate4(date) {
 function getMalaysiaDate() {
     return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
 }
+
+// Builds the "Columns" show/hide button for a DataTable and places it in #weightColumnsBtn
+function initColumnsButton(dt) {
+    new $.fn.dataTable.Buttons(dt, {
+        dom: { button: { className: 'btn' } },
+        buttons: [
+            {
+                extend: 'colvis',
+                text: '<i class="ri-layout-column-line align-middle me-1"></i>Columns',
+                className: 'btn-grey waves-effect waves-light',
+                columns: ':not(.action-button, .select-checkbox)'
+            }
+        ]
+    });
+    dt.buttons().container().appendTo($('#weightColumnsBtn').empty());
+}

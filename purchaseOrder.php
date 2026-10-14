@@ -50,7 +50,8 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
     <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.5.6/css/colReorder.dataTables.min.css">
 
     <!-- Include jQuery library -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -596,7 +597,8 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                                             <div>
                                                                 <h5 class="card-title mb-0">Purchase Orders</h5>
                                                             </div>
-                                                            <div class="flex-shrink-0">
+                                                            <div class="flex-shrink-0 d-flex align-items-center gap-2">
+                                                                <span id="weightColumnsBtn"></span>
                                                                 <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['download_template'])): ?>
                                                                 <a href="template/Po_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
@@ -712,8 +714,11 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.5.6/js/dataTables.colReorder.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
     <!-- Additional js -->
     <script src="assets/js/additional.js"></script>
@@ -809,6 +814,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
             'serverSide': true,
             'searching': true,
             'serverMethod': 'post',
+            'colReorder': { fixedColumnsRight: 1 },
             'ajax': {
                 'url':'php/filterPurchaseOrder.php',
                 'data': {
@@ -903,6 +909,8 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
             ]
         });
 
+        initColumnsButton(table);
+
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
@@ -925,6 +933,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 'serverSide': true,
                 'searching': true,
                 'serverMethod': 'post',
+                'colReorder': { fixedColumnsRight: 1 },
                 'ajax': {
                     'url':'php/filterPurchaseOrder.php',
                     'data': {
@@ -1016,6 +1025,8 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                     }
                 ]
             });
+
+            initColumnsButton(table);
         });
 
         // Add event listener for opening and closing details on row click
