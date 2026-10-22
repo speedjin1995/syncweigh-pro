@@ -676,6 +676,10 @@ if ($user != null && $user != ''){
                                                                     <th>EXQ/DEL</th>
                                                                     <th>Order Quantity</th>
                                                                     <th>Balance</th>
+                                                                    <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['include_price'])): ?>
+                                                                    <th>Unit Price</th>
+                                                                    <th>Total Price</th>
+                                                                    <?php endif; ?>
                                                                     <th>Status</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
@@ -864,6 +868,9 @@ if ($user != null && $user != ''){
                 { data: 'exquarry_or_delivered' },
                 { data: 'converted_order_qty' },
                 { data: 'converted_balance' },
+                ...(isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('include_price'))
+                    ? [{ data: 'unit_price' }, { data: 'total_price' }]
+                    : []),
                 { data: 'status' },
                 { data: 'modified_date' },
                 {
@@ -996,6 +1003,9 @@ if ($user != null && $user != ''){
                     { data: 'exquarry_or_delivered' },
                     { data: 'converted_order_qty' },
                     { data: 'converted_balance' },
+                    ...(isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('include_price'))
+                        ? [{ data: 'unit_price' }, { data: 'total_price' }]
+                        : []),
                     { data: 'status' },
                     { data: 'modified_date' },
                     {
