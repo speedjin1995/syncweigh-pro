@@ -104,6 +104,7 @@
                                                             <option value="Weight">Weighing</option>
                                                             <option value="SO">Sales Order</option>
                                                             <option value="PO">Purchase Order</option>
+                                                            <option value="StockAdjustment">Stock Adjustment</option>
                                                             <option value="Login">Login</option>
                                                         </select>
                                                     </div>
@@ -214,6 +215,12 @@
                                                     <div class="mb-3">
                                                         <label for="loginUsername" class="form-label">Username</label>
                                                         <input type="text" class="form-control" placeholder="Username" name="loginUsername" id="loginUsername">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode stockAdjustmentInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="stockAdjustmentNo" class="form-label">Adjustment No</label>
+                                                        <input type="text" class="form-control" placeholder="Adjustment No" name="stockAdjustmentNo" id="stockAdjustmentNo">
                                                     </div>
                                                 </div>
                                             </div>
@@ -523,6 +530,11 @@ $(function () {
             $('.inputCode').hide();
             $('.loginInput').show();
         }
+        else if($(this).val() == "StockAdjustment")
+        {
+            $('.inputCode').hide();
+            $('.stockAdjustmentInput').show();
+        }
         
     });
 
@@ -634,6 +646,7 @@ $(function () {
                 soNo: $('#soNo').val(),
                 poNo: $('#poNo').val(),
                 loginUsername: $('#loginUsername').val(),
+                stockAdjustmentNo: $('#stockAdjustmentNo').val(),
             },
             dataType: "json",
             success: function (response) {
@@ -671,6 +684,7 @@ $(function () {
                 $('#dataTable tbody').on('click', 'tr', function (e) {
                     var tr = $(this); // The row that was clicked
                     var row = table.row(tr); 
+                    if (!row.data()) return; // click inside an expanded child row
 
                     // Exclude specific td elements by checking the event target
                     if ($(e.target).closest('td').hasClass('dtr-control') || $(e.target).closest('td').hasClass('action-button')) {
@@ -679,7 +693,6 @@ $(function () {
 
                     if ($('#reportType').val() == 'Weight'){
                         if (row.child.isShown()) {
-                            // This row is already open - close it
                             row.child.hide();
                             tr.removeClass('shown');
                         } else {
@@ -701,6 +714,25 @@ $(function () {
                                     row.child(format(obj.message)).show();
                                     tr.addClass("shown");
                                 }
+                            });
+                        }
+                    }
+
+                    if ($('#reportType').val() == 'StockAdjustment'){
+                        if (row.child.isShown()) {
+                            row.child.hide();
+                            tr.removeClass('shown');
+                        } else {
+                            $.post('php/getAdjustmentHistory.php', { stk_adjustment_id: row.data()['stk_adjustment_id'] }, function (data) {
+                                var obj = typeof data === 'string' ? JSON.parse(data) : data;
+                                var content = obj.status === 'success'
+                                    ? renderAdjustmentTimeline(obj)
+                                    : '<div class="alert alert-danger mb-0" role="alert">' + escapeHtml(obj.message || 'Failed to load history') + '</div>';
+                                row.child('<div class="p-3">' + content + '</div>').show();
+                                tr.addClass('shown');
+                            }).fail(function () {
+                                row.child('<div class="alert alert-danger m-3 mb-0" role="alert">Network error - please try again</div>').show();
+                                tr.addClass('shown');
                             });
                         }
                     }        
@@ -734,11 +766,13 @@ $(function () {
         var soNo = $('#soNo').val() || '';
         var poNo = $('#poNo').val() || '';
         var loginUsername = $('#loginUsername').val() || '';
+        var stockAdjustmentNo = $('#stockAdjustmentNo').val() || '';
 
         window.open("php/exportAuditExcel.php?selectedValue="+selectedValue+"&fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+
         "&customerCode="+customerCode+"&destinationCode="+destinationCode+"&productCode="+productCode+"&rawMatCode="+rawMatCode+"&supplierCode="+supplierCode+
         "&vehicleNo="+vehicleNo+"&agentCode="+agentCode+"&transporterCode="+transporterCode+"&unit="+unit+"&userCode="+userCode+"&plantCode="+plantCode+
-        "&siteCode="+siteCode+"&weight="+weight+"&doNo="+doNo+"&custPoNo="+custPoNo+"&soNo="+soNo+"&poNo="+poNo+"&loginUsername="+encodeURIComponent(loginUsername));
+        "&siteCode="+siteCode+"&weight="+weight+"&doNo="+doNo+"&custPoNo="+custPoNo+"&soNo="+soNo+"&poNo="+poNo+"&loginUsername="+encodeURIComponent(loginUsername)+
+        "&stockAdjustmentNo="+encodeURIComponent(stockAdjustmentNo));
     });
 
     // $('#exportExcel').click(function() {
@@ -849,6 +883,118 @@ function format (row) {
     </div>`;
     
     return returnString;
+}
+
+// Stock Adjustment History Functions
+function renderAdjustmentTimeline(data) {
+    var headerHistory = data.header_history || [];
+    var itemHistory = data.item_history || [];
+
+    if (headerHistory.length === 0) {
+        return '<div class="text-muted p-2">No history found</div>';
+    }
+
+    var itemEvents = [];
+    itemHistory.forEach(function(group) {
+        group.history.forEach(function(h) {
+            itemEvents.push({ raw_mat_code: group.raw_mat_code, raw_mat_name: group.raw_mat_name, action: h.action, action_by: h.action_by, event_date: h.event_date, timestamp: h.timestamp, changes: h.changes, used: false });
+        });
+    });
+
+    // One row per header save; item events from the same save (same user, within 5 seconds) join it
+    var rows = headerHistory.map(function(h) {
+        var row = { action: h.action, action_by: h.action_by, event_date: h.event_date, timestamp: h.timestamp, changes: h.changes, items: [] };
+        itemEvents.forEach(function(ie) {
+            if (!ie.used && Math.abs(ie.timestamp - h.timestamp) <= 5 && ie.action_by === h.action_by) {
+                ie.used = true;
+                row.items.push(ie);
+            }
+        });
+        return row;
+    });
+
+    // Item events with no matching header save get their own row
+    itemEvents.forEach(function(ie) {
+        if (!ie.used) {
+            rows.push({ action: ie.action, action_by: ie.action_by, event_date: ie.event_date, timestamp: ie.timestamp, changes: {}, items: [ie] });
+        }
+    });
+
+    rows.sort(function(a, b) { return b.timestamp - a.timestamp; });
+
+    var html = '<table class="table table-sm table-bordered mb-0">' +
+        '<thead class="table-light"><tr><th>Date/Time</th><th>Action</th><th>By</th><th>Changes</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+        var changes = Object.keys(r.changes).length > 0 ? '<strong><u>Header</u></strong><br>' + renderFieldChanges(r.changes, getHeaderFieldLabels()) : '';
+        if (r.items.length > 0) {
+            changes += (changes ? '<br>' : '') + '<strong><u>Items</u></strong>';
+        }
+        r.items.forEach(function(ie) {
+            var itemChanges = Object.keys(ie.changes).length > 0 ? renderFieldChanges(ie.changes, getItemFieldLabels()) : '';
+            changes += (changes ? '<br>' : '') + '<strong>' + escapeHtml(ie.raw_mat_code) + ' - ' + escapeHtml(ie.raw_mat_name || '') + '</strong> (' + escapeHtml(ie.action) + ')';
+            if (itemChanges) {
+                changes += '<br>' + itemChanges;
+            }
+        });
+        html += '<tr>' +
+            '<td>' + escapeHtml(r.event_date) + '</td>' +
+            '<td>' + escapeHtml(r.action) + '</td>' +
+            '<td>' + escapeHtml(r.action_by || 'System') + '</td>' +
+            '<td>' + (changes || '-') + '</td>' +
+            '</tr>';
+    });
+    html += '</tbody></table>';
+
+    return html;
+}
+
+function renderFieldChanges(changes, fieldLabels) {
+    if (!changes || Object.keys(changes).length === 0) {
+        return '-';
+    }
+
+    var lines = [];
+    for (var field in changes) {
+        if (changes.hasOwnProperty(field)) {
+            var change = changes[field];
+            var fromVal = change.from !== null ? escapeHtml(String(change.from)) : '-';
+            var toVal = change.to !== null ? escapeHtml(String(change.to)) : '-';
+            lines.push(escapeHtml(fieldLabels[field] || field) + ': ' + fromVal + ' → ' + toVal);
+        }
+    }
+    return lines.join('<br>');
+}
+
+function getHeaderFieldLabels() {
+    return {
+        'adjustment_no': 'Adjustment No',
+        'adjustment_date': 'Date',
+        'plant_id': 'Plant',
+        'batch_drum': 'Batch/Drum',
+        'remark': 'Remark',
+        'total_items': 'Total Items',
+        'total_qty': 'Total Qty',
+        'total_cost': 'Total Cost'
+    };
+}
+
+function getItemFieldLabels() {
+    return {
+        'raw_mat_code': 'Raw Material',
+        'quantity_before': 'Qty Before',
+        'adjustment_qty': 'Adjust Qty',
+        'quantity_after': 'Qty After',
+        'unit_cost': 'Unit Cost',
+        'total_cost': 'Total Cost',
+        'reason': 'Reason'
+    };
+}
+
+function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 </script>
