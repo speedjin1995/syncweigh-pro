@@ -663,6 +663,10 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                                                     <th>EXQ/DEL</th>
                                                                     <th>Supplier Quantity</th>
                                                                     <th>Balance</th>
+                                                                    <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['include_price'])): ?>
+                                                                    <th>Unit Price</th>
+                                                                    <th>Total Price</th>
+                                                                    <?php endif; ?>
                                                                     <th>Status</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
@@ -850,6 +854,9 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 { data: 'exquarry_or_delivered' },
                 { data: 'converted_order_qty' },
                 { data: 'converted_balance' },
+                ...(isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))
+                    ? [{ data: 'unit_price' }, { data: 'total_price' }]
+                    : []),
                 { data: 'status' },
                 { data: 'modified_date' },
                 {
@@ -905,7 +912,6 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                         return buttons;
                     }
                 }
-
             ]
         });
 
@@ -969,6 +975,9 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                     { data: 'exquarry_or_delivered' },
                     { data: 'converted_order_qty' },
                     { data: 'converted_balance' },
+                    ...(isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))
+                        ? [{ data: 'unit_price' }, { data: 'total_price' }]
+                        : []),
                     { data: 'status' },
                     { data: 'modified_date' },
                     {
@@ -987,6 +996,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                     </button>
                                 </div>`;
                             }
+                            
 
                             if (row.status == 'Open'){
                                 if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('complete'))) {
@@ -1544,7 +1554,14 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 <p><strong>DESTINATION:</strong> ${row.destination_code} - ${row.destination_name}</p>
                 <p><strong>RAW MATERIAL:</strong> ${row.raw_mat_code} - ${row.raw_mat_name}</p>
                 <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
-                <p><strong>REMARKS:</strong> ${row.remarks}</p>
+                <p><strong>REMARKS:</strong> ${row.remarks}</p>`;
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))){
+                returnString += `
+                    <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
+                `;
+            }
+
+            returnString += `
             </div>
             <div class="col-6">
                 <p><strong>ORDER DATE:</strong> ${row.order_date}</p>
@@ -1555,6 +1572,15 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
                 <p><strong>SUPPLIER QUANTITY:</strong> ${row.converted_order_qty} ${row.converted_unit_label}</p>
                 <p><strong>BALANCE:</strong> ${row.converted_balance} ${row.converted_unit_label}</p>
+            `;
+
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))){
+                returnString += `
+                    <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
+                `;
+            }
+
+            returnString += `
             </div>
         </div>`;
 

@@ -116,6 +116,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "converted_order_qty"=>$row['converted_order_qty'],
     "balance"=>$row['balance'],
     "converted_balance"=>round($row['converted_balance'], 2),
+    "unit_price"=>$row['unit_price'],
+    "total_price"=>$row['total_price'],
     "status"=>$row['status'],
     "modified_date" => !empty($row["modified_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y') : ''
   );
