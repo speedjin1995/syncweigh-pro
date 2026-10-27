@@ -1008,6 +1008,113 @@ if($_POST['selectedValue'] == "PO")
     $columnNames = array_merge($columnNames, ["Remarks", "Status", "Action", "Action By", "Event Date"]);
 }
 
+if($_POST['selectedValue'] == "StockAdjustment")
+{
+    ## Fetch unique adjustments (latest log entry per adjustment)
+    $empQuery = "SELECT sa.id as stk_adjustment_id, sa.adjustment_no, sa.adjustment_date, 
+                        p.plant_code, p.name as plant_name, sa.batch_drum, 
+                        sa.total_items, sa.total_qty, sa.total_cost, sa.remark,
+                        sa.created_at, sa.modified_at, sa.deleted,
+                        (SELECT COUNT(*) FROM Stock_Adjustment_Log WHERE stk_adjustment_id = sa.id) as log_count
+                 FROM Stock_Adjustment sa 
+                 LEFT JOIN Plant p ON sa.plant_id = p.id 
+                 WHERE 1=1";
+    
+    if($_POST['stockAdjustmentNo'] != null && $_POST['stockAdjustmentNo'] != ''){
+        $empQuery .= " AND sa.adjustment_no LIKE '%".$_POST['stockAdjustmentNo']."%'";
+    }
+    if($_POST['fromDateSearch'] != null && $_POST['fromDateSearch'] != ''){
+        $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['fromDateSearch']);
+        $fromDateTime = $dateTime->format('Y-m-d');
+        $empQuery .= " AND sa.adjustment_date >= '".$fromDateTime."'";
+    }
+    if($_POST['toDateSearch'] != null && $_POST['toDateSearch'] != ''){
+        $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['toDateSearch']);
+        $toDateTime = $dateTime->format('Y-m-d');
+        $empQuery .= " AND sa.adjustment_date <= '".$toDateTime."'";
+    }
+    
+    $empQuery .= " ORDER BY sa.modified_at DESC, sa.id DESC";
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $status = $row['deleted'] == 1 ? 'Deleted' : 'Active';
+        
+        $data[] = array( 
+            "id"=>$row['stk_adjustment_id'],
+            "stk_adjustment_id"=>$row['stk_adjustment_id'],
+            "Adjustment No"=>$row['adjustment_no'],
+            "Adjustment Date"=>$row['adjustment_date'],
+            "Plant Code"=>$row['plant_code'],
+            "Plant Name"=>$row['plant_name'],
+            "Batch/Drum"=>$row['batch_drum'],
+            "Total Items"=>$row['total_items'],
+            "Total Qty"=>$row['total_qty'],
+            "Total Cost"=>$row['total_cost'],
+            "Remark"=>$row['remark'],
+            "Status"=>$status,
+            "Changes"=>$row['log_count']
+        );
+    }
+
+    $columnNames = ["Adjustment No", "Adjustment Date", "Plant Code", "Plant Name", "Batch/Drum", "Total Items", "Total Qty", "Total Cost", "Remark", "Status", "Changes"];
+}
+
+if($_POST['selectedValue'] == "Login")
+{
+    ## Fetch records
+    $loginQuery = "SELECT * FROM Login_Log WHERE 1=1";
+    $loginTypes = "";
+    $loginParams = array();
+
+    if(!empty($fromDateTime)){
+        $loginQuery .= " AND login_datetime >= ?";
+        $loginTypes .= "s";
+        $loginParams[] = $fromDateTime;
+    }
+
+    if(!empty($toDateTime)){
+        $loginQuery .= " AND login_datetime <= ?";
+        $loginTypes .= "s";
+        $loginParams[] = $toDateTime;
+    }
+
+    if(isset($_POST['loginUsername']) && trim($_POST['loginUsername']) != ''){
+        $loginQuery .= " AND username LIKE ?";
+        $loginTypes .= "s";
+        $loginParams[] = "%".trim($_POST['loginUsername'])."%";
+    }
+
+    $loginQuery .= " ORDER BY login_datetime DESC";
+    $data = array();
+
+    if($loginStmt = $db->prepare($loginQuery)){
+        if(!empty($loginParams)){
+            $loginStmt->bind_param($loginTypes, ...$loginParams);
+        }
+
+        if($loginStmt->execute()){
+            $loginResult = $loginStmt->get_result();
+
+            while($row = $loginResult->fetch_assoc()) {
+                // login_datetime is already stored in Asia/Kuala_Lumpur time
+                $data[] = array(
+                "id"=>$row['id'],
+                "Username"=>$row['username'],
+                "IP Address"=>$row['ip_address'],
+                "User Agent"=>$row['user_agent'],
+                "Login Date"=>$row['login_datetime']
+                );
+            }
+        }
+
+        $loginStmt->close();
+    }
+
+    $columnNames = ["Username", "IP Address", "User Agent", "Login Date"];
+}
+
 ## Response
 $response = [
     "columnNames" => $columnNames,

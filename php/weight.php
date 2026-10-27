@@ -18,6 +18,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     $isCancel = 'N';
     $isComplete = 'N';
     $isApproved = 'Y';
+    $isEdit = 'N';
     $misValue = '';
 
     if (empty($_POST["id"])) {
@@ -267,6 +268,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $manualWeightReason = null;
     } else {
         $manualWeightReason = preg_replace('/\s+/', ' ', trim($_POST["manualWeightReasonInput"]));
+    }
+
+    if (empty($_POST["editReasonInput"])) {
+        $editReason = null;
+    } else {
+        $editReason = preg_replace('/\s+/', ' ', trim($_POST["editReasonInput"]));
     }
 
     if (empty($_POST["weighbridge"])) {
@@ -643,12 +650,34 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
 
-        if ($existing_weight_stmt = $db->prepare("SELECT transaction_status, purchase_order, customer_code, product_code FROM Weight WHERE id=?")) {
+        if ($existing_weight_stmt = $db->prepare("SELECT transaction_status, purchase_order, customer_code, product_code, is_complete, is_edit, edit_reason FROM Weight WHERE id=?")) {
             $existing_weight_stmt->bind_param('s', $weightId);
             $existing_weight_stmt->execute();
             $existing_weight_result = $existing_weight_stmt->get_result();
             $existing_weight = $existing_weight_result->fetch_assoc();
             $existing_weight_stmt->close();
+
+            # Editing a transaction that is already complete needs a reason and marks it as edited
+            if (!empty($existing_weight) && $existing_weight['is_complete'] == 'Y') {
+                $editReasonText = strtolower($editReason ?? '');
+                $editReasonCompact = preg_replace('/\s+/', '', $editReason ?? '');
+
+                if (strlen($editReason ?? '') < 8 || in_array($editReasonText, $dummyManualReasons) || !preg_match('/[a-zA-Z]/', $editReason ?? '') || preg_match('/^([a-zA-Z0-9])\1+$/', $editReasonCompact)) {
+                    $db->close();
+                    echo json_encode(
+                        array(
+                            "status"=> "failed",
+                            "message"=> "Please enter a meaningful reason for editing a completed transaction."
+                        )
+                    );
+                    exit;
+                }
+
+                $isEdit = 'Y';
+            } else {
+                $isEdit = $existing_weight['is_edit'] ?? 'N';
+                $editReason = $existing_weight['edit_reason'] ?? null;
+            }
 
             if (!empty($existing_weight) && $existing_weight['transaction_status'] == 'Sales') {
                 if ($closed_so_stmt = $db->prepare("SELECT status FROM Sales_Order WHERE order_no=? AND customer_code=? AND product_code=? AND deleted='0' LIMIT 1")) {
@@ -755,13 +784,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight_uom=?, supplier_weight=?, po_supply_weight=?, order_weight_uom=?, order_weight=?, tin_no=?, id_no=?, id_type=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, manual_weight_reason=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
-        gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
+        gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_edit=?, edit_reason=?, is_cancel=?, manual_weight=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
         product_description=?, unit_price=?, sub_total=?, sst=?, total_price=?, is_approved=?, approved_reason=?, plant_code=?, plant_name=?, agent_code=?, agent_name=?, load_drum=?, no_of_drum=?, batch_drum=? WHERE id=?"))
         {
-            $update_stmt->bind_param('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $customerType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeightUom, $supplierWeight, $poSupplyWeight, $orderWeightUom, $orderWeight, $tinNo, $idNo, $idType, $customerCode, $customerName,
+            $update_stmt->bind_param('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $customerType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeightUom, $supplierWeight, $poSupplyWeight, $orderWeightUom, $orderWeight, $tinNo, $idNo, $idType, $customerCode, $customerName,
             $supplierCode, $supplierName, $productCode, $productName, $exDel, $rawMaterialCode, $rawMaterialName, $siteCode, $siteName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
             $manualWeightReason, $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
-            $isComplete, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $unitPrice, $subTotalPrice, $sstPrice, $totalPrice, $isApproved, $approved_reason, $plantCode, $plant, $agentCode, $agent, $loadDrum, $noOfDrum, $batchDrum, $weightId);
+            $isComplete, $isEdit, $editReason, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $unitPrice, $subTotalPrice, $sstPrice, $totalPrice, $isApproved, $approved_reason, $plantCode, $plant, $agentCode, $agent, $loadDrum, $noOfDrum, $batchDrum, $weightId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -779,32 +808,19 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
                     if ($isComplete == 'Y' && $isCancel == 'N'){
                         if ($transactionStatus == 'Purchase'){
-                            $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
                             $prodRawId = $rawMaterialId;
                             $supCustCode = $supplierCode;
                             $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
                         }elseif($transactionStatus == 'Sales'){
-                            $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
                             $prodRawId = $productId;
                             $supCustCode = $customerCode;
                             $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND customer_code=?");
                         }
 
-                        // get conversion UOM
-                        $conversion_stmt = $db->prepare($sql);
-                        $unit = '2';
-                        $status = '0';
-                        $conversion_stmt->bind_param('sss', $prodRawId, $unit, $status);
-                        $conversion_stmt->execute();
-                        $conversion_result = $conversion_stmt->get_result();
-
+                        // get conversion UOM (default applied when no KG rate is set, see getKgConversion in lookup.php)
+                        $kgConversion = getKgConversion($prodRawId, ($transactionStatus == 'Purchase' ? 'PO' : 'SO'), $db);
+                        $rate = $kgConversion['rate'];
                         $convertedBalance = 0;
-                        $rate = 1;
-                        if ($conversion_result->num_rows > 0){
-                            $conversionRow = $conversion_result->fetch_assoc();
-                            $rate = $conversionRow['rate'];
-                        }
-                        $conversion_stmt->close();
                         $convertedBalance = $currentBalance * (float) $rate;
 
                         // Update Balance 
@@ -846,40 +862,30 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
                                 $deltaRawMatWeight = (float) $rawMatWeight * $nettWeightDifference; // Use weight difference for edit
 
-                                // Query for rate conversion
-                                $unitId = '2'; // KG unit ID
-                                $rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status='0'");
-                                $rate_stmt->bind_param('ss', $rawMatId, $unitId);
-                                $rate_stmt->execute();
-                                $rate_result = $rate_stmt->get_result();
-                                $rate_row = $rate_result->fetch_assoc();
-                                $rate_stmt->close();
+                                // Query for rate conversion (default applied when no KG rate is set, see getKgConversion in lookup.php)
+                                $rate = getKgConversion($rawMatId, 'PO', $db)['rate'];
 
-                                if (!empty($rate_row) && isset($rate_row) && $rate_row != null) {
-                                    $rate = $rate_row['rate'];
+                                if ($inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")){
+                                    $inventory_stmt->bind_param('ss', $rawMatId, $plantId);
+                                    $inventory_stmt->execute();
+                                    $inventory_result = $inventory_stmt->get_result();
 
-                                    if ($inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")){
-                                        $inventory_stmt->bind_param('ss', $rawMatId, $plantId);
-                                        $inventory_stmt->execute();
-                                        $inventory_result = $inventory_stmt->get_result();
+                                    while ($inventoryRow = $inventory_result->fetch_assoc()) {
+                                        $inventoryBalance = $inventoryRow['raw_mat_weight'];
+                                        $inventoryId = $inventoryRow['id'];
 
-                                        while ($inventoryRow = $inventory_result->fetch_assoc()) {
-                                            $inventoryBalance = $inventoryRow['raw_mat_weight'];
-                                            $inventoryId = $inventoryRow['id'];
+                                        $newInventoryBalance = (float) $inventoryBalance - (float) $deltaRawMatWeight;
+                                        $newInvBasicUom = $newInventoryBalance * $rate;
 
-                                            $newInventoryBalance = (float) $inventoryBalance - (float) $deltaRawMatWeight;
-                                            $newInvBasicUom = $newInventoryBalance * $rate;
-
-                                            // Update Inventory
-                                            if ($upd_inventory_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
-                                                $upd_inventory_stmt->bind_param('sss', $newInventoryBalance, $newInvBasicUom, $inventoryId);
-                                                $upd_inventory_stmt->execute();
-                                                $upd_inventory_stmt->close();
-                                            }
+                                        // Update Inventory
+                                        if ($upd_inventory_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                            $upd_inventory_stmt->bind_param('sss', $newInventoryBalance, $newInvBasicUom, $inventoryId);
+                                            $upd_inventory_stmt->execute();
+                                            $upd_inventory_stmt->close();
                                         }
-
-                                        $inventory_stmt->close();
                                     }
+
+                                    $inventory_stmt->close();
                                 }
                             }
 
@@ -895,29 +901,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                     $currentWipWeight = $wip_inventory_row['raw_mat_weight'];
                                     $wipInventoryId = $wip_inventory_row['id'];
 
-                                    // Get product UOM rate for conversion
-                                    $wipUnitId = 2;
-                                    $wip_product_rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_Uom WHERE raw_mat_id=? AND unit_id=? AND status='0'");
-                                    $wip_product_rate_stmt->bind_param('ss', $productId, $wipUnitId);
-                                    $wip_product_rate_stmt->execute();
-                                    $wip_product_rate_result = $wip_product_rate_stmt->get_result();
-                                    $wip_product_rate_row = $wip_product_rate_result->fetch_assoc();
-                                    $wip_product_rate_stmt->close();
+                                    // Get product UOM rate for conversion (default applied when no KG rate is set, see getKgConversion in lookup.php)
+                                    $wipRate = getKgConversion($productId, 'PO', $db)['rate'];
 
-                                    $wipRate = 1; // Default rate
-                                    if (!empty($wip_product_rate_row) && isset($wip_product_rate_row) && $wip_product_rate_row != null) {
-                                        $wipRate = $wip_product_rate_row['rate'];
+                                    // Add the weight difference to WIP inventory
+                                    $newWipWeight = (float) $currentWipWeight + (float) $nettWeightDifference;
+                                    $newWipBasicUom = $newWipWeight * $wipRate;
 
-                                        // Add the weight difference to WIP inventory
-                                        $newWipWeight = (float) $currentWipWeight + (float) $nettWeightDifference;
-                                        $newWipBasicUom = $newWipWeight * $wipRate;
-
-                                        // Update WIP inventory
-                                        if ($upd_wip_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
-                                            $upd_wip_inv_stmt->bind_param('sss', $newWipWeight, $newWipBasicUom, $wipInventoryId);
-                                            $upd_wip_inv_stmt->execute();
-                                            $upd_wip_inv_stmt->close();
-                                        }
+                                    // Update WIP inventory
+                                    if ($upd_wip_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                        $upd_wip_inv_stmt->bind_param('sss', $newWipWeight, $newWipBasicUom, $wipInventoryId);
+                                        $upd_wip_inv_stmt->execute();
+                                        $upd_wip_inv_stmt->close();
                                     }
                                 }
 
@@ -1047,32 +1042,19 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 }
 
                                 if ($transactionStatus == 'Purchase'){
-                                    $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
                                     $prodRawId = $rawMaterialId;
                                     $supCustCode = $supplierCode;
                                     $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
                                 }elseif($transactionStatus == 'Sales'){
-                                    $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
                                     $prodRawId = $productId;
                                     $supCustCode = $customerCode;
                                     $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND customer_code=?");
                                 }
 
-                                // get conversion UOM
-                                $conversion_stmt = $db->prepare($sql);
-                                $unit = '2';
-                                $status = '0';
-                                $conversion_stmt->bind_param('sss', $prodRawId, $unit, $status);
-                                $conversion_stmt->execute();
-                                $conversion_result = $conversion_stmt->get_result();
-
+                                // get conversion UOM (default applied when no KG rate is set, see getKgConversion in lookup.php)
+                                $kgConversion = getKgConversion($prodRawId, ($transactionStatus == 'Purchase' ? 'PO' : 'SO'), $db);
+                                $rate = $kgConversion['rate'];
                                 $convertedBalance = 0;
-                                $rate = 1;
-                                if ($conversion_result->num_rows > 0){
-                                    $conversionRow = $conversion_result->fetch_assoc();
-                                    $rate = $conversionRow['rate'];
-                                }
-                                $conversion_stmt->close();
                                 $convertedBalance = $currentBalance * (float) $rate;
 
                                 // Update Balance 
@@ -1114,40 +1096,30 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
                                         $calculatedWeight = (float) $nettWeight * (float) $rawMatWeight;
 
-                                        // Query for rate conversion
-                                        $unitId = '2'; // KG unit ID
-                                        $rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status='0'");
-                                        $rate_stmt->bind_param('ss', $rawMatId, $unitId);
-                                        $rate_stmt->execute();
-                                        $rate_result = $rate_stmt->get_result();
-                                        $rate_row = $rate_result->fetch_assoc();
-                                        $rate_stmt->close();
+                                        // Query for rate conversion (default applied when no KG rate is set, see getKgConversion in lookup.php)
+                                        $rate = getKgConversion($rawMatId, 'PO', $db)['rate'];
 
-                                        if (!empty($rate_row) && isset($rate_row) && $rate_row != null) {
-                                            $rate = $rate_row['rate'];
+                                        if ($inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")){
+                                            $inventory_stmt->bind_param('ss', $rawMatId, $plantId);
+                                            $inventory_stmt->execute();
+                                            $inventory_result = $inventory_stmt->get_result();
 
-                                            if ($inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")){
-                                                $inventory_stmt->bind_param('ss', $rawMatId, $plantId);
-                                                $inventory_stmt->execute();
-                                                $inventory_result = $inventory_stmt->get_result();
+                                            while ($inventoryRow = $inventory_result->fetch_assoc()) {
+                                                $inventoryBalance = $inventoryRow['raw_mat_weight'];
+                                                $inventoryId = $inventoryRow['id'];
 
-                                                while ($inventoryRow = $inventory_result->fetch_assoc()) {
-                                                    $inventoryBalance = $inventoryRow['raw_mat_weight'];
-                                                    $inventoryId = $inventoryRow['id'];
+                                                $newInventoryBalance = (float) $inventoryBalance - (float) $calculatedWeight;
+                                                $newInvBasicUom = $newInventoryBalance * $rate;
 
-                                                    $newInventoryBalance = (float) $inventoryBalance - (float) $calculatedWeight;
-                                                    $newInvBasicUom = $newInventoryBalance * $rate;
-
-                                                    // Update Inventory
-                                                    if ($upd_inventory_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
-                                                        $upd_inventory_stmt->bind_param('sss', $newInventoryBalance, $newInvBasicUom, $inventoryId);
-                                                        $upd_inventory_stmt->execute();
-                                                        $upd_inventory_stmt->close();
-                                                    }
+                                                // Update Inventory
+                                                if ($upd_inventory_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                                    $upd_inventory_stmt->bind_param('sss', $newInventoryBalance, $newInvBasicUom, $inventoryId);
+                                                    $upd_inventory_stmt->execute();
+                                                    $upd_inventory_stmt->close();
                                                 }
-
-                                                $inventory_stmt->close();
                                             }
+
+                                            $inventory_stmt->close();
                                         }
                                     }
 
@@ -1163,29 +1135,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                             $currentWipWeight = $wip_inventory_row['raw_mat_weight'];
                                             $wipInventoryId = $wip_inventory_row['id'];
 
-                                            // Get product UOM rate for conversion
-                                            $wipUnitId = 2;
-                                            $wip_product_rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_Uom WHERE raw_mat_id=? AND unit_id=? AND status='0'");
-                                            $wip_product_rate_stmt->bind_param('ss', $productId, $wipUnitId);
-                                            $wip_product_rate_stmt->execute();
-                                            $wip_product_rate_result = $wip_product_rate_stmt->get_result();
-                                            $wip_product_rate_row = $wip_product_rate_result->fetch_assoc();
-                                            $wip_product_rate_stmt->close();
+                                            // Get product UOM rate for conversion (default applied when no KG rate is set, see getKgConversion in lookup.php)
+                                            $wipRate = getKgConversion($productId, 'PO', $db)['rate'];
 
-                                            $wipRate = 1; // Default rate
-                                            if (!empty($wip_product_rate_row) && isset($wip_product_rate_row) && $wip_product_rate_row != null) {
-                                                $wipRate = $wip_product_rate_row['rate'];
+                                            // Add the produced PG76 to inventory
+                                            $newWipWeight = (float) $currentWipWeight + (float) $nettWeight;
+                                            $newWipBasicUom = $newWipWeight * $wipRate;
 
-                                                // Add the produced PG76 to inventory
-                                                $newWipWeight = (float) $currentWipWeight + (float) $nettWeight;
-                                                $newWipBasicUom = $newWipWeight * $wipRate;
-
-                                                // Update WIP inventory
-                                                if ($upd_wip_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
-                                                    $upd_wip_inv_stmt->bind_param('sss', $newWipWeight, $newWipBasicUom, $wipInventoryId);
-                                                    $upd_wip_inv_stmt->execute();
-                                                    $upd_wip_inv_stmt->close();
-                                                }
+                                            // Update WIP inventory
+                                            if ($upd_wip_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                                $upd_wip_inv_stmt->bind_param('sss', $newWipWeight, $newWipBasicUom, $wipInventoryId);
+                                                $upd_wip_inv_stmt->execute();
+                                                $upd_wip_inv_stmt->close();
                                             }
                                         }
                                         $wip_inventory_result->close();

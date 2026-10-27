@@ -2,6 +2,7 @@
 session_start();
 require_once 'db_connect.php';
 require_once 'services/InventoryService.php';
+require_once 'requires/permissions.php';
 
 $username = $_SESSION["username"];
 
@@ -9,6 +10,27 @@ if(isset($_POST['id'], $_POST['cancelId'], $_POST['cancelReason'])){
 	$id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_STRING);
 	$cancelId = filter_input(INPUT_POST, 'cancelId', FILTER_SANITIZE_STRING);
 	$cancelReason = filter_input(INPUT_POST, 'cancelReason', FILTER_SANITIZE_STRING);
+
+	// Cancelling before and after weighing is complete are separate permissions
+	if ($check_stmt = $db->prepare("SELECT transaction_status, is_complete FROM Weight WHERE id=?")) {
+		$check_stmt->bind_param('s', $id);
+		$check_stmt->execute();
+		$weightRow = $check_stmt->get_result()->fetch_assoc();
+		$check_stmt->close();
+
+		if (!$weightRow) {
+			echo json_encode(array("status"=> "failed", "message"=> "Record not found"));
+			exit;
+		}
+
+		$transactionKey = ($weightRow['transaction_status'] == 'Local') ? 'Public' : $weightRow['transaction_status'];
+		$cancelPerm = ($weightRow['is_complete'] == 'Y') ? 'cancel_after_complete' : 'cancel_before_complete';
+
+		if (!hasModulePermission('Weighing', $transactionKey, [$cancelPerm])) {
+			echo json_encode(array("status"=> "failed", "message"=> "You do not have permission to cancel this record"));
+			exit;
+		}
+	}
 	//$del = "1";
 	$cancel = "Y";
 	$action = "3";

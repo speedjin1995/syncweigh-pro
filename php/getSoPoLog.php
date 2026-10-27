@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "db_connect.php";
+require_once "requires/lookup.php";
 
 if (isset($_POST['userID'], $_POST['type'], $_POST['plant'], $_POST['prodRawMatCode'])) {
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
@@ -20,22 +21,9 @@ if (isset($_POST['userID'], $_POST['type'], $_POST['plant'], $_POST['prodRawMatC
          * 1. GET CONVERSION RATE TO KG
          * ============================================================
          */
-        $rate = 1;
-
-        if ($conversion_stmt = $db->prepare("SELECT rate FROM Product_UOM WHERE product_id = ? AND unit_id = ? AND status = ? LIMIT 1 ")) {
-            $conversion_stmt->bind_param('sss', $productId, $unit, $status);
-
-            if ($conversion_stmt->execute()) {
-                $conversion_result = $conversion_stmt->get_result();
-
-                if ($conversion_result->num_rows > 0) {
-                    $conversionRow = $conversion_result->fetch_assoc();
-                    $rate = (float)$conversionRow['rate'];
-                }
-            }
-
-            $conversion_stmt->close();
-        }
+        // Default applied when no KG rate is set (see getKgConversion in lookup.php)
+        $kgConversion = getKgConversion($productId, 'SO', $db);
+        $rate = (float)$kgConversion['rate'];
 
         /*
          * ============================================================

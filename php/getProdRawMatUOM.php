@@ -39,6 +39,13 @@ if(isset($_POST['userID'], $_POST['type'])){
                         $message['basic_uom'] = searchUnitById($row['basic_uom'], $db);
                         $message['basic_uom_id'] = $row['basic_uom'];
                     }
+
+                    // Basic UOM not set up: default to MT (see getDefaultUom in lookup.php)
+                    if (empty($message['basic_uom'])) {
+                        $defaultUom = getDefaultUom($db);
+                        $message['basic_uom'] = $defaultUom['unit'];
+                        $message['basic_uom_id'] = $defaultUom['id'];
+                    }
                     
                     echo json_encode(
                         array(
@@ -66,6 +73,13 @@ if(isset($_POST['userID'], $_POST['type'])){
                     while ($row = $result->fetch_assoc()) {
                         $message['basic_uom'] = searchUnitById($row['basic_uom'], $db);
                         $message['basic_uom_id'] = $row['basic_uom'];
+                    }
+
+                    // Basic UOM not set up: default to MT (see getDefaultUom in lookup.php)
+                    if (empty($message['basic_uom'])) {
+                        $defaultUom = getDefaultUom($db);
+                        $message['basic_uom'] = $defaultUom['unit'];
+                        $message['basic_uom_id'] = $defaultUom['id'];
                     }
                     
                     echo json_encode(
@@ -99,6 +113,13 @@ if(isset($_POST['userID'], $_POST['type'])){
                         $message['unit_id'] = $row['unit_id'];
                         $message['rate'] = $row['rate'];
                     }
+
+                    // KG rate with the default applied when none is set (see getKgConversion in lookup.php)
+                    if ($unitID == 2) {
+                        $kgConversion = getKgConversion($id, $type, $db);
+                        $message['rate'] = $kgConversion['rate'];
+                        $message['basic_uom'] = $kgConversion['basic_uom'];
+                    }
                     
                     echo json_encode(
                         array(
@@ -128,6 +149,13 @@ if(isset($_POST['userID'], $_POST['type'])){
                         $message['raw_mat_id'] = $row['raw_mat_id'];
                         $message['unit_id'] = $row['unit_id'];
                         $message['rate'] = $row['rate'];
+                    }
+
+                    // KG rate with the default applied when none is set (see getKgConversion in lookup.php)
+                    if ($unitID == 2) {
+                        $kgConversion = getKgConversion($id, $type, $db);
+                        $message['rate'] = $kgConversion['rate'];
+                        $message['basic_uom'] = $kgConversion['basic_uom'];
                     }
                     
                     echo json_encode(

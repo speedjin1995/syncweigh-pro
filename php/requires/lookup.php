@@ -293,6 +293,68 @@ function searchUnitById($value, $db) {
     return $id;
 }
 
+/*
+ * Default UOM used when a product / raw material has no basic UOM or KG rate set up.
+ * Returns array('id' => Unit.id, 'unit' => unit label)
+ */
+function getDefaultUom($db) {
+    return array('id' => searchUnitIdByCode('MT', $db), 'unit' => 'MT');
+}
+
+/*
+ * KG conversion of a product ($type 'SO', id = Product.id) or raw material ($type 'PO', id = Raw_Mat.id).
+ * KG x rate = basic UOM quantity.
+ * No KG rate set (unit_id 2): basic UOM KG -> rate 1, anything else -> default MT (rate 0.001).
+ * Returns array('rate' => float, 'basic_uom' => unit label, 'is_default' => true when no KG rate was found)
+ */
+function getKgConversion($value, $type, $db) {
+    $basicUomId = '';
+    $rate = 0;
+
+    if ($type == 'PO') {
+        $itemQuery = "SELECT basic_uom FROM Raw_Mat WHERE id=?";
+        $uomQuery = "SELECT rate FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0' LIMIT 1";
+    } else {
+        $itemQuery = "SELECT basic_uom FROM Product WHERE id=?";
+        $uomQuery = "SELECT rate FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0' LIMIT 1";
+    }
+
+    if(isset($value) && $value != ''){
+        if ($select_stmt = $db->prepare($itemQuery)) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $basicUomId = $row['basic_uom'];
+            }
+            $select_stmt->close();
+        }
+
+        if ($select_stmt = $db->prepare($uomQuery)) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $rate = (float) $row['rate'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    $basicUom = searchUnitById($basicUomId, $db);
+
+    if ($rate > 0) {
+        return array('rate' => $rate, 'basic_uom' => $basicUom, 'is_default' => false);
+    }
+
+    if (strtoupper($basicUom) == 'KG') {
+        return array('rate' => 1, 'basic_uom' => $basicUom, 'is_default' => true);
+    }
+
+    $defaultUom = getDefaultUom($db);
+    return array('rate' => 0.001, 'basic_uom' => $defaultUom['unit'], 'is_default' => true);
+}
+
 function searchUnitIdByCode($value, $db) {
     $id = '';
 

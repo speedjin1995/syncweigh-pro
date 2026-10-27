@@ -364,7 +364,7 @@ if(isset($_POST["type"])){
                             }
 
                             $rowData .= '<tr class="details">
-                                <td>'.$data['transaction_id'].'</td>
+                                <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                 <td>'.$data['transporter_code'].'</td>
                                 <td>'.$data['lorry_plate_no1'].'</td>
                                 <td>'.$data['agent_code'].'</td>
@@ -492,7 +492,7 @@ if(isset($_POST["type"])){
                                 }
 
                                 $rowData .= '<tr class="details">
-                                    <td>'.$data['transaction_id'].'</td>
+                                    <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                     <td>'.$data['transporter_code'].'</td>
                                     <td>'.$data['lorry_plate_no1'].'</td>
                                     <td>'.$data['agent_code'].'</td>
@@ -669,7 +669,7 @@ if(isset($_POST["type"])){
                                     }
     
                                     $rowData .= '<tr class="details">
-                                        <td>'.$data['transaction_id'].'</td>
+                                        <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                         <td>'.$data['transporter_code'].'</td>
                                         <td>'.$data['lorry_plate_no1'].'</td>
                                         <td>'.$data['agent_code'].'</td>
@@ -885,7 +885,7 @@ if(isset($_POST["type"])){
                                         }
                     
                                         $rowData .= '<tr class="details">
-                                            <td>'.$data['transaction_id'].'</td>
+                                            <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                             <td>'.$data['transporter_code'].'</td>
                                             <td>'.$data['lorry_plate_no1'].'</td>
                                             <td>'.$data['agent_code'].'</td>
@@ -1145,7 +1145,7 @@ if(isset($_POST["type"])){
                                             }
                     
                                             $rowData .= '<tr class="details">
-                                                <td>'.$data['transaction_id'].'</td>
+                                                <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                                 <td>'.$data['transporter_code'].'</td>
                                                 <td>'.$data['lorry_plate_no1'].'</td>
                                                 <td>'.$data['agent_code'].'</td>
@@ -1675,7 +1675,7 @@ if(isset($_POST["type"])){
                             }
 
                             $rowData .= '<tr class="details">
-                                <td>'.$data['transaction_id'].'</td>
+                                <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                 <td>'.$data['transporter_code'].'</td>
                                 <td>'.$data['lorry_plate_no1'].'</td>
                                 <td>'.$data['agent_code'].'</td>
@@ -1822,7 +1822,7 @@ if(isset($_POST["type"])){
                                 }
 
                                 $rowData .= '<tr class="details">
-                                    <td>'.$data['transaction_id'].'</td>
+                                    <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                     <td>'.$data['transporter_code'].'</td>
                                     <td>'.$data['lorry_plate_no1'].'</td>
                                     <td>'.$data['agent_code'].'</td>
@@ -2017,7 +2017,7 @@ if(isset($_POST["type"])){
                                     }
     
                                     $rowData .= '<tr class="details">
-                                        <td>'.$data['transaction_id'].'</td>
+                                        <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                         <td>'.$data['transporter_code'].'</td>
                                         <td>'.$data['lorry_plate_no1'].'</td>
                                         <td>'.$data['agent_code'].'</td>
@@ -2252,7 +2252,7 @@ if(isset($_POST["type"])){
                                         }
                     
                                         $rowData .= '<tr class="details">
-                                            <td>'.$data['transaction_id'].'</td>
+                                            <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                             <td>'.$data['transporter_code'].'</td>
                                             <td>'.$data['lorry_plate_no1'].'</td>
                                             <td>'.$data['agent_code'].'</td>
@@ -2537,7 +2537,7 @@ if(isset($_POST["type"])){
                                             }
                     
                                             $rowData .= '<tr class="details">
-                                                <td>'.$data['transaction_id'].'</td>
+                                                <td>'.$data['transaction_id'].(($data['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '').'</td>
                                                 <td>'.$data['transporter_code'].'</td>
                                                 <td>'.$data['lorry_plate_no1'].'</td>
                                                 <td>'.$data['agent_code'].'</td>

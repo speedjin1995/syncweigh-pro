@@ -50,7 +50,8 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
     <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/colreorder/1.5.6/css/colReorder.dataTables.min.css">
 
     <!-- Include jQuery library -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -596,7 +597,8 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                                             <div>
                                                                 <h5 class="card-title mb-0">Purchase Orders</h5>
                                                             </div>
-                                                            <div class="flex-shrink-0">
+                                                            <div class="flex-shrink-0 d-flex align-items-center gap-2">
+                                                                <span id="weightColumnsBtn"></span>
                                                                 <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['download_template'])): ?>
                                                                 <a href="template/Po_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
@@ -661,6 +663,10 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                                                     <th>EXQ/DEL</th>
                                                                     <th>Supplier Quantity</th>
                                                                     <th>Balance</th>
+                                                                    <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['include_price'])): ?>
+                                                                    <th>Unit Price</th>
+                                                                    <th>Total Price</th>
+                                                                    <?php endif; ?>
                                                                     <th>Status</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
@@ -712,8 +718,11 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.datatables.net/colreorder/1.5.6/js/dataTables.colReorder.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
     <!-- Additional js -->
     <script src="assets/js/additional.js"></script>
@@ -809,6 +818,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
             'serverSide': true,
             'searching': true,
             'serverMethod': 'post',
+            'colReorder': { fixedColumnsRight: 1 },
             'ajax': {
                 'url':'php/filterPurchaseOrder.php',
                 'data': {
@@ -844,10 +854,14 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 { data: 'exquarry_or_delivered' },
                 { data: 'converted_order_qty' },
                 { data: 'converted_balance' },
+                ...(isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))
+                    ? [{ data: 'unit_price' }, { data: 'total_price' }]
+                    : []),
                 { data: 'status' },
                 { data: 'modified_date' },
                 {
                     data: 'id',
+                    responsivePriority: 1,
                     class: 'action-button',
                     orderable: false,
                     render: function (data, type, row) {
@@ -898,9 +912,10 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                         return buttons;
                     }
                 }
-
             ]
         });
+
+        initColumnsButton(table);
 
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
@@ -924,6 +939,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 'serverSide': true,
                 'searching': true,
                 'serverMethod': 'post',
+                'colReorder': { fixedColumnsRight: 1 },
                 'ajax': {
                     'url':'php/filterPurchaseOrder.php',
                     'data': {
@@ -959,10 +975,14 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                     { data: 'exquarry_or_delivered' },
                     { data: 'converted_order_qty' },
                     { data: 'converted_balance' },
+                    ...(isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))
+                        ? [{ data: 'unit_price' }, { data: 'total_price' }]
+                        : []),
                     { data: 'status' },
                     { data: 'modified_date' },
                     {
                         data: 'id',
+                        responsivePriority: 1,
                         class: 'action-button',
                         orderable: false,
                         render: function (data, type, row) {
@@ -976,6 +996,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                     </button>
                                 </div>`;
                             }
+                            
 
                             if (row.status == 'Open'){
                                 if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('complete'))) {
@@ -1014,6 +1035,8 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                     }
                 ]
             });
+
+            initColumnsButton(table);
         });
 
         // Add event listener for opening and closing details on row click
@@ -1531,7 +1554,14 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 <p><strong>DESTINATION:</strong> ${row.destination_code} - ${row.destination_name}</p>
                 <p><strong>RAW MATERIAL:</strong> ${row.raw_mat_code} - ${row.raw_mat_name}</p>
                 <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
-                <p><strong>REMARKS:</strong> ${row.remarks}</p>
+                <p><strong>REMARKS:</strong> ${row.remarks}</p>`;
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))){
+                returnString += `
+                    <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
+                `;
+            }
+
+            returnString += `
             </div>
             <div class="col-6">
                 <p><strong>ORDER DATE:</strong> ${row.order_date}</p>
@@ -1542,6 +1572,15 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
                 <p><strong>SUPPLIER QUANTITY:</strong> ${row.converted_order_qty} ${row.converted_unit_label}</p>
                 <p><strong>BALANCE:</strong> ${row.converted_balance} ${row.converted_unit_label}</p>
+            `;
+
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('include_price'))){
+                returnString += `
+                    <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
+                `;
+            }
+
+            returnString += `
             </div>
         </div>`;
 

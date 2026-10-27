@@ -831,6 +831,7 @@ if (hasModulePermission('Stock Management', 'Stock Adjustment', ['view_all_plant
                 { data: 'remark' },
                 {
                     data: 'id',
+                    responsivePriority: 1,
                     orderable: false,
                     render: function ( data, type, row ) {
                         var canEdit = isSADMIN || hasAdjustmentPermission('edit');
@@ -1091,6 +1092,7 @@ if (hasModulePermission('Stock Management', 'Stock Adjustment', ['view_all_plant
                 { data: 'raw_mat_weight' },
                 { 
                     data: 'id',
+                    responsivePriority: 1,
                     orderable: false,
                     visible: false, // Edit button hidden for now; remove this line to show it again
                     render: function ( data, type, row ) {
