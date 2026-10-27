@@ -588,7 +588,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
     <!-- Additional js -->
-    <script src="assets/js/additional.js?v=<?= filemtime(__DIR__ . '/assets/js/additional.js') ?>"></script>
+    <script src="assets/js/additional.js?v=<?= JS_VERSION ?>"></script>
 
     <script type="text/html" id="levelDetail">
         <tr class="details">
