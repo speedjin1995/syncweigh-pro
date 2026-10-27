@@ -2641,7 +2641,8 @@
         $(this).css('z-index', zIndex);
 
         setTimeout(function(){
-            $('.modal-backdrop').not('.modal-stack').last().css('z-index', zIndex - 1).addClass('modal-stack');
+            // Bootstrap 5.2 reuses each modal's backdrop element, so always restack the newest one
+            $('.modal-backdrop').last().css('z-index', zIndex - 1);
         }, 0);
     });
 
