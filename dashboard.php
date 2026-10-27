@@ -325,7 +325,7 @@
     <!-- Chart.js -->
     <script src="plugins/chart.js/Chart.min.js"></script>
     <!-- Additional js -->
-    <script src="assets/js/additional.js"></script>
+    <script src="assets/js/additional.js?v=<?= JS_VERSION ?>"></script>
 
     <script type="text/javascript">
         var dashboardTable = null;

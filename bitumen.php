@@ -1092,7 +1092,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
     <!-- Additional js -->
-    <script src="assets/js/additional.js"></script>
+    <script src="assets/js/additional.js?v=<?= JS_VERSION ?>"></script>
 
     <script type="text/javascript">
 

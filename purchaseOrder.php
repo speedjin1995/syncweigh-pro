@@ -725,7 +725,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
     <script src="https://cdn.datatables.net/colreorder/1.5.6/js/dataTables.colReorder.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
     <!-- Additional js -->
-    <script src="assets/js/additional.js"></script>
+    <script src="assets/js/additional.js?v=<?= JS_VERSION ?>"></script>
 
     <script type="text/javascript">
 
