@@ -650,7 +650,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
 
-        if ($existing_weight_stmt = $db->prepare("SELECT transaction_status, purchase_order, customer_code, product_code, is_complete, is_edit, edit_reason FROM Weight WHERE id=?")) {
+        if ($existing_weight_stmt = $db->prepare("SELECT transaction_status, purchase_order, customer_code, product_code, supplier_code, raw_mat_code, is_complete, is_edit, edit_reason FROM Weight WHERE id=?")) {
             $existing_weight_stmt->bind_param('s', $weightId);
             $existing_weight_stmt->execute();
             $existing_weight_result = $existing_weight_stmt->get_result();
@@ -693,6 +693,27 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             array(
                                 "status"=> "failed",
                                 "message"=> "The Sales Order close, please contact Admin"
+                            )
+                        );
+                        exit;
+                    }
+                }
+            }
+
+            if (!empty($existing_weight) && $existing_weight['transaction_status'] == 'Purchase') {
+                if ($closed_po_stmt = $db->prepare("SELECT status FROM Purchase_Order WHERE po_no=? AND supplier_code=? AND raw_mat_code=? AND deleted='0' LIMIT 1")) {
+                    $closed_po_stmt->bind_param('sss', $existing_weight['purchase_order'], $existing_weight['supplier_code'], $existing_weight['raw_mat_code']);
+                    $closed_po_stmt->execute();
+                    $closed_po_result = $closed_po_stmt->get_result();
+                    $closed_po = $closed_po_result->fetch_assoc();
+                    $closed_po_stmt->close();
+
+                    if (!empty($closed_po) && ($closed_po['status'] == 'Close' || $closed_po['status'] == 'Closed')) {
+                        $db->close();
+                        echo json_encode(
+                            array(
+                                "status"=> "failed",
+                                "message"=> "The Purchase Order close, please contact Admin"
                             )
                         );
                         exit;

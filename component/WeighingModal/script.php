@@ -19,7 +19,8 @@
     let isSyncing = false;
     let isEdit = false;
     let editIsComplete = false;
-    let closedSalesOrderSubmissionBlocked = false;
+    let closedOrderSubmissionBlocked = false;
+    let closedOrderLabel = 'Sales Order';
     let salesOption = $('#salesOrder option').clone();
     let purchaseOption = $('#purchaseOrder option').clone();
     let transporterOption = $('#transporter option').clone();
@@ -32,6 +33,7 @@
     var tareOutgoingDatePicker; 
     var grossIncomingDatePicker2;
     var tareOutgoingDatePicker2; 
+    var pendingManualWeightReason = null;
 
     $(function () {
         const today = getMalaysiaDate();
@@ -129,7 +131,7 @@
         });
 
         $('#submitWeight').on('click', function(){
-            if (isClosedSalesOrderSubmissionBlocked()) {
+            if (isClosedOrderSubmissionBlocked()) {
                 return;
             }
 
@@ -313,7 +315,7 @@
         });
 
         $('#submitWeightPrint').on('click', function(){
-            if (isClosedSalesOrderSubmissionBlocked()) {
+            if (isClosedOrderSubmissionBlocked()) {
                 return;
             }
 
@@ -428,7 +430,7 @@
         });
 
         $('#submitWeightCancel').on('click', function(){
-            if (isClosedSalesOrderSubmissionBlocked()) {
+            if (isClosedOrderSubmissionBlocked()) {
                 return;
             }
 
@@ -603,7 +605,7 @@
             $('#addModal').find('#grossCapture').show();
             $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
-            setClosedSalesOrderSubmissionState(false);
+            setClosedOrderSubmissionState(false);
             $('#addModal').find('#transactionId').val("");
             filterTransactionStatus('create');
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change').prop('disabled', false); // Enable changing transaction status on add new
@@ -2448,6 +2450,99 @@
                 });
             }
         });
+
+        $('#manualWeightReasonModal, #editReasonModal, #confirmDialogModal').on('show.bs.modal', function(){
+            var zIndex = 1055 + (10 * $('.modal.show').length);
+            $(this).css('z-index', zIndex);
+
+            setTimeout(function(){
+                // Bootstrap 5.2 reuses each modal's backdrop element, so always restack the newest one
+                $('.modal-backdrop').last().css('z-index', zIndex - 1);
+            }, 0);
+        });
+
+        $('#manualWeightReasonModal, #editReasonModal, #confirmDialogModal').on('hidden.bs.modal', function(){
+            $(this).css('z-index', '');
+
+            if ($('#addModal').hasClass('show')) {
+                $('body').addClass('modal-open');
+            }
+
+            if ($(this).attr('id') == 'confirmDialogModal') {
+                var cancelCallback = $(this).data('cancelCallback');
+
+                if (!$(this).data('confirmed') && $.isFunction(cancelCallback)) {
+                    cancelCallback();
+                }
+            }
+        });
+
+        $('#submitManualWeightReason').on('click', function(){
+            var reasonButton = $(this);
+            var reason = $('#manualWeightReasonPrompt').val();
+
+            if (!validateManualWeightReason(reason)) {
+                showManualWeightReasonError('Please enter a meaningful reason with at least 8 characters.');
+                return;
+            }
+
+            reasonButton.prop('disabled', true);
+            var cleaned = $.trim(reason).replace(/\s+/g, ' ');
+            var callback = $('#manualWeightReasonModal').data('callback');
+
+            pendingManualWeightReason = cleaned;
+            $('#manualWeightReasonModal').one('hidden.bs.modal', function(){
+                reasonButton.prop('disabled', false);
+                if ($.isFunction(callback)) {
+                    callback();
+                }
+            });
+            $('#manualWeightReasonModal').modal('hide');
+        });
+
+        $('#manualWeightReasonPrompt').on('input', function(){
+            clearManualWeightReasonError();
+        });
+
+        $('#submitEditReason').on('click', function(){
+            var reasonButton = $(this);
+            var reason = $('#editReasonPrompt').val();
+
+            if (!validateManualWeightReason(reason)) {
+                $('#editReasonPrompt').addClass('is-invalid');
+                $('#editReasonError').text('Please enter a meaningful reason with at least 8 characters.');
+                return;
+            }
+
+            reasonButton.prop('disabled', true);
+            var callback = $('#editReasonModal').data('callback');
+
+            $('#addModal').find('#editReasonInput').val($.trim(reason).replace(/\s+/g, ' '));
+            $('#editReasonModal').one('hidden.bs.modal', function(){
+                reasonButton.prop('disabled', false);
+                if ($.isFunction(callback)) {
+                    callback();
+                }
+            });
+            $('#editReasonModal').modal('hide');
+        });
+
+        $('#editReasonPrompt').on('input', function(){
+            $(this).removeClass('is-invalid');
+            $('#editReasonError').text('');
+        });
+
+        $('#confirmDialogSubmit').on('click', function(){
+            $(this).prop('disabled', true);
+            var callback = $('#confirmDialogModal').data('callback');
+
+            $('#confirmDialogModal').data('confirmed', true);
+            $('#confirmDialogModal').modal('hide');
+
+            if ($.isFunction(callback)) {
+                callback();
+            }
+        });
     });
 
     // Function to filter transaction status 
@@ -2507,6 +2602,25 @@
         }
     }
 
+    // Checking for Close SO/PO
+    function setClosedOrderSubmissionState(isBlocked, orderLabel) {
+        closedOrderSubmissionBlocked = isBlocked === true || isBlocked == '1';
+        closedOrderLabel = orderLabel || 'Sales Order';
+        $('#closedSalesOrderWarning strong').text('The ' + closedOrderLabel + ' close, please contact Admin');
+        $('#closedSalesOrderWarning').toggle(closedOrderSubmissionBlocked);
+        $('#submitWeightPrint, #submitWeightCancel, #submitWeight').prop('disabled', closedOrderSubmissionBlocked);
+    }
+
+    function isClosedOrderSubmissionBlocked() {
+        if (closedOrderSubmissionBlocked) {
+            showAppAlert('The ' + closedOrderLabel + ' close, please contact Admin');
+            return true;
+        }
+
+        return false;
+    }
+
+    // Manual Weighing Functions
     function isManualReasonRequired() {
         var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
         var hasIncoming = $.trim($('#addModal').find('#grossIncoming').val()) !== '' || $.trim($('#addModal').find('#grossIncoming2').val()) !== '';
@@ -2549,8 +2663,6 @@
         $('#manualWeightReasonError').text('');
     }
 
-    var pendingManualWeightReason = null;
-
     function applyPendingManualWeightReason() {
         if (pendingManualWeightReason !== null) {
             $('#addModal').find('#manualWeightReason').val(pendingManualWeightReason);
@@ -2562,21 +2674,6 @@
 
     function clearPendingManualWeightReason() {
         pendingManualWeightReason = null;
-    }
-
-    function setClosedSalesOrderSubmissionState(isBlocked) {
-        closedSalesOrderSubmissionBlocked = isBlocked === true || isBlocked == '1';
-        $('#closedSalesOrderWarning').toggle(closedSalesOrderSubmissionBlocked);
-        $('#submitWeightPrint, #submitWeightCancel, #submitWeight').prop('disabled', closedSalesOrderSubmissionBlocked);
-    }
-
-    function isClosedSalesOrderSubmissionBlocked() {
-        if (closedSalesOrderSubmissionBlocked) {
-            showAppAlert('The Sales Order close, please contact Admin');
-            return true;
-        }
-
-        return false;
     }
 
     function requireManualWeightReason(callback) {
@@ -2636,102 +2733,9 @@
         $("#failBtn").click();
     }
 
-    $('#manualWeightReasonModal, #editReasonModal, #confirmDialogModal').on('show.bs.modal', function(){
-        var zIndex = 1055 + (10 * $('.modal.show').length);
-        $(this).css('z-index', zIndex);
-
-        setTimeout(function(){
-            // Bootstrap 5.2 reuses each modal's backdrop element, so always restack the newest one
-            $('.modal-backdrop').last().css('z-index', zIndex - 1);
-        }, 0);
-    });
-
-    $('#manualWeightReasonModal, #editReasonModal, #confirmDialogModal').on('hidden.bs.modal', function(){
-        $(this).css('z-index', '');
-
-        if ($('#addModal').hasClass('show')) {
-            $('body').addClass('modal-open');
-        }
-
-        if ($(this).attr('id') == 'confirmDialogModal') {
-            var cancelCallback = $(this).data('cancelCallback');
-
-            if (!$(this).data('confirmed') && $.isFunction(cancelCallback)) {
-                cancelCallback();
-            }
-        }
-    });
-
-    $('#submitManualWeightReason').on('click', function(){
-        var reasonButton = $(this);
-        var reason = $('#manualWeightReasonPrompt').val();
-
-        if (!validateManualWeightReason(reason)) {
-            showManualWeightReasonError('Please enter a meaningful reason with at least 8 characters.');
-            return;
-        }
-
-        reasonButton.prop('disabled', true);
-        var cleaned = $.trim(reason).replace(/\s+/g, ' ');
-        var callback = $('#manualWeightReasonModal').data('callback');
-
-        pendingManualWeightReason = cleaned;
-        $('#manualWeightReasonModal').one('hidden.bs.modal', function(){
-            reasonButton.prop('disabled', false);
-            if ($.isFunction(callback)) {
-                callback();
-            }
-        });
-        $('#manualWeightReasonModal').modal('hide');
-    });
-
-    $('#manualWeightReasonPrompt').on('input', function(){
-        clearManualWeightReasonError();
-    });
-
-    $('#submitEditReason').on('click', function(){
-        var reasonButton = $(this);
-        var reason = $('#editReasonPrompt').val();
-
-        if (!validateManualWeightReason(reason)) {
-            $('#editReasonPrompt').addClass('is-invalid');
-            $('#editReasonError').text('Please enter a meaningful reason with at least 8 characters.');
-            return;
-        }
-
-        reasonButton.prop('disabled', true);
-        var callback = $('#editReasonModal').data('callback');
-
-        $('#addModal').find('#editReasonInput').val($.trim(reason).replace(/\s+/g, ' '));
-        $('#editReasonModal').one('hidden.bs.modal', function(){
-            reasonButton.prop('disabled', false);
-            if ($.isFunction(callback)) {
-                callback();
-            }
-        });
-        $('#editReasonModal').modal('hide');
-    });
-
-    $('#editReasonPrompt').on('input', function(){
-        $(this).removeClass('is-invalid');
-        $('#editReasonError').text('');
-    });
-
-    $('#confirmDialogSubmit').on('click', function(){
-        $(this).prop('disabled', true);
-        var callback = $('#confirmDialogModal').data('callback');
-
-        $('#confirmDialogModal').data('confirmed', true);
-        $('#confirmDialogModal').modal('hide');
-
-        if ($.isFunction(callback)) {
-            callback();
-        }
-    });
-
     // Function to handle weight form submission without printing
     function submitWeightForm() {
-        if (isClosedSalesOrderSubmissionBlocked()) {
+        if (isClosedOrderSubmissionBlocked()) {
             return;
         }
 
@@ -2794,7 +2798,7 @@
 
     // Function to handle weight form submission with printing
     function submitWeightPrintForm() {
-        if (isClosedSalesOrderSubmissionBlocked()) {
+        if (isClosedOrderSubmissionBlocked()) {
             return;
         }
 
@@ -2905,7 +2909,7 @@
 
     // Function to handle weight form submission with cancel
     function submitWeightCancelForm() {
-        if (isClosedSalesOrderSubmissionBlocked()) {
+        if (isClosedOrderSubmissionBlocked()) {
             return;
         }
 
@@ -3143,13 +3147,19 @@
 
     function edit(id){ 
         isEdit = true;
-        setClosedSalesOrderSubmissionState(false);
+        setClosedOrderSubmissionState(false);
         $('#spinnerLoading').show();
         $.post('php/getWeight.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
-                setClosedSalesOrderSubmissionState(obj.message.sales_order_closed);
+                if (obj.message.sales_order_closed) {
+                    setClosedOrderSubmissionState(true, 'Sales Order');
+                } else if (obj.message.purchase_order_closed) {
+                    setClosedOrderSubmissionState(true, 'Purchase Order');
+                } else {
+                    setClosedOrderSubmissionState(false);
+                }
                 editIsComplete = obj.message.is_complete == 'Y';
 
                 if(obj.message.is_complete == 'Y'){
