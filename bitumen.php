@@ -2935,7 +2935,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
                 if (obj.message.plant_code) {
                     getIncoming(obj.message.plant_code, obj.message.batch_drum, formatDate4(new Date(obj.message.declaration_datetime)), function(){
-                        $('#bitumenTable').find('input[id^="level"]').trigger('change');
+                        //$('#bitumenTable').find('input[id^="level"]').trigger('change');
                         $('#lfoTable').find('input[id^="lfoLevel"]').trigger('change');
                         $('#dieselTable').find('input[id^="dieselLevel"]').trigger('change');
                         $('#addModal').find('#totalLfo').trigger('change');
