@@ -21,6 +21,7 @@
     let editIsComplete = false;
     let closedOrderSubmissionBlocked = false;
     let closedOrderLabel = 'Sales Order';
+    let editLoading = false;
     let salesOption = $('#salesOrder option').clone();
     let purchaseOption = $('#purchaseOrder option').clone();
     let transporterOption = $('#transporter option').clone();
@@ -1657,8 +1658,11 @@
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant, customer: customerCode}, function (data){
                         var obj = JSON.parse(data);
-    
+
                         if (obj.status == 'success'){
+                            if (type == 'Sales') {
+                                setClosedOrderSubmissionState(obj.message.order_closed, 'Sales Order');
+                            }
                             var customerSupplierName = obj.message.customer_supplier_name;
                             var destinationName = obj.message.destination_name;
                             var siteName = obj.message.site_name;
@@ -1780,8 +1784,11 @@
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant, supplier: supplierCode}, function (data){
                         var obj = JSON.parse(data);
-    
+
                         if (obj.status == 'success'){
+                            if (type == 'Purchase') {
+                                setClosedOrderSubmissionState(obj.message.order_closed, 'Purchase Order');
+                            }
                             var customerSupplierName = obj.message.customer_supplier_name;
                             var destinationName = obj.message.destination_name;
                             var siteName = obj.message.site_name;
@@ -2225,6 +2232,9 @@
                         }
                     });
                 // }
+            }else if (purchaseOrder && isEdit && !editLoading){
+                // Re-run the raw material lookup so the closed PO check follows the new PO
+                $('#addModal').find('#rawMaterialName').trigger('change');
             }
         });
 
@@ -2305,6 +2315,9 @@
                         }
                     });
                 // }
+            }else if (salesOrder && isEdit && !editLoading){
+                // Re-run the product lookup so the closed SO check follows the new SO
+                $('#addModal').find('#productName').trigger('change');
             }
         });
 
@@ -3153,6 +3166,7 @@
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
+                editLoading = true;
                 if (obj.message.sales_order_closed) {
                     setClosedOrderSubmissionState(true, 'Sales Order');
                 } else if (obj.message.purchase_order_closed) {
@@ -3450,6 +3464,7 @@
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
+            editLoading = false;
             $('#spinnerLoading').hide();
         });
     }
