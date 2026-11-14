@@ -3170,9 +3170,9 @@
                 if (obj.message.sales_order_closed) {
                     setClosedOrderSubmissionState(true, 'Sales Order');
                 } 
-                //else if (obj.message.purchase_order_closed) {
-                //    setClosedOrderSubmissionState(true, 'Purchase Order');
-                //} 
+                else if (obj.message.purchase_order_closed) {
+                    setClosedOrderSubmissionState(true, 'Purchase Order');
+                } 
                 else {
                     setClosedOrderSubmissionState(false);
                 }
