@@ -429,15 +429,15 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     $manualReasonText = strtolower($manualWeightReason ?? '');
     $manualReasonCompact = preg_replace('/\s+/', '', $manualWeightReason ?? '');
 
-    if ($manualReasonRequired && (strlen($manualWeightReason ?? '') < 8 || in_array($manualReasonText, $dummyManualReasons) || !preg_match('/[a-zA-Z]/', $manualWeightReason ?? '') || preg_match('/^([a-zA-Z0-9])\1+$/', $manualReasonCompact))) {
-        echo json_encode(
-            array(
-                "status"=> "failed",
-                "message"=> "Please enter a meaningful reason for manual weighing."
-            )
-        );
-        exit;
-    }
+    //if ($manualReasonRequired && (strlen($manualWeightReason ?? '') < 8 || in_array($manualReasonText, $dummyManualReasons) || !preg_match('/[a-zA-Z]/', $manualWeightReason ?? '') || preg_match('/^([a-zA-Z0-9])\1+$/', $manualReasonCompact))) {
+      //  echo json_encode(
+        //    array(
+          //      "status"=> "failed",
+            //    "message"=> "Please enter a meaningful reason for manual weighing."
+        //    )
+        //);
+        //exit;
+    //}
 
     if (empty($_POST["agent"])) {
         $agent = null;
