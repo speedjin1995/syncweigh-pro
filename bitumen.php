@@ -640,29 +640,29 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                     </thead>
                                                     <tr>
                                                         <td><input type="text" class="form-control text-center" id="fibreNameMr6" name="fibreNameMr6" value="MR6" readonly></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreTypeMr6" name="fibreTypeMr6" value="0.00"></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreBagsMr6" name="fibreBagsMr6" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeMr6" name="fibreTypeMr6" min="0" onkeydown="return event.key !== '-'" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsMr6" name="fibreBagsMr6" min="0" onkeydown="return event.key !== '-'" value="0"></td>
                                                         <td><input type="number" class="form-control text-center" id="fibreQtyMr6" name="fibreQtyMr6" value="0.00" readonly></td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td><input type="text" class="form-control text-center" id="fibreNameRpf" name="fibreNameRpf" value="RPF" readonly></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreTypeRpf" name="fibreTypeRpf" value="0.00"></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreBagsRpf" name="fibreBagsRpf" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeRpf" name="fibreTypeRpf" min="0" onkeydown="return event.key !== '-'" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsRpf" name="fibreBagsRpf" min="0" onkeydown="return event.key !== '-'" value="0"></td>
                                                         <td><input type="number" class="form-control text-center" id="fibreQtyRpf" name="fibreQtyRpf" value="0.00" readonly></td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td><input type="text" class="form-control text-center" id="fibreNameNova" name="fibreNameNova" value="Nova Fiber" readonly></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreTypeNova" name="fibreTypeNova" value="0.00"></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreBagsNova" name="fibreBagsNova" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeNova" name="fibreTypeNova" min="0" onkeydown="return event.key !== '-'" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsNova" name="fibreBagsNova" min="0" onkeydown="return event.key !== '-'" value="0"></td>
                                                         <td><input type="number" class="form-control text-center" id="fibreQtyNova" name="fibreQtyNova" value="0.00" readonly></td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td><input type="text" class="form-control text-center" id="fibreNameForta" name="fibreNameForta" value="Forta Fiber" readonly></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreTypeForta" name="fibreTypeForta" value="0.00"></td>
-                                                        <td><input type="number" class="form-control text-center" id="fibreBagsForta" name="fibreBagsForta" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeForta" name="fibreTypeForta" min="0" onkeydown="return event.key !== '-'" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsForta" name="fibreBagsForta" min="0" onkeydown="return event.key !== '-'" value="0"></td>
                                                         <td><input type="number" class="form-control text-center" id="fibreQtyForta" name="fibreQtyForta" value="0.00" readonly></td>
                                                         <td></td>
                                                     </tr>
@@ -822,16 +822,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </select>
             </td>
             <td>
-                <input type="number" class="form-control" id="temp" name="temp" style="background-color:white;" value="100.00" required>
+                <input type="number" class="form-control" id="temp" name="temp" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="100.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="level" name="level" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="level" name="level" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="actualLevel" name="actualLevel" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="sixtyseventy" name="sixtyseventy" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="sixtyseventy" name="sixtyseventy" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -866,19 +866,19 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </select>
             </td>
             <td>
-                <input type="number" class="form-control" id="lfoIncomingVolume" name="lfoIncomingVolume" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="lfoIncomingVolume" name="lfoIncomingVolume" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="lfoLevel" name="lfoLevel" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="lfoLevel" name="lfoLevel" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="lfoActualLevel" name="lfoActualLevel" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="lfoVolume" name="lfoVolume" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="lfoVolume" name="lfoVolume" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -907,19 +907,19 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </select>
             </td>
             <td>
-                <input type="number" class="form-control" id="dieselIncomingVolume" name="dieselIncomingVolume" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="dieselIncomingVolume" name="dieselIncomingVolume" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="dieselLevel" name="dieselLevel" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="dieselLevel" name="dieselLevel" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="dieselActualLevel" name="dieselActualLevel" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="dieselVolume" name="dieselVolume" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="dieselVolume" name="dieselVolume" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td style="display:none">
-                <input type="number" class="form-control" id="dieselWeight" name="dieselWeight" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="dieselWeight" name="dieselWeight" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -945,10 +945,10 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 <input type="text" class="form-control" id="otherDieselVehicleNo" name="otherDieselVehicleNo" style="background-color:white;" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="otherDieselFirstReading" name="otherDieselFirstReading" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="otherDieselFirstReading" name="otherDieselFirstReading" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="otherDieselSecondReading" name="otherDieselSecondReading" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="otherDieselSecondReading" name="otherDieselSecondReading" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="otherDieselUsage" name="otherDieselUsage" style="background-color:white;" value="0.00" required readonly>
@@ -991,7 +991,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 <input type="text" class="form-control" id="hotoilNo" name="hotoilNo" readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="hotoilWeight" name="hotoilWeight" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="hotoilWeight" name="hotoilWeight" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -1016,7 +1016,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </select>
             </td>
             <td>
-                <input type="number" class="form-control" id="pg76Incoming" name="pg76Incoming" style="background-color:white;" value="0.00">
+                <input type="number" class="form-control" id="pg76Incoming" name="pg76Incoming" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00">
             </td>
             <td>
                 <select class="form-select" id="pg76Status" name="pg76Status">
@@ -1025,16 +1025,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </select>
             </td>
             <td style="display: none;">
-                <input type="number" class="form-control" id="pg76Temp" name="pg76Temp" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="pg76Temp" name="pg76Temp" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="pg76Level" name="pg76Level" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="pg76Level" name="pg76Level" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="pg76ActualLevel" name="pg76ActualLevel" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="pgSeventySix" name="pgSeventySix" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="pgSeventySix" name="pgSeventySix" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -1051,10 +1051,10 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 <input type="text" class="form-control" id="fibreName" name="fibreName" style="background-color:white;" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="fibreType" name="fibreType" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="fibreType" name="fibreType" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="fibreNoOfBags" name="fibreNoOfBags" style="background-color:white;" value="0" required>
+                <input type="number" class="form-control" id="fibreNoOfBags" name="fibreNoOfBags" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="fibreQty" name="fibreQty" style="background-color:white;" value="0.00" readonly>
