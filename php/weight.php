@@ -679,9 +679,9 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 $editReason = $existing_weight['edit_reason'] ?? null;
             }
 
-            if (!empty($existing_weight) && $existing_weight['transaction_status'] == 'Sales') {
+            if ($transactionStatus == 'Sales') {
                 if ($closed_so_stmt = $db->prepare("SELECT status FROM Sales_Order WHERE order_no=? AND customer_code=? AND product_code=? AND deleted='0' LIMIT 1")) {
-                    $closed_so_stmt->bind_param('sss', $existing_weight['purchase_order'], $existing_weight['customer_code'], $existing_weight['product_code']);
+                    $closed_so_stmt->bind_param('sss', $purchaseOrder, $customerCode, $productCode);
                     $closed_so_stmt->execute();
                     $closed_so_result = $closed_so_stmt->get_result();
                     $closed_so = $closed_so_result->fetch_assoc();
@@ -700,9 +700,9 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 }
             }
 
-            if (!empty($existing_weight) && $existing_weight['transaction_status'] == 'Purchase') {
+            if ($transactionStatus == 'Purchase') {
                 if ($closed_po_stmt = $db->prepare("SELECT status FROM Purchase_Order WHERE po_no=? AND supplier_code=? AND raw_mat_code=? AND deleted='0' LIMIT 1")) {
-                    $closed_po_stmt->bind_param('sss', $existing_weight['purchase_order'], $existing_weight['supplier_code'], $existing_weight['raw_mat_code']);
+                    $closed_po_stmt->bind_param('sss', $purchaseOrder, $supplierCode, $rawMaterialCode);
                     $closed_po_stmt->execute();
                     $closed_po_result = $closed_po_stmt->get_result();
                     $closed_po = $closed_po_result->fetch_assoc();

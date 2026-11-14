@@ -1481,7 +1481,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
         var sheet = workbook.Sheets[sheetName];
 
         // Convert the sheet to an array of objects
-        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
 
         // Get the headers
         var headers = jsonData[0];

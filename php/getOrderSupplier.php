@@ -303,7 +303,18 @@ if(isset($_POST['type'])){
                     $message['remarks'] = $remarks;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
-    
+
+                    // No open PO matched: flag it if the same PO exists but is closed
+                    $message['order_closed'] = false;
+                    if ($result->num_rows == 0 && $closed_stmt = $db->prepare("SELECT status FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND supplier_code=? AND deleted='0' LIMIT 1")) {
+                        $closed_stmt->bind_param('sss', $code, $material, $supplier);
+                        if ($closed_stmt->execute()) {
+                            $closed_row = $closed_stmt->get_result()->fetch_assoc();
+                            $message['order_closed'] = !empty($closed_row) && ($closed_row['status'] == 'Close' || $closed_row['status'] == 'Closed');
+                        }
+                        $closed_stmt->close();
+                    }
+
                     echo json_encode(
                         array(
                             "status" => "success",
@@ -382,7 +393,18 @@ if(isset($_POST['type'])){
                     $message['remarks'] = $remarks;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
-    
+
+                    // No open SO matched: flag it if the same SO exists but is closed
+                    $message['order_closed'] = false;
+                    if ($result->num_rows == 0 && $closed_stmt = $db->prepare("SELECT status FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0' LIMIT 1")) {
+                        $closed_stmt->bind_param('sss', $code, $material, $customer);
+                        if ($closed_stmt->execute()) {
+                            $closed_row = $closed_stmt->get_result()->fetch_assoc();
+                            $message['order_closed'] = !empty($closed_row) && ($closed_row['status'] == 'Close' || $closed_row['status'] == 'Closed');
+                        }
+                        $closed_stmt->close();
+                    }
+
                     echo json_encode(
                         array(
                             "status" => "success",

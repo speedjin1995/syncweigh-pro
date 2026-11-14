@@ -6,6 +6,36 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $uid = $_SESSION['username'];
 
+// Update existing active Calculation_Value row with the same key, otherwise insert new row.
+// $keyCol / $valCol are hardcoded by callers, never request input.
+function upsertCalculationValue($db, $calculationId, $keyCol, $keyVal, $valCol, $val) {
+    $existingValueId = '';
+    if ($checkValueStmt = $db->prepare("SELECT id FROM Calculation_Value WHERE calculation_id=? AND `$keyCol`=? AND deleted='0' LIMIT 1")) {
+        $checkValueStmt->bind_param('ss', $calculationId, $keyVal);
+        if ($checkValueStmt->execute()) {
+            $checkResult = $checkValueStmt->get_result();
+            if ($valueRow = $checkResult->fetch_assoc()) {
+                $existingValueId = $valueRow['id'];
+            }
+        }
+        $checkValueStmt->close();
+    }
+
+    if (!empty($existingValueId)) {
+        if ($updateValueStmt = $db->prepare("UPDATE Calculation_Value SET `$valCol`=? WHERE id=?")) {
+            $updateValueStmt->bind_param('ss', $val, $existingValueId);
+            $updateValueStmt->execute();
+            $updateValueStmt->close();
+        }
+    } else {
+        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `$keyCol`, `$valCol`) VALUES (?, ?, ?)")) {
+            $insertValueStmt->bind_param('sss', $calculationId, $keyVal, $val);
+            $insertValueStmt->execute();
+            $insertValueStmt->close();
+        }
+    }
+}
+
 // Read the JSON data from the request body
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -95,56 +125,36 @@ if (!empty($data)) {
 
             // Type-specific insert
             if (!empty($calculationId)) {
-                // Set olf calculation deleted to 1
+                // Set old calculation deleted to 1
                 if ($uploadType == 'LEVEL') {
                     $Levelmm = isset($row['Levelmm']) && $row['Levelmm'] !== '' ? ($row['Levelmm'] == '0' ? '0' : trim($row['Levelmm'])) : '';
-                    $Volumem = isset($row['Volumem']) && $row['Volumem'] !== '' ? ($row['Volumem'] == '0' ? '0' : $row['Volumem']) : '';
+                    $Volumem = isset($row['Volumem']) && $row['Volumem'] !== '' ? ($row['Volumem'] == '0' ? '0' : trim($row['Volumem'])) : '';
                     if ($Levelmm !== '' && $Volumem !== '') {
-                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
-                            $insertValueStmt->bind_param('sss', $calculationId, $Levelmm, $Volumem);
-                            $insertValueStmt->execute();
-                            $insertValueStmt->close();
-                        }
+                        upsertCalculationValue($db, $calculationId, 'level', $Levelmm, 'volume', $Volumem);
                     }
                 } elseif ($uploadType == 'SG') {
                     $TemperatureC = isset($row['TemperatureC']) && $row['TemperatureC'] !== '' ? ($row['TemperatureC'] == '0' ? '0' : trim($row['TemperatureC'])) : '';
                     $SG = isset($row['SG']) && $row['SG'] !== '' ? ($row['SG'] == '0' ? '0' : trim($row['SG'])) : '';
                     if ($TemperatureC !== '' && $SG !== '') {
-                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, temperature, sg) VALUES (?, ?, ?)")) {
-                            $insertValueStmt->bind_param('sss', $calculationId, $TemperatureC, $SG);
-                            $insertValueStmt->execute();
-                            $insertValueStmt->close();
-                        }
+                        upsertCalculationValue($db, $calculationId, 'temperature', $TemperatureC, 'sg', $SG);
                     }
                 } elseif ($uploadType == 'BITULOOKUP') {
                     $HeightCM = isset($row['HeightCM']) && $row['HeightCM'] !== '' ? ($row['HeightCM'] == '0' ? '0' : trim($row['HeightCM'])) : '';
                     $WeightMT = isset($row['WeightMT']) && $row['WeightMT'] !== '' ? ($row['WeightMT'] == '0' ? '0' : trim($row['WeightMT'])) : '';
                     if ($HeightCM !== '' && $WeightMT !== '') {
-                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
-                            $insertValueStmt->bind_param('sss', $calculationId, $HeightCM, $WeightMT);
-                            $insertValueStmt->execute();
-                            $insertValueStmt->close();
-                        }
+                        upsertCalculationValue($db, $calculationId, 'level', $HeightCM, 'volume', $WeightMT);
                     }
                 } elseif ($uploadType == 'LFOLOOKUP') {
                     $Depthm = isset($row['Depthm']) && $row['Depthm'] !== '' ? ($row['Depthm'] == '0' ? '0' : trim($row['Depthm'])) : '';
                     $Litrel = isset($row['Litrel']) && $row['Litrel'] !== '' ? ($row['Litrel'] == '0' ? '0' : trim($row['Litrel'])) : '';
                     if ($Depthm !== '' && $Litrel !== '') {
-                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
-                            $insertValueStmt->bind_param('sss', $calculationId, $Depthm, $Litrel);
-                            $insertValueStmt->execute();
-                            $insertValueStmt->close();
-                        }
+                        upsertCalculationValue($db, $calculationId, 'level', $Depthm, 'volume', $Litrel);
                     }
                 } elseif ($uploadType == 'DIESELLOOKUP') {
                     $Depthm = isset($row['Depthm']) && $row['Depthm'] !== '' ? ($row['Depthm'] == '0' ? '0' : trim($row['Depthm'])) : '';
                     $Litrel = isset($row['Litrel']) && $row['Litrel'] !== '' ? ($row['Litrel'] == '0' ? '0' : trim($row['Litrel'])) : '';
                     if ($Depthm !== '' && $Litrel !== '') {
-                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
-                            $insertValueStmt->bind_param('sss', $calculationId, $Depthm, $Litrel);
-                            $insertValueStmt->execute();
-                            $insertValueStmt->close();
-                        }
+                        upsertCalculationValue($db, $calculationId, 'level', $Depthm, 'volume', $Litrel);
                     }
                 }
             }
