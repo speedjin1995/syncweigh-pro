@@ -1142,13 +1142,17 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         });
 
         $('#fromDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: yesterday
+            dateFormat: "d-m-Y H:i",
+            enableTime: true,
+            time_24hr: true,
+            defaultDate: new Date(yesterday.setHours(0, 0, 0, 0))
         });
 
         $('#toDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: today
+            dateFormat: "d-m-Y H:i",
+            enableTime: true,
+            time_24hr: true,
+            defaultDate: new Date(new Date(today).setHours(23, 59, 0, 0))
         });
         
         $('#datetime').flatpickr({
