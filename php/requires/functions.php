@@ -29,7 +29,7 @@ function getVolumeFromLevel($db, $calculationId, $level)
             WHERE calculation_id = ?
               AND level IS NOT NULL
               AND deleted = 0
-            ORDER BY level ASC";
+            ORDER BY CAST(level AS DECIMAL(12,4)) ASC";
 
     $stmt = $db->prepare($sql);
     $stmt->bind_param("i", $calculationId);
