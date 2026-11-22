@@ -261,6 +261,7 @@ if(isset($_POST['userID'])){
                 $message['plant_code'] = $row['plant_code'];
                 $message['batch_drum'] = $row['batch_drum'];
                 $message['remarks'] = $row['remarks'];
+                $message['stock_take_no'] = $row['stock_take_no'];
                 $message['declaration_datetime'] = $row['declaration_datetime'];
             }
             

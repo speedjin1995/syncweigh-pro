@@ -201,6 +201,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <thead>
                                                                 <tr>
                                                                     <th>No</th>
+                                                                    <th>Stock Take No</th>
                                                                     <th>Plant</th>
                                                                     <th>Batch/ <br> Drum</th>
                                                                     <th>Declaration <br> Date</th>
@@ -257,7 +258,11 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                     <div class="card bg-light">
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-lg-3 col-md-6 mb-3">
+                                                <div class="col-lg-4 col-md-6 mb-3">
+                                                    <label for="stockTakeNo" class="col-form-label">Stock Take No</label>
+                                                    <input type="text" class="form-control" id="stockTakeNo" placeholder="Assigned on save" readonly>
+                                                </div>
+                                                <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
                                                         <label for="plant" class="col-12 col-form-label">Plant <span class="text-danger">*</span></label>
                                                         <div class="col-12">
@@ -269,7 +274,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3 col-md-6 mb-3">
+                                                <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
                                                         <label for="batchDrum" class="col-12 col-form-label">By-Batch/By-Drum <span class="text-danger">*</span></label>
                                                         <div class="col-12">
@@ -281,7 +286,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3 col-md-6 mb-3">
+                                                <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
                                                         <label for="declarationDate" class="col-12 col-form-label">Date <span class="text-danger">*</span></label>
                                                         <div class="col-12">
@@ -290,7 +295,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3 col-md-6 mb-3">
+                                                <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
                                                         <label for="declarationTime" class="col-12 col-form-label">Time <span class="text-danger">*</span></label>
                                                         <div class="col-12">
@@ -1200,7 +1205,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             'serverSide': true,
             'searching': true,
             'serverMethod': 'post',
-            'order': [[ 1, 'asc' ]],
+            'order': [[ 2, 'asc' ]],
             'columnDefs': [ 
                 { orderable: false, targets: [0] },
                 // { orderable: false, targets: [4] },
@@ -1219,6 +1224,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             },
             'columns': [
                 { data: 'no' },
+                { data: 'stock_take_no' },
                 { data: 'plant' },
                 { data: 'batch_drum' },
                 { data: 'declaration_datetime' },
@@ -1291,7 +1297,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 'serverSide': true,
                 'searching': true,
                 'serverMethod': 'post',
-                'order': [[ 1, 'asc' ]],
+                'order': [[ 2, 'asc' ]],
                 'columnDefs': [ 
                     { orderable: false, targets: [0] },
                     // { orderable: false, targets: [4] },
@@ -1310,6 +1316,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 },
                 'columns': [
                     { data: 'no' },
+                    { data: 'stock_take_no' },
                     { data: 'plant' },
                     { data: 'batch_drum' },
                     { data: 'declaration_datetime' },
@@ -1390,6 +1397,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#batchDrum').val("").trigger('change');
             $('#addModal').find('#remarks').val('');
+            $('#addModal').find('#stockTakeNo').val('');
             $('#declarationDate')[0]._flatpickr.setDate(today);
             $('#declarationTime')[0]._flatpickr.clear();
             $('#addModal').find('#datetime').val('');
@@ -2969,6 +2977,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#batchDrum').val(obj.message.batch_drum).select2('destroy').select2();
                 $('#addModal').find('#remarks').val(obj.message.remarks || '');
+                $('#addModal').find('#stockTakeNo').val(obj.message.stock_take_no || '');
                 var declarationDt = new Date(obj.message.declaration_datetime);
                 $('#declarationDate')[0]._flatpickr.setDate(declarationDt);
                 $('#declarationTime')[0]._flatpickr.setDate(declarationDt);

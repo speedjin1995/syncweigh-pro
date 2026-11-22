@@ -765,71 +765,222 @@ $data = array(
 $data = json_encode($data, JSON_PRETTY_PRINT);
 
 if(!empty($bitumenId)){
+    $db->begin_transaction();
+
+    // Lock the plant row so concurrent saves for this plant run the overlap check one at a time
+    $lock_stmt = $db->prepare("SELECT id FROM Plant WHERE id = ? FOR UPDATE");
+    if (!$lock_stmt || !$lock_stmt->bind_param('s', $plant) || !$lock_stmt->execute()) {
+        $db->rollback();
+        $db->close();
+        echo json_encode(array("status" => "failed", "message" => "Unable to verify declaration date/time, please try again"));
+        exit;
+    }
+    $lock_stmt->close();
+
+    // Current record decides whether this is the same group (stay between neighbours) or a moved one (after latest)
+    $current = null;
+    if ($current_stmt = $db->prepare("SELECT plant_id, batch_drum, declaration_datetime FROM Bitumen WHERE id = ?")) {
+        $current_stmt->bind_param('s', $bitumenId);
+        if ($current_stmt->execute()) {
+            $current = $current_stmt->get_result()->fetch_assoc();
+        }
+        $current_stmt->close();
+    }
+
+    if (!$current) {
+        $db->rollback();
+        $db->close();
+        echo json_encode(array("status" => "failed", "message" => "Stock take record not found"));
+        exit;
+    }
+
+    $sameGroup = ((string) $current['plant_id'] === (string) $plant && $current['batch_drum'] === $batchDrum);
+    $overlapError = getStockTakeOverlapError($db, $plant, $batchDrum, $declarationDatetime, (int) $bitumenId, $sameGroup ? $current['declaration_datetime'] : null);
+
+    if ($overlapError !== null) {
+        $db->rollback();
+        $db->close();
+        echo json_encode(array("status" => "failed", "message" => $overlapError));
+        exit;
+    }
+
     if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `other_diesel`=?, `hotoil`=?, `fibre`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, `batch_drum`=?, `remarks`=?, modified_by=? WHERE id=?")) {
         $update_stmt->bind_param('sssssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $otherDieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $remarks, $username, $bitumenId);
 
         // Execute the prepared query.
         if (! $update_stmt->execute()) {
+            $error = $update_stmt->error;
+            $update_stmt->close();
+            $db->rollback();
             echo json_encode(
                 array(
-                    "status"=> "failed", 
-                    "message"=> $update_stmt->error
+                    "status"=> "failed",
+                    "message"=> $error
                 )
             );
         }
         else{
             $update_stmt->close();
+            $db->commit();
             $db->close();
 
             echo json_encode(
                 array(
-                    "status"=> "success", 
-                    "message"=> "Updated Successfully!!" 
+                    "status"=> "success",
+                    "message"=> "Updated Successfully!!"
                 )
             );
         }
+    }
+    else {
+        $db->rollback();
+        echo json_encode(array("status" => "failed", "message" => $db->error));
     }
 }
 else
 { 
-    // Check if existing decalaration for the same date, plant, and batch/drum exists
-    $check_stmt = $db->prepare("SELECT id FROM Bitumen WHERE DATE(declaration_datetime) = DATE(?) AND plant_id = ? AND batch_drum = ?");
-    $check_stmt->bind_param('sss', $declarationDatetime, $plant, $batchDrum);
-    $check_stmt->execute();
-    $check_stmt->store_result();
-    
-    if ($check_stmt->num_rows > 0) {
-        $check_stmt->close();
+    $db->begin_transaction();
+
+    // Running no. per plant + batch/drum; FOR UPDATE makes concurrent saves wait for the counter
+    $counterCol = ($batchDrum == 'Drum') ? 'stock_take_drum' : 'stock_take_batch';
+    $curcount = null;
+    if ($counter_stmt = $db->prepare("SELECT $counterCol AS curcount FROM Plant WHERE id = ? FOR UPDATE")) {
+        $counter_stmt->bind_param('s', $plant);
+        if ($counter_stmt->execute()) {
+            $counter_row = $counter_stmt->get_result()->fetch_assoc();
+            $curcount = $counter_row ? (int) $counter_row['curcount'] : null;
+        }
+        $counter_stmt->close();
+    }
+
+    if ($curcount === null) {
+        $db->rollback();
         $db->close();
-        echo json_encode(array("status" => "failed", "message" => "Declaration already exists for this date, plant, and batch/drum"));
+        echo json_encode(array("status" => "failed", "message" => "Unable to generate stock take no for this plant"));
         exit;
     }
-    $check_stmt->close();
 
-    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `other_diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `batch_drum`, `remarks`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-        $insert_stmt->bind_param('ssssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $otherDieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $remarks, $username);
+    // Checked after the plant row lock above, so two users can't both pass with overlapping times
+    $overlapError = getStockTakeOverlapError($db, $plant, $batchDrum, $declarationDatetime);
+    if ($overlapError !== null) {
+        $db->rollback();
+        $db->close();
+        echo json_encode(array("status" => "failed", "message" => $overlapError));
+        exit;
+    }
+
+    $stockTakeNo = $plantCode . '/ST-' . ($batchDrum == 'Drum' ? 'D' : 'B') . '-' . str_pad($curcount, 5, '0', STR_PAD_LEFT);
+
+    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`stock_take_no`, `60/70`, `pg76`, `lfo`, `diesel`, `other_diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `batch_drum`, `remarks`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        $insert_stmt->bind_param('sssssssssssssss', $stockTakeNo, $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $otherDieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $remarks, $username);
 
         // Execute the prepared query.
         if (! $insert_stmt->execute()) {
+            $error = $insert_stmt->error;
+            $insert_stmt->close();
+            $db->rollback();
             echo json_encode(
                 array(
-                    "status"=> "failed", 
-                    "message"=> $insert_stmt->error
+                    "status"=> "failed",
+                    "message"=> $error
                 )
             );
         }
         else{
-            echo json_encode(
-                array(
-                    "status"=> "success", 
-                    "message"=> "Added Successfully!!" 
-                )
-            );
-
             $insert_stmt->close();
+
+            $plantU_stmt = $db->prepare("UPDATE Plant SET $counterCol = $counterCol + 1 WHERE id = ?");
+            if ($plantU_stmt && $plantU_stmt->bind_param('s', $plant) && $plantU_stmt->execute()) {
+                $plantU_stmt->close();
+                $db->commit();
+                echo json_encode(
+                    array(
+                        "status"=> "success",
+                        "message"=> "Added Successfully!! (" . $stockTakeNo . ")"
+                    )
+                );
+            }
+            else {
+                $db->rollback();
+                echo json_encode(
+                    array(
+                        "status"=> "failed",
+                        "message"=> "Failed to update stock take running no"
+                    )
+                );
+            }
+
             $db->close();
-            
         }
     }
+    else {
+        $db->rollback();
+        echo json_encode(array("status" => "failed", "message" => $db->error));
+    }
+}
+
+/**
+ * Stock takes for the same plant + batch/drum must not overlap, because incoming is
+ * counted from the previous take up to this one (php/getWeight.php STOCKTAKE).
+ * Add (no $origDatetime): must be after the latest take.
+ * Edit ($origDatetime given): must stay between its previous and next takes.
+ * Returns an error message, or null when the datetime is allowed.
+ */
+function getStockTakeOverlapError($db, $plant, $batchDrum, $datetime, $excludeId = 0, $origDatetime = null) {
+    if (empty($datetime)) {
+        return "Declaration date/time is required";
+    }
+
+    $describe = function($row) {
+        $when = date('d-m-Y H:i', strtotime($row['declaration_datetime']));
+        return !empty($row['stock_take_no']) ? $row['stock_take_no'] . " (" . $when . ")" : "(" . $when . ")";
+    };
+
+    $findTake = function($condition, $order, $value) use ($db, $plant, $batchDrum, $excludeId) {
+        $sql = "SELECT stock_take_no, declaration_datetime FROM Bitumen WHERE plant_id = ? AND batch_drum = ? AND status = '0' AND id <> ?" . $condition . " ORDER BY declaration_datetime " . $order . " LIMIT 1";
+        if (!($stmt = $db->prepare($sql))) {
+            return false;
+        }
+        if ($value === null) {
+            $stmt->bind_param('ssi', $plant, $batchDrum, $excludeId);
+        } else {
+            $stmt->bind_param('ssis', $plant, $batchDrum, $excludeId, $value);
+        }
+        if (!$stmt->execute()) {
+            $stmt->close();
+            return false;
+        }
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        return $row ?: null;
+    };
+
+    // PHP 8.1+ mysqli throws on query errors by default; treat that the same as a false return
+    try {
+        if ($origDatetime === null) {
+            $prev = $findTake("", "DESC", null);
+            $next = null;
+        } else {
+            $prev = $findTake(" AND declaration_datetime < ?", "DESC", $origDatetime);
+            $next = $findTake(" AND declaration_datetime > ?", "ASC", $origDatetime);
+        }
+    } catch (mysqli_sql_exception $e) {
+        $prev = false;
+        $next = false;
+    }
+
+    if ($prev === false || $next === false) {
+        return "Unable to verify declaration date/time, please try again";
+    }
+
+    $newTime = strtotime($datetime);
+    if ($prev && $newTime <= strtotime($prev['declaration_datetime'])) {
+        return "Declaration date/time must be after the last stock take " . $describe($prev);
+    }
+    if ($next && $newTime >= strtotime($next['declaration_datetime'])) {
+        return "Declaration date/time must be before the next stock take " . $describe($next);
+    }
+
+    return null;
 }
 ?>

@@ -86,6 +86,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "id"=>$row['id'],
     "no"=>$salesCount,
+    "stock_take_no"=>$row['stock_take_no'] ?? '',
     "plant"=>$row['plant'],
     "batch_drum"=>$row['batch_drum'],
     "remarks"=>$row['remarks'],
