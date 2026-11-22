@@ -3797,3 +3797,41 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_PLANT` BEFORE UPDATE ON `Plant`
 END
 $$
 DELIMITER ;
+
+ALTER TABLE `Assets` ADD `supplier_id` INT(11) NULL AFTER `diameter`;
+
+ALTER TABLE `Assets_Log` ADD `supplier_id` INT(11) NULL AFTER `diameter`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_ASSET` AFTER INSERT ON `Assets`
+ FOR EACH ROW INSERT INTO Assets_Log (
+    type, name, plant_id, batch_drum, length, height, diameter, supplier_id, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.type, NEW.name, NEW.plant_id, NEW.batch_drum, NEW.length, NEW.height, NEW.diameter, NEW.supplier_id, 1, NEW.created_by, NEW.created_at
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_ASSET` BEFORE UPDATE ON `Assets`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Assets_Log table
+    INSERT INTO Assets_Log (
+        type, name, plant_id, batch_drum, length, height, diameter, supplier_id, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.type, NEW.name, NEW.plant_id, NEW.batch_drum, NEW.length, NEW.height, NEW.diameter, NEW.supplier_id, action_value, NEW.modified_by, NEW.modified_at
+    );
+END
+$$
+DELIMITER ;

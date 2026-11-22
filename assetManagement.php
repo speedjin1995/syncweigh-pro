@@ -19,6 +19,8 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
 }
+
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 ?>
 
 <head>
@@ -120,22 +122,22 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="batchDrumSearch" class="form-label">Batch/Drum</label>
-                                                            <select id="batchDrumSearch" class="form-select select2">
-                                                                <option selected>-</option>
-                                                                <option value="Batch">Batch</option>
-                                                                <option value="Drum">Drum</option>
-                                                            </select>
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowPlantF['id'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="batchDrumSearch" class="form-label">Batch/Drum</label>
+                                                            <select id="batchDrumSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <option value="Batch">Batch</option>
+                                                                <option value="Drum">Drum</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -234,6 +236,19 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
                                                                                     <label for="length" class="col-sm-4 col-form-label">Length (m)</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="number" class="form-control" id="length" name="length" placeholder="Length" step="0.001">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="supplierRow" style="display:none">
+                                                                                <div class="row">
+                                                                                    <label for="supplier" class="col-sm-4 col-form-label">Supplier</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select id="supplier" name="supplier" class="form-select select2">
+                                                                                            <option value="">-</option>
+                                                                                            <?php while($rowSupplier = mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                <option value="<?=$rowSupplier['id'] ?>"><?=$rowSupplier['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -706,6 +721,16 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
             });
         });
 
+        // Supplier only applies to LFO
+        $('#addModal').find('#assetType').on('change', function(){
+            if ($(this).val() === 'LFO') {
+                $('#supplierRow').show();
+            } else {
+                $('#supplierRow').hide();
+                $('#addModal').find('#supplier').val('').trigger('change');
+            }
+        });
+
         $('#addAsset').on('click', function(){
             $('#addModal').find('#id').val("");
             $('#addModal').find('#assetType').val("").trigger('change');
@@ -715,6 +740,7 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
             $('#addModal').find('#length').val("");
             $('#addModal').find('#diameter').val("");
             $('#addModal').find('#height').val("");
+            $('#addModal').find('#supplier').val("").trigger('change');
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -817,6 +843,7 @@ if (hasModulePermission('Stock Management', 'Asset Management', ['view_all_plant
                 $('#addModal').find('#length').val(obj.message.length || '');
                 $('#addModal').find('#diameter').val(obj.message.diameter || '');
                 $('#addModal').find('#height').val(obj.message.height || '');
+                $('#addModal').find('#supplier').val(obj.message.supplier_id || '').trigger('change');
 
                 // Initialize all Select2 elements in the modal
                 $('#addModal .select2').select2({

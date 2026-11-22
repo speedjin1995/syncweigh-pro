@@ -59,11 +59,18 @@ if (isset($_POST['assetType'], $_POST['assetName'], $_POST['plant'], $_POST['bat
         $length = trim($_POST["length"]);
     }
 
+    // Supplier only applies to LFO
+    if (empty($_POST["supplier"]) || $assetType !== 'LFO') {
+        $supplierId = null;
+    } else {
+        $supplierId = trim($_POST["supplier"]);
+    }
+
     if(!empty($assetId))
     {
-        if ($update_stmt = $db->prepare("UPDATE Assets SET type=?, name=?, plant_id=?, batch_drum=?, diameter=?, height=?, length=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Assets SET type=?, name=?, plant_id=?, batch_drum=?, diameter=?, height=?, length=?, supplier_id=?, modified_by=? WHERE id=?"))
         {
-            $update_stmt->bind_param('sssssssss', $assetType, $assetName, $plantId, $batchDrum, $diameter, $height, $length, $username, $assetId);
+            $update_stmt->bind_param('ssssssssss', $assetType, $assetName, $plantId, $batchDrum, $diameter, $height, $length, $supplierId, $username, $assetId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -88,8 +95,8 @@ if (isset($_POST['assetType'], $_POST['assetName'], $_POST['plant'], $_POST['bat
     }
     else
     {
-        if ($insert_stmt = $db->prepare("INSERT INTO Assets (type, name, plant_id, batch_drum, diameter, height, length, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssss', $assetType, $assetName, $plantId, $batchDrum, $diameter, $height, $length, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Assets (type, name, plant_id, batch_drum, diameter, height, length, supplier_id, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssss', $assetType, $assetName, $plantId, $batchDrum, $diameter, $height, $length, $supplierId, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
