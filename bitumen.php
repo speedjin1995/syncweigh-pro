@@ -256,10 +256,10 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                     <div class="card bg-light">
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-lg-3 col-md-6 mb-3">
                                                     <div class="row">
-                                                        <label for="plant" class="col-sm-4 col-form-label">Plant</label>
-                                                        <div class="col-sm-8">
+                                                        <label for="plant" class="col-12 col-form-label">Plant <span class="text-danger">*</span></label>
+                                                        <div class="col-12">
                                                             <select class="form-select select2" id="plant" name="plant" required>
                                                                 <?php while($rowPlant=mysqli_fetch_assoc($plant2)){ ?>
                                                                     <option value="<?=$rowPlant['id'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
@@ -268,23 +268,32 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-lg-3 col-md-6 mb-3">
                                                     <div class="row">
-                                                        <label for="datetime" class="col-sm-4 col-form-label">Date/Time</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="date" class="form-control" data-provider="flatpickr" id="datetime" name="datetime" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
-                                                        <div class="col-sm-8">
-                                                            <select id="batchDrum" name="batchDrum" class="form-select select2">
-                                                                <option selected>-</option>
+                                                        <label for="batchDrum" class="col-12 col-form-label">By-Batch/By-Drum <span class="text-danger">*</span></label>
+                                                        <div class="col-12">
+                                                            <select id="batchDrum" name="batchDrum" class="form-select select2" required>
+                                                                <option value="" selected>Please Select</option>
                                                                 <option value="Batch">Batch</option>
                                                                 <option value="Drum">Drum</option>
                                                             </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 mb-3">
+                                                    <div class="row">
+                                                        <label for="declarationDate" class="col-12 col-form-label">Date <span class="text-danger">*</span></label>
+                                                        <div class="col-12">
+                                                            <input type="text" class="form-control" id="declarationDate" name="declarationDate" required>
+                                                            <input type="hidden" id="datetime" name="datetime">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-md-6 mb-3">
+                                                    <div class="row">
+                                                        <label for="declarationTime" class="col-12 col-form-label">Time <span class="text-danger">*</span></label>
+                                                        <div class="col-12">
+                                                            <input type="text" class="form-control" id="declarationTime" name="declarationTime" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1155,11 +1164,23 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             defaultDate: new Date(new Date(today).setHours(23, 59, 0, 0))
         });
         
-        $('#datetime').flatpickr({
-            dateFormat: "d-m-Y H:i",
-            enableTime: true,
-            time_24hr: true,
+        $('#declarationDate').flatpickr({
+            dateFormat: "d-m-Y",
             defaultDate: today
+        });
+
+        $('#declarationTime').flatpickr({
+            enableTime: true,
+            noCalendar: true,
+            time_24hr: true,
+            dateFormat: "H:i"
+        });
+
+        // Combine date + time into hidden #datetime (d-m-Y H:i)
+        $('#declarationDate, #declarationTime').on('change', function(){
+            var d = $('#declarationDate').val();
+            var t = $('#declarationTime').val();
+            $('#datetime').val(d && t ? d + ' ' + t : '').trigger('change');
         });
 
         var fromDateI = $('#fromDateSearch').val();
@@ -1361,7 +1382,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $('#addModal').find('#bitumenId').val("");
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#batchDrum').val("").trigger('change');
-            $('#addModal').find('#datetime').val(formatDate4(today));
+            $('#declarationDate')[0]._flatpickr.setDate(today);
+            $('#declarationTime')[0]._flatpickr.clear();
+            $('#addModal').find('#datetime').val('');
             $('#bitumenTable').html('');
             $('#addModal').find('#totalSixtySeventy').val(0);
             $('#addModal').find('#bitumenIncoming').val(0);
@@ -1592,6 +1615,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             var plantId = $('#plant').val();
             var plantCode = $('#plantCode').val();
             var batchDrum = $('#batchDrum').val();
+
+            if (!declarationDate) return;
 
             if (plantId && batchDrum){
                 // Get Previous Stock Take
@@ -2935,7 +2960,10 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 $('#addModal').find('#plant').val(obj.message.plant_id).select2('destroy').select2();
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#batchDrum').val(obj.message.batch_drum).select2('destroy').select2();
-                $('#addModal').find('#datetime').val(formatDate4(new Date(obj.message.declaration_datetime)));
+                var declarationDt = new Date(obj.message.declaration_datetime);
+                $('#declarationDate')[0]._flatpickr.setDate(declarationDt);
+                $('#declarationTime')[0]._flatpickr.setDate(declarationDt);
+                $('#addModal').find('#datetime').val(formatDate4(declarationDt));
 
                 if (obj.message.plant_code) {
                     getIncoming(obj.message.plant_code, obj.message.batch_drum, formatDate4(new Date(obj.message.declaration_datetime)), function(){

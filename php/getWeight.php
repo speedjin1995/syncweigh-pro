@@ -65,8 +65,27 @@ if(isset($_POST['userID'])){
     } elseif ($format == 'STOCKTAKE') {
         $plantCode = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
         $declarationDate = filter_input(INPUT_POST, 'declarationDate', FILTER_SANITIZE_STRING);
-        $formattedDate = DateTime::createFromFormat('d-m-Y H:i', $declarationDate)->format('Y-m-d');
+        $declarationDt = DateTime::createFromFormat('d-m-Y H:i', $declarationDate);
         $batchDrum = filter_input(INPUT_POST, 'batchDrum', FILTER_SANITIZE_STRING);
+
+        if (!$declarationDt) {
+            echo json_encode(array("status" => "failed", "message" => "Invalid date/time"));
+            exit;
+        }
+
+        // Incoming window: previous stock take (same plant + batch/drum) -> picked datetime
+        $endDate = $declarationDt->format('Y-m-d H:i:00');
+        $startDate = $declarationDt->format('Y-m-d 00:00:00'); // fallback when no previous stock take
+        if ($prev_stmt = $db->prepare("SELECT declaration_datetime FROM Bitumen WHERE plant_code = ? AND batch_drum = ? AND status = '0' AND declaration_datetime < ? ORDER BY declaration_datetime DESC LIMIT 1")) {
+            $prev_stmt->bind_param('sss', $plantCode, $batchDrum, $endDate);
+            if ($prev_stmt->execute()) {
+                $prev_result = $prev_stmt->get_result();
+                if ($prev_row = $prev_result->fetch_assoc()) {
+                    $startDate = $prev_row['declaration_datetime'];
+                }
+            }
+            $prev_stmt->close();
+        }
 
         // Handle the case for stock take to get total diesel and total lfo
         $rawMatCode = [
@@ -78,9 +97,9 @@ if(isset($_POST['userID'])){
             '3003/002' // LFO AJIL
         ];
         $placeholders = implode(',', array_fill(0, count($rawMatCode), '?'));
-        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(supplier_weight) AS supplier_weight FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
-            $bindTypes = str_repeat('s', count($rawMatCode)) . 'sss';
-            $bindParams = array_merge($rawMatCode, [$plantCode, $formattedDate, $batchDrum]);
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(supplier_weight) AS supplier_weight FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND tare_weight1_date > ? AND tare_weight1_date <= ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+            $bindTypes = str_repeat('s', count($rawMatCode)) . 'ssss';
+            $bindParams = array_merge($rawMatCode, [$plantCode, $startDate, $endDate, $batchDrum]);
             $update_stmt->bind_param($bindTypes, ...$bindParams);
             
             // Execute the prepared query.
