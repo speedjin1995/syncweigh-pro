@@ -94,6 +94,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
+                            <button type="button" hidden id="successBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+                            <button type="button" hidden id="failBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+
                             <div class="row mb-3 pb-1">
                                 <div class="col-12">
                                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
@@ -844,7 +847,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 <input type="number" class="form-control" id="temp" name="temp" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="100.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="level" name="level" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
+                <select class="form-select" id="level" name="level" required>
+                    <option value="0.00">0.00</option>
+                </select>
             </td>
             <td>
                 <input type="number" class="form-control" id="actualLevel" name="actualLevel" style="background-color:white;" value="0.00" required readonly>
@@ -1133,6 +1138,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
     var bitumenIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
     var lfoIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
     var dieselIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+    var bitumenLevels = [];
 
     $(function () {
         const today = new Date();
@@ -1142,7 +1148,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         yesterday.setDate(yesterday.getDate() - 1);
 
         // Initialize all Select2 elements in the modal
-        $('#addModal .select2').select2({
+        $('#addModal select.select2').select2({
             allowClear: true,
             placeholder: "Please Select",
             dropdownParent: $('#addModal') // Ensures dropdown is not cut off
@@ -1530,15 +1536,15 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
                     }
-                    else if(obj.status === 'failed'){
+                    else{
                         $('#spinnerLoading').hide();
-                        alert(obj.message);
-                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").attr('data-toast-text', obj.message || 'Failed to save');
                         $("#failBtn").click();
                     }
-                    else{
-
-                    }
+                }).fail(function(){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save. Please try again.');
+                    $("#failBtn").click();
                 });
             }
         });
@@ -1652,6 +1658,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             var batchDrum = $(this).val();
 
             if (plantId && batchDrum){
+                // Load Bitumen Level options from Calculation Setup
+                loadBitumenLevels(plantId, batchDrum);
+
                 // Load Assets based on selected plant and batch drum
                 loadAssets(plantId, batchDrum);
 
@@ -1684,7 +1693,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             var row = $(this).closest('tr');
             var status = $(this).val();
             var temp = row.find('input[id^="temp"]').val();
-            var level = row.find('input[id^="level"]').val();
+            var level = row.find('select[id^="level"]').val();
             var height = (parseFloat(row.find('input[id^="bitumenHeight"]').val()) || 0) * 1000;
             var actualLevel = 0;
 
@@ -1693,7 +1702,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 actualLevel = calculateActualLevel(status, level, height);
             }
 
-            row.find('input[id^="actualLevel"]').val(actualLevel.toFixed(2));  
+            row.find('input[id^="actualLevel"]').val(actualLevel.toFixed(2));
             
             // Calculate Weight MT
             if (plantId && batchDrum && actualLevel && temp){
@@ -1714,7 +1723,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             var row = $(this).closest('tr');
             var status =row.find('select[id^="bitumenStatus"]').val();
             var temp = $(this).val();
-            var level = row.find('input[id^="level"]').val();
+            var level = row.find('select[id^="level"]').val();
             var height = (parseFloat(row.find('input[id^="bitumenHeight"]').val()) || 0) * 1000;
             var actualLevel = 0;
 
@@ -1738,7 +1747,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         });
 
         // Event delegation for level
-        $("#bitumenTable").on('change', 'input[id^="level"]', function(){
+        $("#bitumenTable").on('change', 'select[id^="level"]', function(){
             var plantId = $('#plant').val();
             var batchDrum = $('#batchDrum').val();
             var row = $(this).closest('tr');
@@ -1796,7 +1805,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $("#bitumenTable").find('#name:last').attr('name', 'name['+bitumenCount+']').attr("id", "name" + bitumenCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#bitumenTable").find('#bitumenStatus:last').attr('name', 'bitumenStatus['+bitumenCount+']').attr("id", "bitumenStatus" + bitumenCount);
             $("#bitumenTable").find('#temp:last').attr('name', 'temp['+bitumenCount+']').attr("id", "temp" + bitumenCount).css("text-align", "center");
-            $("#bitumenTable").find('#level:last').attr('name', 'level['+bitumenCount+']').attr("id", "level" + bitumenCount).css("text-align", "center");
+            fillLevelSelect($("#bitumenTable").find('#level:last').attr('name', 'level['+bitumenCount+']').attr("id", "level" + bitumenCount).css("text-align", "center"), '');
             $("#bitumenTable").find('#actualLevel:last').attr('name', 'actualLevel['+bitumenCount+']').attr("id", "actualLevel" + bitumenCount).css("text-align", "center");
             $("#bitumenTable").find('#sixtyseventy:last').attr('name', 'sixtyseventy['+bitumenCount+']').attr("id", "sixtyseventy" + bitumenCount).css("text-align", "center");
 
@@ -2153,7 +2162,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             // $("#dieselTable").find('#dieselWeight:last').attr('name', 'dieselWeight['+dieselCount+']').attr("id", "dieselWeight" + dieselCount).css("text-align", "center");
 
             // // Initialize all Select2 elements in the modal
-            // $('#addModal .select2').select2({
+            // $('#addModal select.select2').select2({
             //     allowClear: true,
             //     placeholder: "Please Select",
             //     dropdownParent: $('#addModal') // Ensures dropdown is not cut off
@@ -2598,7 +2607,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 });
                 if (plantCode) {
                     getIncoming(plantCode, batchDrum, declarationDate, function(){
-                        $('#bitumenTable').find('input[id^="level"]').trigger('change');
+                        $('#bitumenTable').find('select[id^="level"]').trigger('change');
                         $('#lfoTable').find('input[id^="lfoLevel"]').trigger('change');
                         $('#dieselTable').find('input[id^="dieselLevel"]').trigger('change');
                         $('#addModal').find('#totalLfo').trigger('change');
@@ -2863,6 +2872,63 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         }
     }
 
+    // Rebuild level options; keep a saved value even if no longer in setup
+    function fillLevelSelect($sel, value){
+        if (value === null || value === undefined || value === '' || !parseFloat(value)) {
+            value = '0.00';
+        }
+        else {
+            value = String(value);
+        }
+
+        $sel.empty().append($('<option>').val('0.00').text('0.00'));
+        var found = (value === '0.00');
+
+        bitumenLevels.forEach(function(level){
+            // 0.00 already on top
+            if (!parseFloat(level)) {
+                return;
+            }
+
+            if (parseFloat(level) === parseFloat(value)) {
+                value = level;
+                found = true;
+            }
+
+            $sel.append($('<option>').val(level).text(level));
+        });
+
+        if (!found) {
+            $sel.append($('<option>').val(value).text(value));
+        }
+
+        if (!$sel.hasClass('select2-hidden-accessible')) {
+            $sel.select2({ dropdownParent: $('#bitumenTable'), width: '100%' });
+        }
+        $sel.val(value).trigger('change.select2');
+    }
+
+    function loadBitumenLevels(plantId, batchDrum){
+        $.post('php/getCalculations.php', {plantId: plantId, batchDrum: batchDrum, type: 'BITULEVEL'}, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                bitumenLevels = (obj.message.values || [])
+                    .map(function(v){ return v.level; })
+                    .filter(function(l){ return l !== null && l !== ''; })
+                    .sort(function(a, b){ return parseFloat(a) - parseFloat(b); });
+            }else{
+                bitumenLevels = [];
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+
+            $('#bitumenTable').find('select[id^="level"]').each(function(){
+                fillLevelSelect($(this), $(this).val());
+            });
+        });
+    }
+
     function loadAssets(plant, batchDrum){
         $('#spinnerLoading').show();
         $.post('php/getPlantAssets.php', {plantId: plant, batchDrum: batchDrum}, function(data)
@@ -3010,7 +3076,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                         $("#bitumenTable").find('#name:last').attr('name', 'name['+bitumenCount+']').attr("id", "name" + bitumenCount).css("text-align", "center").val(item.name || '');
                         $("#bitumenTable").find('#bitumenStatus:last').attr('name', 'bitumenStatus['+bitumenCount+']').attr("id", "bitumenStatus" + bitumenCount).val(item.bitumenStatus || '');
                         $("#bitumenTable").find('#temp:last').attr('name', 'temp['+bitumenCount+']').attr("id", "temp" + bitumenCount).css("text-align", "center").val(item.temperature);
-                        $("#bitumenTable").find('#level:last').attr('name', 'level['+bitumenCount+']').attr("id", "level" + bitumenCount).css("text-align", "center").val(item.level);
+                        fillLevelSelect($("#bitumenTable").find('#level:last').attr('name', 'level['+bitumenCount+']').attr("id", "level" + bitumenCount).css("text-align", "center"), item.level);
                         $("#bitumenTable").find('#actualLevel:last').attr('name', 'actualLevel['+bitumenCount+']').attr("id", "actualLevel" + bitumenCount).css("text-align", "center").val(item.actualLevel || '0.00');
                         $("#bitumenTable").find('#sixtyseventy:last').attr('name', 'sixtyseventy['+bitumenCount+']').attr("id", "sixtyseventy" + bitumenCount).css("text-align", "center").val(item.sixtyseventy);
 
@@ -3023,6 +3089,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                         bitumenCount++;
                     }
                 }
+                loadBitumenLevels(obj.message.plant_id, obj.message.batch_drum);
                 $('#addModal').find('#bitumenIncoming').val(obj.message.bitumenIncoming);
                 $('#addModal').find('#totalSixtySeventy').val(obj.message.totalSixtySeventy);
                 // $('#addModal').find('#totalTemp').val(obj.message.totalTemp);
@@ -3107,7 +3174,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
 
                         // Initialize all Select2 elements in the modal
-                        $('#addModal .select2').select2({
+                        $('#addModal select.select2').select2({
                             allowClear: true,
                             placeholder: "Please Select",
                             dropdownParent: $('#addModal') // Ensures dropdown is not cut off
@@ -3277,7 +3344,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 $('#addModal').find('#limeQty').val(obj.message.limeQty);
 
                 // Initialize all Select2 elements in the modal
-                $('#addModal .select2').select2({
+                $('#addModal select.select2').select2({
                     allowClear: true,
                     placeholder: "Please Select",
                     dropdownParent: $('#addModal') // Ensures dropdown is not cut off
