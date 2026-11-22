@@ -3720,3 +3720,80 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
 END
 $$
 DELIMITER ;
+
+-- 22/11/2026 --
+ALTER TABLE `Bitumen` ADD `stock_take_no` VARCHAR(50) NULL AFTER `id`;
+
+ALTER TABLE `Bitumen_Log` ADD `stock_take_no` VARCHAR(50) NULL AFTER `bitumen_id`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_BITUMEN` AFTER INSERT ON `Bitumen`
+ FOR EACH ROW INSERT INTO Bitumen_Log (
+    bitumen_id, stock_take_no, `60/70`, pg76, crmb, lfo, diesel, hotoil, other_diesel, fibre, data, declaration_datetime, plant_id, plant_code, batch_drum, remarks, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.stock_take_no, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.other_diesel, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, NEW.batch_drum, NEW.remarks, 1, NEW.created_by, NEW.created_datetime
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Bitumen_Log table
+    INSERT INTO Bitumen_Log (
+        bitumen_id, stock_take_no, `60/70`, pg76, crmb, lfo, diesel, hotoil, other_diesel, fibre, data, declaration_datetime, plant_id, plant_code, batch_drum, remarks, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.stock_take_no, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.other_diesel, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, NEW.batch_drum, NEW.remarks, action_value, NEW.modified_by, NEW.modified_datetime
+    );
+END
+$$
+DELIMITER ;
+
+ALTER TABLE `Plant` ADD `stock_take_batch` INT NOT NULL DEFAULT 1 AFTER `do_no`, ADD `stock_take_drum` INT NOT NULL DEFAULT 1 AFTER `stock_take_batch`;
+
+ALTER TABLE `Plant_Log` ADD `stock_take_batch` INT NULL AFTER `do_no`, ADD `stock_take_drum` INT NULL AFTER `stock_take_batch`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_PLANT` AFTER INSERT ON `Plant`
+ FOR EACH ROW INSERT INTO Plant_Log (
+    plant_id, plant_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, sales, purchase, locals, do_no, stock_take_batch, stock_take_drum, default_type, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.plant_code, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.sales, NEW.purchase, NEW.locals, NEW.do_no, NEW.stock_take_batch, NEW.stock_take_drum, NEW.default_type, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_PLANT` BEFORE UPDATE ON `Plant`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Plant_Log table
+    INSERT INTO Plant_Log (
+        plant_id, plant_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, sales, purchase, locals, do_no, stock_take_batch, stock_take_drum, default_type, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.plant_code, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.sales, NEW.purchase, NEW.locals, NEW.do_no, NEW.stock_take_batch, NEW.stock_take_drum, NEW.default_type, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;

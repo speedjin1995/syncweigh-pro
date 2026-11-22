@@ -211,6 +211,49 @@
                                             </div><!-- /.modal-content -->
                                         </div><!-- /.modal-dialog -->
                                     </div><!-- /.modal -->
+                                    <div class="modal fade" id="serialNoModal" tabindex="-1" role="dialog" aria-labelledby="serialNoModalTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="serialNoModalTitle">Serial No Setup</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form role="form" id="serialNoForm" class="needs-validation" novalidate autocomplete="off">
+                                                        <input type="hidden" id="serialPlantId" name="id">
+                                                        <div class="card bg-light">
+                                                            <div class="card-body">
+                                                                <div class="row mb-3">
+                                                                    <label for="serialPlantCode" class="col-sm-5 col-form-label">Plant Code</label>
+                                                                    <div class="col-sm-7">
+                                                                        <input type="text" class="form-control" id="serialPlantCode" readonly>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-3">
+                                                                    <label for="stockTakeBatch" class="col-sm-5 col-form-label">Next Stock Take No (Batch) <span class="text-danger">*</span></label>
+                                                                    <div class="col-sm-7">
+                                                                        <input type="number" class="form-control" id="stockTakeBatch" name="stockTakeBatch" min="1" step="1" required>
+                                                                        <div class="form-text">Preview: <span id="stockTakeBatchPreview" class="fw-semibold"></span></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-3">
+                                                                    <label for="stockTakeDrum" class="col-sm-5 col-form-label">Next Stock Take No (Drum) <span class="text-danger">*</span></label>
+                                                                    <div class="col-sm-7">
+                                                                        <input type="number" class="form-control" id="stockTakeDrum" name="stockTakeDrum" min="1" step="1" required>
+                                                                        <div class="form-text">Preview: <span id="stockTakeDrumPreview" class="fw-semibold"></span></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="hstack gap-2 justify-content-end">
+                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-danger" id="submitSerialNo">Submit</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="modal fade" id="uploadModal" style="display:none">
                                         <div class="modal-dialog modal-xl" style="max-width: 90%;">
                                             <div class="modal-content">
@@ -443,6 +486,11 @@ $(function () {
                                                     <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a class="dropdown-item edit-item-btn" id="serialNo${data}" onclick="serialNo(${data})">
+                                                    <i class="ri-hashtag align-bottom me-2 text-muted"></i> Serial No
+                                                </a>
+                                            </li>
                                         `;
                                     }
 
@@ -494,6 +542,25 @@ $(function () {
             });
         }
         // }
+    });
+
+    $('#submitSerialNo').on('click', function(){
+        if($('#serialNoForm').valid()){
+            $('#spinnerLoading').show();
+            $.post('php/plantSerialNo.php', $('#serialNoForm').serialize(), function(data){
+                var obj = JSON.parse(data);
+                $('#spinnerLoading').hide();
+                if(obj.status === 'success'){
+                    $('#serialNoModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else{
+                    $("#failBtn").attr('data-toast-text', obj.message || 'Something went wrong!');
+                    $("#failBtn").click();
+                }
+            });
+        }
     });
 
     $('#addPlant').on('click', function(){
@@ -649,6 +716,8 @@ $(function () {
             $('#spinnerLoading').hide();
         }     
     });
+
+    $(document).on('input', '#stockTakeBatch, #stockTakeDrum', updateSerialNoPreview);
 });
 
 function edit(id){
@@ -679,6 +748,39 @@ function edit(id){
         }
         else{
             $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        $('#spinnerLoading').hide();
+    });
+}
+
+// Same format as the stock take no built in php/bitumen.php
+function updateSerialNoPreview(){
+    var plantCode = $('#serialPlantCode').val();
+    var format = function(type, value){
+        var num = parseInt(value, 10);
+        return (num >= 1) ? plantCode + '/ST-' + type + '-' + String(num).padStart(5, '0') : '-';
+    };
+    $('#stockTakeBatchPreview').text(format('B', $('#stockTakeBatch').val()));
+    $('#stockTakeDrumPreview').text(format('D', $('#stockTakeDrum').val()));
+}
+
+function serialNo(id){
+    $('#spinnerLoading').show();
+    $.post('php/getPlant.php', {userID: id}, function(data)
+    {
+        var obj = JSON.parse(data);
+        if(obj.status === 'success'){
+            $('#serialNoModal').find('#serialPlantId').val(obj.message.id);
+            $('#serialNoModal').find('#serialPlantCode').val(obj.message.plant_code);
+            $('#serialNoModal').find('#stockTakeBatch').val(obj.message.stock_take_batch);
+            $('#serialNoModal').find('#stockTakeDrum').val(obj.message.stock_take_drum);
+            updateSerialNoPreview();
+            $('#serialNoModal .is-invalid').removeClass('is-invalid');
+            $('#serialNoModal').modal('show');
+        }
+        else{
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
