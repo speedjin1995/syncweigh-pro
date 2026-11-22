@@ -628,6 +628,10 @@ if(isset($_GET['id'])){
                                     <td style="border-bottom: 1px dotted #000;"></td>
                                     <td colspan="2"></td>
                                 </tr>
+                                <tr></tr>
+                                <tr>
+                                    <td class="left" colspan="4"><b>Stock Take No :</b> '.htmlspecialchars($row['stock_take_no'] ?? '-').'</td>
+                                </tr>
                             </table>
                         </body>
                     </html>
