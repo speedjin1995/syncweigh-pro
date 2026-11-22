@@ -204,6 +204,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                                     <th>Plant</th>
                                                                     <th>Batch/ <br> Drum</th>
                                                                     <th>Declaration <br> Date</th>
+                                                                    <th>Remarks</th>
                                                                     <!-- <th>Total (60/70) <br> Weight</th> -->
                                                                     <!-- <th>Total (60/70) <br> Temperature</th> -->
                                                                     <!-- <th>Total (60/70) <br> Level</th> -->
@@ -296,6 +297,10 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <input type="text" class="form-control" id="declarationTime" name="declarationTime" required>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <label for="remarks" class="col-form-label">Remarks</label>
+                                                    <textarea class="form-control" id="remarks" name="remarks" rows="2"></textarea>
                                                 </div>
                                                 <input type="hidden" class="form-control" id="bitumenId" name="bitumenId"> 
                                                 <input type="hidden" class="form-control" id="plantCode" name="plantCode">
@@ -1217,6 +1222,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 { data: 'plant' },
                 { data: 'batch_drum' },
                 { data: 'declaration_datetime' },
+                { data: 'remarks' },
                 // { data: 'totalSixtySeventy' },
                 // { data: 'totalTemperature' },
                 // { data: 'totalLevel' },
@@ -1307,6 +1313,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     { data: 'plant' },
                     { data: 'batch_drum' },
                     { data: 'declaration_datetime' },
+                    { data: 'remarks' },
                     // { data: 'totalSixtySeventy' },
                     // { data: 'totalTemperature' },
                     // { data: 'totalLevel' },
@@ -1382,6 +1389,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $('#addModal').find('#bitumenId').val("");
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#batchDrum').val("").trigger('change');
+            $('#addModal').find('#remarks').val('');
             $('#declarationDate')[0]._flatpickr.setDate(today);
             $('#declarationTime')[0]._flatpickr.clear();
             $('#addModal').find('#datetime').val('');
@@ -2960,6 +2968,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 $('#addModal').find('#plant').val(obj.message.plant_id).select2('destroy').select2();
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#batchDrum').val(obj.message.batch_drum).select2('destroy').select2();
+                $('#addModal').find('#remarks').val(obj.message.remarks || '');
                 var declarationDt = new Date(obj.message.declaration_datetime);
                 $('#declarationDate')[0]._flatpickr.setDate(declarationDt);
                 $('#declarationTime')[0]._flatpickr.setDate(declarationDt);

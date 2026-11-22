@@ -260,6 +260,7 @@ if(isset($_POST['userID'])){
                 $message['plant_id'] = $row['plant_id'];
                 $message['plant_code'] = $row['plant_code'];
                 $message['batch_drum'] = $row['batch_drum'];
+                $message['remarks'] = $row['remarks'];
                 $message['declaration_datetime'] = $row['declaration_datetime'];
             }
             

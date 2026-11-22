@@ -88,6 +88,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "no"=>$salesCount,
     "plant"=>$row['plant'],
     "batch_drum"=>$row['batch_drum'],
+    "remarks"=>$row['remarks'],
     "totalSixtySeventy"=>$totalSixtySeventy,
     "totalTemperature"=>$totalTemperature,
     "totalLevel"=>$totalLevel,

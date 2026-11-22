@@ -3681,3 +3681,42 @@ SELECT role_id, module_id, 37 FROM role_permissions WHERE permission_id = 7 AND 
 DELETE FROM role_permissions WHERE permission_id = 7 AND module_id IN (1, 2, 3, 4, 5);
 
 UPDATE permissions SET modules = '[\"8\",\"6\",\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"31\",\"14\",\"15\",\"36\",\"37\",\"35\",\"34\",\"39\"]' WHERE id = 7;
+
+-- 22/11/2026 --
+ALTER TABLE `Bitumen` ADD `remarks` TEXT NULL AFTER `batch_drum`;
+
+ALTER TABLE `Bitumen_Log` ADD `remarks` TEXT NULL AFTER `batch_drum`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_BITUMEN` AFTER INSERT ON `Bitumen`
+ FOR EACH ROW INSERT INTO Bitumen_Log (
+    bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, other_diesel, fibre, data, declaration_datetime, plant_id, plant_code, batch_drum, remarks, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.other_diesel, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, NEW.batch_drum, NEW.remarks, 1, NEW.created_by, NEW.created_datetime
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Bitumen_Log table
+    INSERT INTO Bitumen_Log (
+        bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, other_diesel, fibre, data, declaration_datetime, plant_id, plant_code, batch_drum, remarks, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.other_diesel, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, NEW.batch_drum, NEW.remarks, action_value, NEW.modified_by, NEW.modified_datetime
+    );
+END
+$$
+DELIMITER ;
