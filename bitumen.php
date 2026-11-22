@@ -2083,7 +2083,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     $('#addModal').find('#totalDiesel').trigger('change');
                 });
             } else {
-                row.find('input[id^="dieselVolume"]').val('0.00');
+                // No level: keep the volume the user typed in by hand
                 row.find('input[id^="dieselWeight"]').val('0.00');
                 $('#addModal').find('#totalDiesel').trigger('change');
             }
@@ -2126,7 +2126,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     $('#addModal').find('#totalDiesel').trigger('change');
                 });
             } else {
-                row.find('input[id^="dieselVolume"]').val('0.00');
+                // No level: keep the volume the user typed in by hand
                 row.find('input[id^="dieselWeight"]').val('0.00');
                 $('#addModal').find('#totalDiesel').trigger('change');
             }
