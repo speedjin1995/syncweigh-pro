@@ -3835,3 +3835,32 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_ASSET` BEFORE UPDATE ON `Assets`
 END
 $$
 DELIMITER ;
+
+ALTER TABLE `Bitumen` ADD `cancel_reason` TEXT NULL AFTER `remarks`;
+
+ALTER TABLE `Bitumen_Log` ADD `cancel_reason` TEXT NULL AFTER `remarks`;
+
+UPDATE permissions SET modules = JSON_ARRAY_APPEND(modules, '$', '11') WHERE id = 7 AND NOT JSON_CONTAINS(modules, '"11"');
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Bitumen_Log table
+    INSERT INTO Bitumen_Log (
+        bitumen_id, stock_take_no, `60/70`, pg76, crmb, lfo, diesel, hotoil, other_diesel, fibre, data, declaration_datetime, plant_id, plant_code, batch_drum, remarks, cancel_reason, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.stock_take_no, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.other_diesel, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, NEW.batch_drum, NEW.remarks, NEW.cancel_reason, action_value, NEW.modified_by, NEW.modified_datetime
+    );
+END
+$$
+DELIMITER ;

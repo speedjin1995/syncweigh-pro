@@ -779,6 +779,30 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+        <div class="modal fade" id="cancelModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form role="form" id="cancelForm">
+                        <div class="modal-header bg-gray-dark color-palette">
+                            <h4 class="modal-title">Cancel Stock Take</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="cancelId" name="id">
+                            <div class="form-group">
+                                <label for="cancelReason">Cancel Reason *</label>
+                                <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3" required></textarea>
+                                <div class="invalid-feedback">Please fill in the cancel reason</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" id="submitCancel">Cancel Stock Take</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="uploadModal">
             <div class="modal-dialog modal-xl" style="max-width: 90%;">
                 <div class="modal-content">
@@ -1249,7 +1273,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     render: function ( data, type, row ) {
                         var buttons = '';
 
-                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
+                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'print', 'cancelled'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
                             buttons += `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1272,6 +1296,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                             <li>
                                                 <a class="dropdown-item" onclick="printDeclaration(${data})">
                                                     <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+
+                                    if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('cancelled'))){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item" onclick="deactivate(${data})">
+                                                    <i class="ri-close-circle-line align-bottom me-2 text-muted"></i> Cancel
                                                 </a>
                                             </li>
                                         `;
@@ -1341,7 +1375,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                         render: function ( data, type, row ) {
                             var buttons = '';
 
-                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'print', 'cancelled'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
                                 buttons += `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1364,6 +1398,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <li>
                                                     <a class="dropdown-item" onclick="printDeclaration(${data})">
                                                         <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+
+                                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('cancelled'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item" onclick="deactivate(${data})">
+                                                        <i class="ri-close-circle-line align-bottom me-2 text-muted"></i> Cancel
                                                     </a>
                                                 </li>
                                             `;
@@ -2716,6 +2760,46 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 }
             });
         });
+
+        $('#submitCancel').on('click', function(){
+            var reason = $('#cancelReason').val().trim();
+
+            if (!reason) {
+                $('#cancelReason').addClass('is-invalid');
+                return;
+            }
+
+            $('#cancelReason').removeClass('is-invalid');
+            $('#spinnerLoading').show();
+
+            $.post('php/cancelBitumen.php', {id: $('#cancelId').val(), cancelReason: reason}, function(data){
+                var obj = {};
+                try {
+                    obj = JSON.parse(data);
+                } catch (e) {
+                    obj = {status: 'failed', message: 'Unexpected server response'};
+                }
+
+                $('#spinnerLoading').hide();
+
+                if (obj.status === 'success') {
+                    $('#cancelModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                    // table var is local to $(function), so look it up by selector
+                    $('#weightTable').DataTable().ajax.reload();
+                }
+                else {
+                    $("#failBtn").attr('data-toast-text', obj.message || 'Failed to cancel');
+                    $("#failBtn").click();
+                }
+            }).fail(function(){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', 'Failed to cancel, please try again');
+                $("#failBtn").click();
+            });
+        });
+
     });
 
     function renderSheet(sheetName) {
@@ -3393,27 +3477,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
     }
 
     function deactivate(id){
-        $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+        $('#cancelModal').find('#cancelId').val(id);
+        $('#cancelModal').find('#cancelReason').val('').removeClass('is-invalid');
+        $('#cancelModal').modal('show');
     }
 
     function printDeclaration(id) {
