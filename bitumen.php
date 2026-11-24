@@ -190,6 +190,12 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                                     Upload Bom List
                                                                 </button>
                                                                 <?php } ?>
+                                                                <?php if (hasModulePermission('Stock Management', 'Stock Take', ['edit'])){ ?>
+                                                                <button type="button" id="bulkRefreshBtn" class="btn btn-warning waves-effect waves-light">
+                                                                    <i class="ri-refresh-line align-middle me-1"></i>
+                                                                    Refresh
+                                                                </button>
+                                                                <?php } ?>
                                                                 <?php if (hasModulePermission('Stock Management', 'Stock Take', ['create'])){ ?>
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
@@ -803,6 +809,48 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="bulkRefreshModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-gray-dark color-palette">
+                        <h4 class="modal-title">Bulk Refresh Stock Take</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="bulkFromDate" class="form-label">From Date *</label>
+                            <input type="text" class="form-control" id="bulkFromDate" placeholder="Please Select">
+                        </div>
+                        <div class="mb-3">
+                            <label for="bulkToDate" class="form-label">To Date *</label>
+                            <input type="text" class="form-control" id="bulkToDate" placeholder="Please Select">
+                        </div>
+                        <div class="mb-3">
+                            <label for="bulkPlant" class="form-label">Plant</label>
+                            <select id="bulkPlant" class="form-select">
+                                <?php mysqli_data_seek($plant, 0); ?>
+                                <?php while($rowPlantB=mysqli_fetch_assoc($plant)){ ?>
+                                    <option value="<?=$rowPlantB['id'] ?>"><?=$rowPlantB['name'] ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bulkBatchDrum" class="form-label">Batch/Drum</label>
+                            <select id="bulkBatchDrum" class="form-select">
+                                <option value="">-</option>
+                                <option value="Batch">Batch</option>
+                                <option value="Drum">Drum</option>
+                            </select>
+                        </div>
+                        <div id="bulkProgress" class="text-muted small"></div>
+                    </div>
+                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-warning" id="startBulkRefresh">Start Refresh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="uploadModal">
             <div class="modal-dialog modal-xl" style="max-width: 90%;">
                 <div class="modal-content">
@@ -1164,6 +1212,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
     var lfoIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
     var dieselIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
     var bitumenLevels = [];
+    var bulkRefreshing = false;
+    var bulkQueue = [];
+    var bulkIndex = 0;
 
     $(function () {
         const today = new Date();
@@ -2642,7 +2693,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         });
 
         $('#refreshBtn').on('click', function(){
-            if (!confirm('This will reset previous reading, incoming data and calculation. Continue?')){
+            if (!bulkRefreshing && !confirm('This will reset previous reading, incoming data and calculation. Continue?')){
                 return;
             } 
             var declarationDate = $('#addModal').find('#datetime').val();
@@ -2666,6 +2717,62 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     });
                 }
             }
+        });
+
+        $('#bulkFromDate, #bulkToDate').flatpickr({
+            dateFormat: "d-m-Y H:i",
+            enableTime: true,
+            time_24hr: true
+        });
+
+        $('#bulkRefreshBtn').on('click', function(){
+            $('#bulkFromDate').val($('#fromDateSearch').val());
+            $('#bulkToDate').val($('#toDateSearch').val());
+            $('#bulkPlant').val($('#plantSearch').val());
+            $('#bulkBatchDrum').val($('#batchDrumSearch').val() || '-');
+            $('#bulkProgress').text('');
+            $('#bulkRefreshModal').modal('show');
+        });
+
+        $('#startBulkRefresh').on('click', function(){
+            var fromDate = $('#bulkFromDate').val();
+            var toDate = $('#bulkToDate').val();
+
+            if (!fromDate || !toDate) {
+                $("#failBtn").attr('data-toast-text', 'Please select From and To date.');
+                $("#failBtn").click();
+                return;
+            }
+            if (!confirm('This will reset previous reading, incoming and calculation for every stock take in the date range. Continue?')) {
+                return;
+            }
+
+            $('#startBulkRefresh').prop('disabled', true);
+            $('#bulkProgress').text('Loading stock takes...');
+            // Same list query as the table; oldest first so each record's previous reading is already refreshed
+            $.post('php/filterBitumen.php', {
+                draw: 1,
+                start: 0,
+                length: 100000,
+                order: [{column: 0, dir: 'asc'}],
+                columns: [{data: 'declaration_datetime'}],
+                search: {value: ''},
+                fromDate: fromDate,
+                toDate: toDate,
+                plant: $('#bulkPlant').val() || '',
+                batchDrum: $('#bulkBatchDrum').val() || ''
+            }, function(data){
+                var obj = JSON.parse(data);
+                bulkQueue = obj.aaData || [];
+
+                if (bulkQueue.length === 0) {
+                    finishBulk('No stock take found in this range.', false);
+                    return;
+                }
+                bulkIndex = 0;
+                bulkRefreshing = true;
+                processNextBulk();
+            });
         });
 
         $('#uploadBom').on('click', function(){
@@ -2808,6 +2915,72 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         });
 
     });
+
+    // Runs callback once no ajax request is pending
+    function whenIdle(callback){
+        if ($.active === 0) {
+            callback();
+        }
+        else {
+            $(document).one('ajaxStop', callback);
+        }
+    }
+
+    function processNextBulk(){
+        if (bulkIndex >= bulkQueue.length) {
+            finishBulk('Refreshed ' + bulkQueue.length + ' stock take(s).', true);
+            return;
+        }
+        var row = bulkQueue[bulkIndex];
+        $('#bulkProgress').text('Refreshing ' + (bulkIndex + 1) + ' / ' + bulkQueue.length + ' - ' + row.stock_take_no);
+
+        edit(row.id);
+        whenIdle(function(){
+            // Stop if the modal did not load this record, so the previous one is not saved again
+            if ($('#addModal').find('#bitumenId').val() !== String(row.id)) {
+                finishBulk('Stopped: could not load ' + row.stock_take_no + '.', false);
+                return;
+            }
+            $('#refreshBtn').trigger('click');
+            whenIdle(function(){
+                saveBulkRecord(row);
+            });
+        });
+    }
+
+    function saveBulkRecord(row){
+        $.post('php/bitumen.php', $('#siteForm').serialize(), function(data){
+            var obj = JSON.parse(data);
+            if (obj.status === 'success') {
+                bulkIndex++;
+                processNextBulk();
+            }
+            else {
+                finishBulk('Stopped at ' + row.stock_take_no + ': ' + obj.message, false);
+            }
+        }).fail(function(){
+            finishBulk('Stopped at ' + row.stock_take_no + ': save failed.', false);
+        });
+    }
+
+    function finishBulk(message, ok){
+        bulkRefreshing = false;
+        $('#startBulkRefresh').prop('disabled', false);
+        $('#spinnerLoading').hide();
+        $('#bulkProgress').text(message);
+        $('#weightTable').DataTable().ajax.reload();
+
+        if (ok) {
+            $('#bulkRefreshModal').modal('hide');
+            $("#successBtn").attr('data-toast-text', message);
+            $("#successBtn").click();
+        }
+        else {
+            $("#failBtn").attr('data-toast-text', message);
+            $("#failBtn").click();
+        }
+    }
+
 
     function renderSheet(sheetName) {
         if (!uploadWorkbook) return;
@@ -3478,7 +3651,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     'height': 'auto'
                 });
 
-                $('#addModal').modal('show');
+                if (!bulkRefreshing) {
+                    $('#addModal').modal('show');
+                }
             
                 $('#siteForm').validate({
                     errorElement: 'span',
