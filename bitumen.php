@@ -975,8 +975,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             </td>
             <td>
                 <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" min="0" onkeydown="return event.key !== '-'" style="background-color:white;" value="0.00" required>
+                <small class="text-danger lfo-ratio-warn" style="display:none;"></small>
             </td>
-            <td class="d-flex justify-content-center">
+            <td class="text-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
                     <i class="fa fa-times"></i>
                 </button>
@@ -2041,6 +2042,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 var weight = parseFloat($(this).val()) || 0;
                 totalWeight += weight;
             });
+
+            checkLfoRatio();
 
             $('#addModal').find('#totalLfoLitre').val(totalVolume.toFixed(2));
             $(this).val(totalWeight.toFixed(2));
@@ -3321,6 +3324,21 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         }
     }
 
+    // Warn when LFO Litre/Tonnage > 8 per row
+    function checkLfoRatio(){
+        $('#lfoTable').find('tr').each(function(){
+            var rowVolume = parseFloat($(this).find('input[id^="lfoVolume"]').val()) || 0;
+            var rowWeight = parseFloat($(this).find('input[id^="lfoWeight"]').val()) || 0;
+            var warn = $(this).find('.lfo-ratio-warn');
+            if (rowWeight > 0 && (rowVolume / rowWeight) > 8) {
+                warn.text('Litre/Tonnage = ' + (rowVolume / rowWeight).toFixed(2) + ' (> 8)').show();
+            }
+            else {
+                warn.text('').hide();
+            }
+        });
+    }
+
     function edit(id){
         $('#spinnerLoading').show();
         $.post('php/getBitumen.php', {userID: id}, function(data)
@@ -3423,6 +3441,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 $('#addModal').find('#totalLfo').val(obj.message.totalLfo);
                 $('#addModal').find('#totalLfoMTDisplay').text(obj.message.totalLfo);
                 $('#addModal').find('#totalLfoUsage').val(obj.message.totalLfoUsage);
+                checkLfoRatio();
 
                 // Diesel Table Processing
                 // $('#addModal').find('#dieselSupplierTransport').val(obj.message.dieselSupplierTransport);
