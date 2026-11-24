@@ -97,7 +97,7 @@ if(isset($_POST['userID'])){
             '3003/002' // LFO AJIL
         ];
         $placeholders = implode(',', array_fill(0, count($rawMatCode), '?'));
-        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(supplier_weight) AS supplier_weight FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND tare_weight1_date > ? AND tare_weight1_date <= ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, supplier_code, SUM(CASE WHEN supplier_weight_uom > 0 THEN 0 ELSE supplier_weight END) AS supplier_weight, SUM(CASE WHEN supplier_weight_uom > 0 THEN supplier_weight_uom ELSE 0 END) AS supplier_weight_uom FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND tare_weight1_date > ? AND tare_weight1_date <= ? AND batch_drum = ? GROUP BY raw_mat_code, supplier_code")) {
             $bindTypes = str_repeat('s', count($rawMatCode)) . 'ssss';
             $bindParams = array_merge($rawMatCode, [$plantCode, $startDate, $endDate, $batchDrum]);
             $update_stmt->bind_param($bindTypes, ...$bindParams);
@@ -112,7 +112,7 @@ if(isset($_POST['userID'])){
             }
             else{
                 $result = $update_stmt->get_result();
-                $message = array();
+                $message = array('dieselIncoming' => 0, 'lfoIncoming' => 0, 'bitumenIncoming' => 0, 'lfoIncomingBySupplier' => array());
 
                 while ($row = $result->fetch_assoc()) {
                     if ($row['raw_mat_code'] == 'DIE001' || $row['raw_mat_code'] == '3003/001') {
@@ -124,13 +124,13 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
-                                $message['dieselIncoming'] = $litre;
+                                $litre = (float) ($row['supplier_weight_uom'] ?? 0) + ($row['supplier_weight'] ?? 0) * $rate; // typed value as-is; convert only rows without one
+                                $message['dieselIncoming'] += $litre;
                             } else {
-                                $message['dieselIncoming'] = 0; // Default to 0 if no conversion found
+                                $message['dieselIncoming'] += 0; // Default to 0 if no conversion found
                             }
                         } else {
-                            $message['dieselIncoming'] = 0; // Default to 0 if query fails
+                            $message['dieselIncoming'] += 0; // Default to 0 if query fails
                         }
 
                         $conversion_stmt->close();
@@ -143,13 +143,18 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
-                                $message['lfoIncoming'] = $litre;
+                                $litre = (float) ($row['supplier_weight_uom'] ?? 0) + ($row['supplier_weight'] ?? 0) * $rate; // typed value as-is; convert only rows without one
+                                $message['lfoIncoming'] += $litre;
+                                $supplierCode = $row['supplier_code'] ?? '';
+                                if (!isset($message['lfoIncomingBySupplier'][$supplierCode])) {
+                                    $message['lfoIncomingBySupplier'][$supplierCode] = 0;
+                                }
+                                $message['lfoIncomingBySupplier'][$supplierCode] += $litre;
                             } else {
-                                $message['lfoIncoming'] = 0; // Default to 0 if no conversion found
+                                $message['lfoIncoming'] += 0; // Default to 0 if no conversion found
                             }
                         } else {
-                            $message['lfoIncoming'] = 0; // Default to 0 if query fails
+                            $message['lfoIncoming'] += 0; // Default to 0 if query fails
                         }
 
                         $conversion_stmt->close();
@@ -162,13 +167,13 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
-                                $message['bitumenIncoming'] = $litre;
+                                $litre = (float) ($row['supplier_weight_uom'] ?? 0) + ($row['supplier_weight'] ?? 0) * $rate; // typed value as-is; convert only rows without one
+                                $message['bitumenIncoming'] += $litre;
                             } else {
-                                $message['bitumenIncoming'] = 0; // Default to 0 if no conversion found
+                                $message['bitumenIncoming'] += 0; // Default to 0 if no conversion found
                             }
                         } else {
-                            $message['bitumenIncoming'] = 0; // Default to 0 if query fails
+                            $message['bitumenIncoming'] += 0; // Default to 0 if query fails
                         }
 
                         $conversion_stmt->close();

@@ -31,6 +31,7 @@ if(isset($_POST['plantId'], $_POST['batchDrum'])){
                     'length' => $row['length'],
                     'height' => $row['height'],
                     'diameter' => $row['diameter'],
+                    'supplier_id' => $row['supplier_id'],
                 ];
             }
             

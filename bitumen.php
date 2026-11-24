@@ -1154,6 +1154,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
     var bitumenCount = $("#bitumenTable").find(".details").length;
     var lfoCount = $("#lfoTable").find(".details").length;
+    var lfoIncomingBySupplier = {};
     var dieselCount = $("#dieselTable").find(".details").length;
     var otherDieselCount = $("#otherDieselTable").find(".details").length;
     var hotoilCount = $("#hotoilTable").find(".details").length;
@@ -1690,7 +1691,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
                 if (plantCode){
                     // getPo(plantCode, batchDrum, declarationDate);
-                    getIncoming(plantCode, batchDrum, declarationDate);
+                    getIncoming(plantCode, batchDrum, declarationDate, applyLfoIncoming);
                 }
             }
         });
@@ -1713,7 +1714,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
                 if (plantCode){
                     // getPo(plantCode, batchDrum, declarationDate);
-                    getIncoming(plantCode, batchDrum, declarationDate);
+                    getIncoming(plantCode, batchDrum, declarationDate, applyLfoIncoming);
                 }
             }
         });
@@ -1878,6 +1879,11 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             lfoCount--;
         });
 
+        // Supplier picked by hand: re-allocate LFO incoming
+        $("#lfoTable").on('change', 'select[id^="lfoSupplier"]', function(){
+            applyLfoIncoming();
+        });
+
         // Event delegation for lfoIncomingVolume
         $("#lfoTable").on('change', 'input[id^="lfoIncomingVolume"]', function(){
             var totalLfoIncomingVolume = 0;
@@ -2009,7 +2015,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 allowClear: true,
                 placeholder: "Please Select",
                 dropdownParent: $('#lfoTable') // Prevents dropdown cutoff inside modals/tables
-            });
+            }).val(asset ? asset.supplier_id || '' : '').trigger('change.select2');
             $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount);
             $("#lfoTable").find('#lfoIncomingVolume:last').attr('name', 'lfoIncomingVolume['+lfoCount+']').attr("id", "lfoIncomingVolume" + lfoCount);
@@ -2651,6 +2657,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 });
                 if (plantCode) {
                     getIncoming(plantCode, batchDrum, declarationDate, function(){
+                        applyLfoIncoming();
                         $('#bitumenTable').find('select[id^="level"]').trigger('change');
                         $('#lfoTable').find('input[id^="lfoLevel"]').trigger('change');
                         $('#dieselTable').find('input[id^="dieselLevel"]').trigger('change');
@@ -3047,6 +3054,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                             $('.add-pg-76').trigger('click', [asset]);
                         }
                     });
+                    applyLfoIncoming();
                 }else{
                     // Reset Bitumen Table
                     $('#bitumenTable').html('');
@@ -3080,6 +3088,29 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         });
     }
 
+    // Fill each LFO row's incoming from its supplier's purchases; a supplier's total goes to its first tank only
+    function applyLfoIncoming(){
+        var usedCodes = {};
+        var $selects = $('#lfoTable').find('select[id^="lfoSupplier"]');
+
+        $selects.each(function(){
+            var code = $(this).find('option:selected').data('code') || '';
+            var volume = 0;
+
+            if (code && !usedCodes[code] && lfoIncomingBySupplier[code]) {
+                volume = parseFloat(lfoIncomingBySupplier[code]) || 0;
+            }
+            if (code) {
+                usedCodes[code] = true;
+            }
+
+            $(this).closest('.details').find('input[id^="lfoIncomingVolume"]').val(volume.toFixed(2));
+        });
+
+        // Refresh header total and usage
+        $('#lfoTable').find('input[id^="lfoIncomingVolume"]').first().trigger('change');
+    }
+
     function getIncoming(plantCode, batchDrum, declarationDate, callback){
         if (declarationDate && plantCode && batchDrum){
             // load previous diesel reading
@@ -3099,6 +3130,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     // $('#addModal').find('#bitumenIncoming').val(parseFloat(obj.message.bitumenIncoming || 0).toFixed(2));
                     // $('#addModal').find('#dieselIncoming').val(parseFloat(obj.message.dieselIncoming || 0).toFixed(2));
                     // $('#addModal').find('#lfoIncoming').val(parseFloat(obj.message.lfoIncoming || 0).toFixed(2));
+                    lfoIncomingBySupplier = obj.message.lfoIncomingBySupplier || {};
                     if (typeof callback === 'function') callback();
                 }
                 else if(obj.status === 'failed'){
