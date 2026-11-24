@@ -3864,3 +3864,42 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
 END
 $$
 DELIMITER ;
+
+-- 24/11/2026 --
+ALTER TABLE `Product` ADD `description2` VARCHAR(255) NULL AFTER `description`;
+
+ALTER TABLE `Product_Log` ADD `description2` VARCHAR(255) NULL AFTER `description`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_PRODUCT` AFTER INSERT ON `Product`
+ FOR EACH ROW INSERT INTO Product_Log (
+    product_id, product_code, name, description, description2, price, variance, high, low, basic_uom, type, action_id, action_by, event_date
+)
+VALUES (
+    NEW.id, NEW.product_code, NEW.name, NEW.description, NEW.description2, NEW.price, NEW.variance, NEW.high, NEW.low, NEW.basic_uom, NEW.type, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_PRODUCT` BEFORE UPDATE ON `Product`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Product_Log table
+    INSERT INTO Product_Log (
+        product_id, product_code, name, description, description2, price, variance, high, low, basic_uom, type, action_id, action_by, event_date
+    )
+    VALUES (
+        NEW.id, NEW.product_code, NEW.name, NEW.description, NEW.description2, NEW.price, NEW.variance, NEW.high, NEW.low, NEW.basic_uom, NEW.type, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;

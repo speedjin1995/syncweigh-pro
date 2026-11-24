@@ -182,6 +182,14 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                    <div class="row">
+                                                                                        <label for="description2" class="col-sm-4 col-form-label">Description 2</label>
+                                                                                        <div class="col-sm-8">
+                                                                                            <input type="text" class="form-control" id="description2" name="description2" placeholder="Description 2">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="description" class="col-sm-4 col-form-label">Variance Type</label>
@@ -772,6 +780,7 @@ $(function () {
         $('#addModal').find('#productName').val("");
         $('#addModal').find('#productPrice').val("");
         $('#addModal').find('#description').val("");
+        $('#addModal').find('#description2').val("");
         $('#addModal').find('#varianceType').val("").trigger('change');
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
@@ -1092,6 +1101,7 @@ function edit(id){
             $('#addModal').find('#productName').val(obj.message.name);
             $('#addModal').find('#productPrice').val(obj.message.price);
             $('#addModal').find('#description').val(obj.message.description);
+            $('#addModal').find('#description2').val(obj.message.description2);
             $('#addModal').find('#varianceType').val(obj.message.variance);
             $('#addModal').find('#high').val(obj.message.high);
             $('#addModal').find('#low').val(obj.message.low);

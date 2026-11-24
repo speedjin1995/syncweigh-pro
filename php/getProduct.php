@@ -27,6 +27,7 @@ if(isset($_POST['userID'])){
                 $message['name'] = $row['name'];
                 $message['price'] = $row['price'];
                 $message['description'] = $row['description'];
+                $message['description2'] = $row['description2'];
                 $message['variance'] = $row['variance'];
                 $message['high'] = $row['high'];
                 $message['low'] = $row['low'];
