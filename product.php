@@ -234,7 +234,8 @@
                                                                                 <div class="row">
                                                                                     <label for="type" class="col-sm-4 col-form-label">Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="type" name="type" class="form-select select2" >
+                                                                                        <select id="type" name="type" class="form-select select2" required>
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
                                                                                             <option value="Premix">Premix</option>
                                                                                             <option value="Others">Others</option>
                                                                                         </select>
