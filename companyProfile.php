@@ -14,11 +14,11 @@ if (!hasModulePermission('Setting', 'Company Profile', ['view', 'edit'])){
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = '1';
-$stmt2 = $link->prepare("SELECT company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links from Company where id = ?");
+$stmt2 = $link->prepare("SELECT company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links, closed_order_days from Company where id = ?");
 mysqli_stmt_bind_param($stmt2, "s", $id);
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
-mysqli_stmt_bind_result($stmt2, $company_reg_no, $name, $address_line_1, $address_line_2, $address_line_3, $phone_no, $fax_no, $links);
+mysqli_stmt_bind_result($stmt2, $company_reg_no, $name, $address_line_1, $address_line_2, $address_line_3, $phone_no, $fax_no, $links, $closed_order_days);
 
 if (mysqli_stmt_fetch($stmt2)) {
     $usercompany_reg_no = $company_reg_no;
@@ -29,6 +29,7 @@ if (mysqli_stmt_fetch($stmt2)) {
     $userphone_no = $phone_no;
     $userfax_no = $fax_no;
     $userlinks = $links;
+    $userclosed_order_days = $closed_order_days;
     
     $linksArray = json_decode($links, true);
     $usersop_link = $linksArray['sop_link'] ?? '';
@@ -153,6 +154,14 @@ if(hasModulePermission('Setting', 'Company Profile', ['edit'])){
                                                     <label for="helpLink" class="col-sm-4 col-form-label">Help Link</label>
                                                     <div class="col-sm-8">
                                                         <input type="url" class="form-control" id="helpLink" name="helpLink" placeholder="Help Link" value="<?=$userhelp_link ?>" <?=$readonly ?>>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="closedOrderDays" class="col-sm-4 col-form-label">Closed SO/PO Selectable Days *</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="number" class="form-control" id="closedOrderDays" name="closedOrderDays" min="0" step="1" placeholder="Days a closed SO/PO stays in weighing dropdown" value="<?=$userclosed_order_days ?>" required <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>

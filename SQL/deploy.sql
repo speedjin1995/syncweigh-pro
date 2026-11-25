@@ -3981,5 +3981,35 @@ $$
 DELIMITER ;
 
 -- one-time backfill: orders already closed get closed_date from their last modified_date
-UPDATE `Sales_Order` SET closed_date = modified_date WHERE status IN ('Close','Closed') AND closed_date IS NULL;
-UPDATE `Purchase_Order` SET closed_date = modified_date WHERE status IN ('Close','Closed') AND closed_date IS NULL;
+UPDATE `Sales_Order` SET closed_date = modified_date WHERE status IN ('Close','Closed');
+UPDATE `Purchase_Order` SET closed_date = modified_date WHERE status IN ('Close','Closed');
+
+-- 26/11/2026 --
+ALTER TABLE `Company` ADD `closed_order_days` INT NOT NULL DEFAULT 30 AFTER `links`;
+ALTER TABLE `Company_Log` ADD `closed_order_days` INT NULL DEFAULT NULL AFTER `links`;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_COMPANY` AFTER INSERT ON `Company`
+ FOR EACH ROW INSERT INTO Company_Log (
+    company_id, company_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links, closed_order_days, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.company_code, NEW.company_reg_no, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.links, NEW.closed_order_days, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_COMPANY` BEFORE UPDATE ON `Company`
+ FOR EACH ROW BEGIN
+
+    -- Insert into Company_Log table
+    INSERT INTO Company_Log (
+        company_id, company_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links, closed_order_days, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.company_code, NEW.company_reg_no, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.links, NEW.closed_order_days, 2, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;

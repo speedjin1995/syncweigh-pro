@@ -19,6 +19,7 @@ if(isset($_POST['companyRegNo'], $_POST['companyName'], $_POST['companyAddress']
 	$sopLink = '';
 	$hardwareSetupLink = '';
 	$helpLink = '';
+	$closedOrderDays = 30;
 	$today = date("Y-m-d H:i:s");
 	$id = '1';
 	$action = '2';
@@ -47,6 +48,10 @@ if(isset($_POST['companyRegNo'], $_POST['companyName'], $_POST['companyAddress']
 		$helpLink = filter_input(INPUT_POST, 'helpLink', FILTER_SANITIZE_URL);
 	}
 	
+	if (isset($_POST['closedOrderDays']) && $_POST['closedOrderDays'] !== '') {
+		$closedOrderDays = max(0, (int)$_POST['closedOrderDays']);
+	}
+
 	$linksArray = array(
 		'sop_link' => $sopLink,
 		'hardware_setup_link' => $hardwareSetupLink,
@@ -54,8 +59,8 @@ if(isset($_POST['companyRegNo'], $_POST['companyName'], $_POST['companyAddress']
 	);
 	$companyLinks = json_encode($linksArray);
 	
-	if ($stmt2 = $db->prepare("UPDATE Company SET company_reg_no=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, name=?, links=?, modified_date=?, modified_by=? WHERE id=?")) {
-		$stmt2->bind_param('sssssssssss', $companyRegNo, $companyAddress, $companyAddress2, $companyAddress3, $companyPhone, $companyFax, $companyName, $companyLinks, $today, $username, $id);
+	if ($stmt2 = $db->prepare("UPDATE Company SET company_reg_no=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, name=?, links=?, closed_order_days=?, modified_date=?, modified_by=? WHERE id=?")) {
+		$stmt2->bind_param('ssssssssisss', $companyRegNo, $companyAddress, $companyAddress2, $companyAddress3, $companyPhone, $companyFax, $companyName, $companyLinks, $closedOrderDays, $today, $username, $id);
 		
 		if($stmt2->execute()){
 			$stmt2->close();
