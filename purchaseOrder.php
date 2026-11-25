@@ -668,6 +668,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                                                     <th>Total Price</th>
                                                                     <?php endif; ?>
                                                                     <th>Status</th>
+                                                                    <th>Closed Days</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -858,6 +859,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                     ? [{ data: 'unit_price' }, { data: 'total_price' }]
                     : []),
                 { data: 'status' },
+                { data: 'closed_days' },
                 { data: 'modified_date' },
                 {
                     data: 'id',
@@ -979,6 +981,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                         ? [{ data: 'unit_price' }, { data: 'total_price' }]
                         : []),
                     { data: 'status' },
+                    { data: 'closed_days' },
                     { data: 'modified_date' },
                     {
                         data: 'id',

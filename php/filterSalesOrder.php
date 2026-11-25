@@ -93,7 +93,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Sales_Order where deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select *, DATEDIFF(NOW(), closed_date) AS closed_days from Sales_Order where deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery); 
 $data = array();
 
@@ -119,6 +119,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "unit_price"=>$row['unit_price'],
     "total_price"=>$row['total_price'],
     "status"=>$row['status'],
+    "closed_days"=>$row['closed_days'] ?? '',
     "modified_date" => !empty($row["modified_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y') : ''
   );
 }

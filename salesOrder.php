@@ -681,6 +681,7 @@ if ($user != null && $user != ''){
                                                                     <th>Total Price</th>
                                                                     <?php endif; ?>
                                                                     <th>Status</th>
+                                                                    <th>Closed Days</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -872,6 +873,7 @@ if ($user != null && $user != ''){
                     ? [{ data: 'unit_price' }, { data: 'total_price' }]
                     : []),
                 { data: 'status' },
+                { data: 'closed_days' },
                 { data: 'modified_date' },
                 {
                     data: 'id',
@@ -1007,6 +1009,7 @@ if ($user != null && $user != ''){
                         ? [{ data: 'unit_price' }, { data: 'total_price' }]
                         : []),
                     { data: 'status' },
+                    { data: 'closed_days' },
                     { data: 'modified_date' },
                     {
                         data: 'id',
