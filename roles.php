@@ -70,6 +70,13 @@ while($p = $permissionsResult->fetch_assoc()){
                                                     <h5 class="card-title mb-0">Role Records</h5>
                                                 </div>
                                                 <div class="flex-shrink-0">
+                                                    <?php if(hasModulePermission('User Management', 'Role', ['export_excel'])): ?>
+                                                    <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                        <i class="ri-file-excel-line align-middle me-1"></i>
+                                                        Export Excel
+                                                    </button>
+                                                    <?php endif; ?>
+
                                                     <?php if(hasModulePermission('User Management', 'Role', ['cancelled'])): ?>
                                                     <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                         <i class="fa-solid fa-ban align-middle me-1"></i>
@@ -365,6 +372,10 @@ $(function () {
                 }
             });
         }
+    });
+
+    $('#exportExcel').on('click', function(){
+        window.open("php/modules/Role/index.php?action=export");
     });
 
     // Submit Permissions
