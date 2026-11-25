@@ -831,11 +831,11 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         if ($transactionStatus == 'Purchase'){
                             $prodRawId = $rawMaterialId;
                             $supCustCode = $supplierCode;
-                            $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
+                            $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=?, closed_date=IF(status='Close', NOW(), NULL) WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
                         }elseif($transactionStatus == 'Sales'){
                             $prodRawId = $productId;
                             $supCustCode = $customerCode;
-                            $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND customer_code=?");
+                            $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=?, closed_date=IF(status='Close', NOW(), NULL) WHERE order_no=? AND product_code=? AND customer_code=?");
                         }
 
                         // get conversion UOM (default applied when no KG rate is set, see getKgConversion in lookup.php)
@@ -1065,11 +1065,11 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 if ($transactionStatus == 'Purchase'){
                                     $prodRawId = $rawMaterialId;
                                     $supCustCode = $supplierCode;
-                                    $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
+                                    $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=?, closed_date=IF(status='Close', NOW(), NULL) WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
                                 }elseif($transactionStatus == 'Sales'){
                                     $prodRawId = $productId;
                                     $supCustCode = $customerCode;
-                                    $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND customer_code=?");
+                                    $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=?, closed_date=IF(status='Close', NOW(), NULL) WHERE order_no=? AND product_code=? AND customer_code=?");
                                 }
 
                                 // get conversion UOM (default applied when no KG rate is set, see getKgConversion in lookup.php)
