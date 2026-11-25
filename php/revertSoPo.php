@@ -49,9 +49,9 @@ if(isset($_POST['userID'], $_POST['type'])){
 			exit;
 		}
 
-		$sql = "UPDATE Sales_Order SET status=?, modified_by=? WHERE id=?";
+		$sql = "UPDATE Sales_Order SET status=?, modified_by=?, closed_date=NULL WHERE id=?";
 	}else{
-		$sql = "UPDATE Purchase_Order SET status=?, modified_by=? WHERE id=?";
+		$sql = "UPDATE Purchase_Order SET status=?, modified_by=?, closed_date=NULL WHERE id=?";
 	}
 
 	if ($stmt2 = $db->prepare($sql)) {

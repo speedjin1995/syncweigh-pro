@@ -8,7 +8,7 @@ if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 	$status = "Close";
 
-	if ($stmt2 = $db->prepare("UPDATE Purchase_Order SET status=?, modified_by=?  WHERE id=?")) {
+	if ($stmt2 = $db->prepare("UPDATE Purchase_Order SET status=?, modified_by=?, closed_date=NOW() WHERE id=?")) {
 		$stmt2->bind_param('sss', $status, $username, $id);
 		
 		if($stmt2->execute()){
