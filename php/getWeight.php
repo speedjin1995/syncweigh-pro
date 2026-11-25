@@ -459,8 +459,9 @@ if(isset($_POST['userID'])){
 
                         $message['sales_order_status'] = '';
                         $message['sales_order_closed'] = false;
+                        $message['sales_order_days_closed'] = null;
                         if ($row['transaction_status'] == 'Sales') {
-                            if ($so_stmt = $db->prepare("SELECT status FROM Sales_Order WHERE order_no=? AND customer_code=? AND product_code=? AND deleted='0' LIMIT 1")) {
+                            if ($so_stmt = $db->prepare("SELECT status, DATEDIFF(NOW(), closed_date) AS days_closed FROM Sales_Order WHERE order_no=? AND customer_code=? AND product_code=? AND deleted='0' LIMIT 1")) {
                                 $so_stmt->bind_param('sss', $row['purchase_order'], $row['customer_code'], $row['product_code']);
                                 $so_stmt->execute();
                                 $so_result = $so_stmt->get_result();
@@ -468,6 +469,7 @@ if(isset($_POST['userID'])){
                                 if ($so_row = $so_result->fetch_assoc()) {
                                     $message['sales_order_status'] = $so_row['status'];
                                     $message['sales_order_closed'] = ($so_row['status'] == 'Close' || $so_row['status'] == 'Closed');
+                                    $message['sales_order_days_closed'] = $so_row['days_closed'];
                                 }
 
                                 $so_stmt->close();
@@ -476,8 +478,9 @@ if(isset($_POST['userID'])){
 
                         $message['purchase_order_status'] = '';
                         $message['purchase_order_closed'] = false;
+                        $message['purchase_order_days_closed'] = null;
                         if ($row['transaction_status'] == 'Purchase') {
-                            if ($po_stmt = $db->prepare("SELECT status FROM Purchase_Order WHERE po_no=? AND supplier_code=? AND raw_mat_code=? AND deleted='0' LIMIT 1")) {
+                            if ($po_stmt = $db->prepare("SELECT status, DATEDIFF(NOW(), closed_date) AS days_closed FROM Purchase_Order WHERE po_no=? AND supplier_code=? AND raw_mat_code=? AND deleted='0' LIMIT 1")) {
                                 $po_stmt->bind_param('sss', $row['purchase_order'], $row['supplier_code'], $row['raw_mat_code']);
                                 $po_stmt->execute();
                                 $po_result = $po_stmt->get_result();
@@ -485,6 +488,7 @@ if(isset($_POST['userID'])){
                                 if ($po_row = $po_result->fetch_assoc()) {
                                     $message['purchase_order_status'] = $po_row['status'];
                                     $message['purchase_order_closed'] = ($po_row['status'] == 'Close' || $po_row['status'] == 'Closed');
+                                    $message['purchase_order_days_closed'] = $po_row['days_closed'];
                                 }
 
                                 $po_stmt->close();

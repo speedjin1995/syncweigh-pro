@@ -53,7 +53,7 @@ if(isset($_POST['type'])){
 
     if ($format == 'getProdRaw'){
         if ($type == 'Purchase'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND (status='Open' OR (status IN ('Close','Closed') AND closed_date >= DATE_SUB(NOW(), INTERVAL IFNULL((SELECT closed_order_days FROM Company WHERE id=1), 30) DAY))) AND deleted='0'")) {
                 $update_stmt->bind_param('s', $code);
                 
                 // Execute the prepared query.
@@ -105,7 +105,7 @@ if(isset($_POST['type'])){
                 }
             }
         }else{
-            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND (status='Open' OR (status IN ('Close','Closed') AND closed_date >= DATE_SUB(NOW(), INTERVAL IFNULL((SELECT closed_order_days FROM Company WHERE id=1), 30) DAY))) AND deleted='0'")) {
                 $update_stmt->bind_param('s', $code);
                 
                 // Execute the prepared query.
@@ -158,7 +158,7 @@ if(isset($_POST['type'])){
         }
     }elseif($format == 'getSoPo'){
         if ($type == 'Purchase'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE status='Open' AND deleted='0'".$searchQuery)) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE (status='Open' OR (status IN ('Close','Closed') AND closed_date >= DATE_SUB(NOW(), INTERVAL IFNULL((SELECT closed_order_days FROM Company WHERE id=1), 30) DAY))) AND deleted='0'".$searchQuery)) {
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
@@ -187,7 +187,7 @@ if(isset($_POST['type'])){
                 }
             }
         }else{
-            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE status='Open' AND deleted='0'".$searchQuery)) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE (status='Open' OR (status IN ('Close','Closed') AND closed_date >= DATE_SUB(NOW(), INTERVAL IFNULL((SELECT closed_order_days FROM Company WHERE id=1), 30) DAY))) AND deleted='0'".$searchQuery)) {
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
@@ -229,6 +229,12 @@ if(isset($_POST['type'])){
         $converted_order_supplier_weight = 0;
         $converted_order_supplier_unit = 0;
         $unitPrice = 0;
+        $transporterName = '';
+        $vehNo = '';
+        $batchDrum = '';
+        $exDel = '';
+        $converted_order_supplier_unitId = '';
+        $remarks = '';
 
         // $previousRecordsTag = true;
         $count = 1;
@@ -306,11 +312,15 @@ if(isset($_POST['type'])){
 
                     // No open PO matched: flag it if the same PO exists but is closed
                     $message['order_closed'] = false;
-                    if ($result->num_rows == 0 && $closed_stmt = $db->prepare("SELECT status FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND supplier_code=? AND deleted='0' LIMIT 1")) {
+                    $message['days_closed'] = null;
+                    if ($result->num_rows == 0 && $closed_stmt = $db->prepare("SELECT status, DATEDIFF(NOW(), closed_date) AS days_closed FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND supplier_code=? AND deleted='0' LIMIT 1")) {
                         $closed_stmt->bind_param('sss', $code, $material, $supplier);
                         if ($closed_stmt->execute()) {
                             $closed_row = $closed_stmt->get_result()->fetch_assoc();
                             $message['order_closed'] = !empty($closed_row) && ($closed_row['status'] == 'Close' || $closed_row['status'] == 'Closed');
+                            if ($message['order_closed']) {
+                                $message['days_closed'] = $closed_row['days_closed'];
+                            }
                         }
                         $closed_stmt->close();
                     }
@@ -396,11 +406,15 @@ if(isset($_POST['type'])){
 
                     // No open SO matched: flag it if the same SO exists but is closed
                     $message['order_closed'] = false;
-                    if ($result->num_rows == 0 && $closed_stmt = $db->prepare("SELECT status FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0' LIMIT 1")) {
+                    $message['days_closed'] = null;
+                    if ($result->num_rows == 0 && $closed_stmt = $db->prepare("SELECT status, DATEDIFF(NOW(), closed_date) AS days_closed FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0' LIMIT 1")) {
                         $closed_stmt->bind_param('sss', $code, $material, $customer);
                         if ($closed_stmt->execute()) {
                             $closed_row = $closed_stmt->get_result()->fetch_assoc();
                             $message['order_closed'] = !empty($closed_row) && ($closed_row['status'] == 'Close' || $closed_row['status'] == 'Closed');
+                            if ($message['order_closed']) {
+                                $message['days_closed'] = $closed_row['days_closed'];
+                            }
                         }
                         $closed_stmt->close();
                     }

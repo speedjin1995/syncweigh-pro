@@ -21,6 +21,7 @@
     let editIsComplete = false;
     let closedOrderSubmissionBlocked = false;
     let closedOrderLabel = 'Sales Order';
+    let closedOrderMessage = 'The Sales Order close, please contact Admin';
     let editLoading = false;
     let salesOption = $('#salesOrder option').clone();
     let purchaseOption = $('#purchaseOrder option').clone();
@@ -1661,7 +1662,7 @@
 
                         if (obj.status == 'success'){
                             if (type == 'Sales') {
-                                setClosedOrderSubmissionState(obj.message.order_closed, 'Sales Order');
+                                setClosedOrderSubmissionState(obj.message.order_closed, 'Sales Order', obj.message.days_closed);
                             }
                             var customerSupplierName = obj.message.customer_supplier_name;
                             var destinationName = obj.message.destination_name;
@@ -1787,7 +1788,7 @@
 
                         if (obj.status == 'success'){
                             if (type == 'Purchase') {
-                                setClosedOrderSubmissionState(obj.message.order_closed, 'Purchase Order');
+                                setClosedOrderSubmissionState(obj.message.order_closed, 'Purchase Order', obj.message.days_closed);
                             }
                             var customerSupplierName = obj.message.customer_supplier_name;
                             var destinationName = obj.message.destination_name;
@@ -2616,17 +2617,21 @@
     }
 
     // Checking for Close SO/PO
-    function setClosedOrderSubmissionState(isBlocked, orderLabel) {
+    function setClosedOrderSubmissionState(isBlocked, orderLabel, daysClosed) {
         closedOrderSubmissionBlocked = isBlocked === true || isBlocked == '1';
         closedOrderLabel = orderLabel || 'Sales Order';
-        $('#closedSalesOrderWarning strong').text('The ' + closedOrderLabel + ' close, please contact Admin');
+        closedOrderMessage = 'The ' + closedOrderLabel + ' close, please contact Admin';
+        if (daysClosed !== undefined && daysClosed !== null && daysClosed !== '') {
+            closedOrderMessage += ' (closed ' + daysClosed + ' day(s) ago)';
+        }
+        $('#closedSalesOrderWarning strong').text(closedOrderMessage);
         $('#closedSalesOrderWarning').toggle(closedOrderSubmissionBlocked);
         $('#submitWeightPrint, #submitWeightCancel, #submitWeight').prop('disabled', closedOrderSubmissionBlocked);
     }
 
     function isClosedOrderSubmissionBlocked() {
         if (closedOrderSubmissionBlocked) {
-            showAppAlert('The ' + closedOrderLabel + ' close, please contact Admin');
+            showAppAlert(closedOrderMessage);
             return true;
         }
 
@@ -3168,10 +3173,10 @@
             if(obj.status === 'success'){
                 editLoading = true;
                 if (obj.message.sales_order_closed) {
-                    setClosedOrderSubmissionState(true, 'Sales Order');
-                } 
+                    setClosedOrderSubmissionState(true, 'Sales Order', obj.message.sales_order_days_closed);
+                }
                 else if (obj.message.purchase_order_closed) {
-                    setClosedOrderSubmissionState(true, 'Purchase Order');
+                    setClosedOrderSubmissionState(true, 'Purchase Order', obj.message.purchase_order_days_closed);
                 } 
                 else {
                     setClosedOrderSubmissionState(false);

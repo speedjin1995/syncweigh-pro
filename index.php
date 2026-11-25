@@ -71,9 +71,9 @@ $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name 
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
-$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
+$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE (status = 'Open' OR (status IN ('Close','Closed') AND closed_date >= DATE_SUB(NOW(), INTERVAL IFNULL((SELECT closed_order_days FROM Company WHERE id=1), 30) DAY))) AND deleted = '0' ORDER BY po_no ASC");
 $purchaseOrder2 = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
-$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
+$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE (status = 'Open' OR (status IN ('Close','Closed') AND closed_date >= DATE_SUB(NOW(), INTERVAL IFNULL((SELECT closed_order_days FROM Company WHERE id=1), 30) DAY))) AND deleted = '0' ORDER BY order_no ASC");
 $salesOrder2 = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
