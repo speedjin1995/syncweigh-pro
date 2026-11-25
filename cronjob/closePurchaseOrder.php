@@ -30,7 +30,8 @@ try {
         UPDATE Purchase_Order
         SET status = 'Close',
             modified_by = 'SYSTEM',
-            modified_date = NOW()
+            modified_date = NOW(),
+            closed_date = NOW()
         WHERE id = ?
     ");
 
