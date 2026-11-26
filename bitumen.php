@@ -3,6 +3,8 @@
 
 <?php
 require_once "php/db_connect.php";
+require_once "php/requires/translation.php";
+$translations = loadTranslations($db, $_SESSION['language'] ?? 'en');
 
 if (!hasModulePermission('Stock Management', 'Stock Take', ['view', 'create', 'edit'])){
     header('Location: no-permission.php');
@@ -41,7 +43,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
 <head>
 
-    <title>Stock Take | PWS - Weighing System</title>
+    <title><?=t('stock_take_code')?> | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -121,7 +123,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                 <div class="card">
                                     <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
-                                        Search Records
+                                        <?=t('search_records_code')?>
                                     </div>
                                     <div id="collapseSearch" class="collapse" aria-labelledby="collapseSearch">                                    
                                         <div class="card-body">
@@ -129,19 +131,19 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <div class="row">
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="fromDateSearch" class="form-label">From Date</label>
+                                                            <label for="fromDateSearch" class="form-label"><?=t('from_date_code')?></label>
                                                             <input type="date" class="form-control" data-provider="flatpickr" id="fromDateSearch">
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="toDateSearch" class="form-label">To Date</label>
+                                                            <label for="toDateSearch" class="form-label"><?=t('to_date_code')?></label>
                                                             <input type="date" class="form-control" data-provider="flatpickr" id="toDateSearch">
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Plant</label>
+                                                            <label for="ForminputState" class="form-label"><?=t('plant_code')?></label>
                                                             <select id="plantSearch" class="form-select" >
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowPlantF['id'] ?>"><?=$rowPlantF['name'] ?></option>
@@ -151,17 +153,17 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Batch/Drum</label>
+                                                            <label for="ForminputState" class="form-label"><?=t('batch_drum_code')?></label>
                                                             <select id="batchDrumSearch" class="form-select" >
                                                                 <option value="">-</option>
-                                                                <option value="Batch">Batch</option>
-                                                                <option value="Drum">Drum</option>
+                                                                <option value="Batch"><?=t('batch_code')?></option>
+                                                                <option value="Drum"><?=t('drum_code')?></option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> <?=t('search_code')?></button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -181,25 +183,25 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                     <div class="card-header">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Stock Take</h5>
+                                                                <h5 class="card-title mb-0"><?=t('stock_take_code')?></h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <?php if (hasModulePermission('Stock Management', 'Stock Take', ['upload_bom_list'])){ ?>
                                                                 <button type="button" id="uploadBom" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                    Upload Bom List
+                                                                    <?=t('upload_bom_list_code')?>
                                                                 </button>
                                                                 <?php } ?>
                                                                 <?php if (hasModulePermission('Stock Management', 'Stock Take', ['edit'])){ ?>
                                                                 <button type="button" id="bulkRefreshBtn" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-refresh-line align-middle me-1"></i>
-                                                                    Refresh
+                                                                    <?=t('refresh_code')?>
                                                                 </button>
                                                                 <?php } ?>
                                                                 <?php if (hasModulePermission('Stock Management', 'Stock Take', ['create'])){ ?>
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                    Add Stock Take
+                                                                    <?=t('add_stock_take_code')?>
                                                                 </button>
                                                                 <?php } ?>
                                                             </div> 
@@ -209,12 +211,12 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>No</th>
-                                                                    <th>Stock Take No</th>
-                                                                    <th>Plant</th>
-                                                                    <th>Batch/ <br> Drum</th>
-                                                                    <th>Declaration <br> Date</th>
-                                                                    <th>Remarks</th>
+                                                                    <th><?=t('no_code')?></th>
+                                                                    <th><?=t('stock_take_no_code')?></th>
+                                                                    <th><?=t('plant_code')?></th>
+                                                                    <th><?=t('batch_drum_code')?></th>
+                                                                    <th><?=t('declaration_date_code')?></th>
+                                                                    <th><?=t('remarks_code')?></th>
                                                                     <!-- <th>Total (60/70) <br> Weight</th> -->
                                                                     <!-- <th>Total (60/70) <br> Temperature</th> -->
                                                                     <!-- <th>Total (60/70) <br> Level</th> -->
@@ -222,7 +224,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                                     <!-- <th>Total <br> Diesel</th> -->
                                                                     <!-- <th>Total <br> Hotoil</th> -->
                                                                     <!-- <th>Total <br> PG76</th> -->
-                                                                    <th>Action</th>
+                                                                    <th><?=t('action_code')?></th>
                                                                 </tr>
                                                             </thead>
                                                         </table>
@@ -251,10 +253,10 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalScrollableTitle">Add Stock Take</h5>
+                        <h5 class="modal-title" id="exampleModalScrollableTitle"><?=t('add_stock_take_code')?></h5>
                         <div class="d-flex gap-2 align-items-center">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshBtn" title="Refresh Previous Stock Take & Incoming">
-                                <i class="ri-refresh-line"></i> Refresh
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshBtn" title="<?=t('refresh_previous_tooltip_code')?>">
+                                <i class="ri-refresh-line"></i> <?=t('refresh_code')?>
                             </button>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
@@ -268,12 +270,12 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-lg-4 col-md-6 mb-3">
-                                                    <label for="stockTakeNo" class="col-form-label">Stock Take No</label>
-                                                    <input type="text" class="form-control" id="stockTakeNo" placeholder="Assigned on save" readonly>
+                                                    <label for="stockTakeNo" class="col-form-label"><?=t('stock_take_no_code')?></label>
+                                                    <input type="text" class="form-control" id="stockTakeNo" placeholder="<?=t('assigned_on_save_code')?>" readonly>
                                                 </div>
                                                 <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
-                                                        <label for="plant" class="col-12 col-form-label">Plant <span class="text-danger">*</span></label>
+                                                        <label for="plant" class="col-12 col-form-label"><?=t('plant_code')?> <span class="text-danger">*</span></label>
                                                         <div class="col-12">
                                                             <select class="form-select select2" id="plant" name="plant" required>
                                                                 <?php while($rowPlant=mysqli_fetch_assoc($plant2)){ ?>
@@ -285,19 +287,19 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 </div>
                                                 <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
-                                                        <label for="batchDrum" class="col-12 col-form-label">By-Batch/By-Drum <span class="text-danger">*</span></label>
+                                                        <label for="batchDrum" class="col-12 col-form-label"><?=t('by_batch_drum_code')?> <span class="text-danger">*</span></label>
                                                         <div class="col-12">
                                                             <select id="batchDrum" name="batchDrum" class="form-select select2" required>
-                                                                <option value="" selected>Please Select</option>
-                                                                <option value="Batch">Batch</option>
-                                                                <option value="Drum">Drum</option>
+                                                                <option value="" selected><?=t('please_select_code')?></option>
+                                                                <option value="Batch"><?=t('batch_code')?></option>
+                                                                <option value="Drum"><?=t('drum_code')?></option>
                                                             </select>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
-                                                        <label for="declarationDate" class="col-12 col-form-label">Date <span class="text-danger">*</span></label>
+                                                        <label for="declarationDate" class="col-12 col-form-label"><?=t('date_code')?> <span class="text-danger">*</span></label>
                                                         <div class="col-12">
                                                             <input type="text" class="form-control" id="declarationDate" name="declarationDate" required>
                                                             <input type="hidden" id="datetime" name="datetime">
@@ -306,14 +308,14 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 </div>
                                                 <div class="col-lg-4 col-md-6 mb-3">
                                                     <div class="row">
-                                                        <label for="declarationTime" class="col-12 col-form-label">Time <span class="text-danger">*</span></label>
+                                                        <label for="declarationTime" class="col-12 col-form-label"><?=t('time_code')?> <span class="text-danger">*</span></label>
                                                         <div class="col-12">
                                                             <input type="text" class="form-control" id="declarationTime" name="declarationTime" required>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-12 mb-3">
-                                                    <label for="remarks" class="col-form-label">Remarks</label>
+                                                    <label for="remarks" class="col-form-label"><?=t('remarks_code')?></label>
                                                     <textarea class="form-control" id="remarks" name="remarks" rows="2"></textarea>
                                                 </div>
                                                 <input type="hidden" class="form-control" id="bitumenId" name="bitumenId"> 
@@ -329,8 +331,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Bitumen</h5>
-                                                    <button type="button" class="btn btn-danger add-bitumen" id="addBitumen">Add Bitumen</button>
+                                                    <h5 class="card-title mb-0"><?=t('bitumen_code')?></h5>
+                                                    <button type="button" class="btn btn-danger add-bitumen" id="addBitumen"><?=t('add_bitumen_code')?></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -339,21 +341,21 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
-                                                            <th>Name</th>
-                                                            <th>Status</th>
-                                                            <th>Temperature (&deg;C)</th>
-                                                            <th>Level (mm)</th>
-                                                            <th>Actual Level (mm)</th>
+                                                            <th width="10%"><?=t('no_code')?></th>
+                                                            <th><?=t('name_code')?></th>
+                                                            <th><?=t('status_code')?></th>
+                                                            <th><?=t('temperature_code')?> (&deg;C)</th>
+                                                            <th><?=t('level_code')?> (mm)</th>
+                                                            <th><?=t('actual_level_code')?> (mm)</th>
                                                             <th>MT</th>
-                                                            <th>Action</th>
+                                                            <th><?=t('action_code')?></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="bitumenTable"></tbody>
                                                     <tfoot>
-                                                        <th colspan="2">Incoming (MT) <i class="ri-information-line text-info" id="bitumenIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
+                                                        <th colspan="2"><?=t('incoming_code')?> (MT) <i class="ri-information-line text-info" id="bitumenIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
                                                         <th colspan="3"><input type="number" class="form-control" id="bitumenIncoming" name="bitumenIncoming" style="background-color:white;text-align: center;" value="0"></th>
-                                                        <th>Total</th>
+                                                        <th><?=t('total_code')?></th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <!-- <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalLevel" name="totalLevel" style="background-color:white;text-align: center;" value="0" readonly></th> -->
@@ -373,9 +375,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title mb-0">LFO</h5>
                                                     <div class="d-flex align-items-center gap-3">
-                                                        <label for="previousLfoReading" class="form-label mb-0">Previous Reading (&#76;):</label>
+                                                        <label for="previousLfoReading" class="form-label mb-0"><?=t('previous_reading_code')?> (&#76;):</label>
                                                         <input type="number" class="form-control" id="previousLfoReading" name="previousLfoReading" value="0" style="width: 120px;">
-                                                        <button type="button" class="btn btn-danger add-lfo ms-4" id="addLFO">Add LFO</button>
+                                                        <button type="button" class="btn btn-danger add-lfo ms-4" id="addLFO"><?=t('add_lfo_code')?></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -385,26 +387,26 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="20%">Supplier</th>
-                                                            <th>Name</th>
-                                                            <th>Status</th>
-                                                            <th>Incoming (&#76;)</th>
-                                                            <th>Level (m)</th>
-                                                            <th>Actual Level (m)</th>
-                                                            <th>Volume (&#76;)</th>
-                                                            <th>Weight (MT)</th>
-                                                            <th>Action</th>
+                                                            <th width="20%"><?=t('supplier_code')?></th>
+                                                            <th><?=t('name_code')?></th>
+                                                            <th><?=t('status_code')?></th>
+                                                            <th><?=t('incoming_code')?> (&#76;)</th>
+                                                            <th><?=t('level_code')?> (m)</th>
+                                                            <th><?=t('actual_level_code')?> (m)</th>
+                                                            <th><?=t('volume_code')?> (&#76;)</th>
+                                                            <th><?=t('weight_code')?> (MT)</th>
+                                                            <th><?=t('action_code')?></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="lfoTable"></tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <th colspan="3">Incoming (&#76;) <i class="ri-information-line text-info" id="lfoIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
+                                                            <th colspan="3"><?=t('incoming_code')?> (&#76;) <i class="ri-information-line text-info" id="lfoIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
                                                             <th><input type="number" class="form-control" id="lfoIncoming" name="lfoIncoming" style="background-color:white;text-align: center;" value="0"></th>
                                                             <th></th>
                                                             <!-- <th>Last Meter Reading</th>
                                                             <th><input type="number" class="form-control" id="lfoLastMeterReading" name="lfoLastMeterReading" style="background-color:white;text-align: center;" value="0"></th> -->
-                                                            <th>Total (&#76;)</th>
+                                                            <th><?=t('total_code')?> (&#76;)</th>
                                                             <th><input type="number" class="form-control" id="totalLfoLitre" name="totalLfoLitre" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th>
                                                                 <input type="hidden" id="totalLfo" name="totalLfo" value="0">
@@ -414,7 +416,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                         </tr>
                                                         <tr>
                                                             <th colspan="5"></th>
-                                                            <th>Total Usage (&#76;)</th>
+                                                            <th><?=t('total_usage_code')?> (&#76;)</th>
                                                             <th><input type="number" class="form-control" id="totalLfoUsage" name="totalLfoUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
                                                             <th></th>
@@ -436,11 +438,11 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Diesel</h5>
+                                                    <h5 class="card-title mb-0"><?=t('diesel_code')?></h5>
                                                     <div class="d-flex align-items-center gap-3">
-                                                        <label for="previousDieselReading" class="form-label mb-0">Previous Reading (&#76;):</label>
+                                                        <label for="previousDieselReading" class="form-label mb-0"><?=t('previous_reading_code')?> (&#76;):</label>
                                                         <input type="number" class="form-control" id="previousDieselReading" name="previousDieselReading" value="0" style="width: 120px;">
-                                                        <button type="button" class="btn btn-danger add-diesel ms-4" id="addDiesel">Add Diesel</button>
+                                                        <button type="button" class="btn btn-danger add-diesel ms-4" id="addDiesel"><?=t('add_diesel_code')?></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -450,15 +452,15 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
-                                                            <th>Name</th>
-                                                            <th>Status</th>
-                                                            <th>Incoming (&#76;)</th>
-                                                            <th>Level (m)</th>
-                                                            <th>Actual Level (m)</th>
-                                                            <th>Volume (&#76;)</th>
+                                                            <th width="10%"><?=t('no_code')?></th>
+                                                            <th><?=t('name_code')?></th>
+                                                            <th><?=t('status_code')?></th>
+                                                            <th><?=t('incoming_code')?> (&#76;)</th>
+                                                            <th><?=t('level_code')?> (m)</th>
+                                                            <th><?=t('actual_level_code')?> (m)</th>
+                                                            <th><?=t('volume_code')?> (&#76;)</th>
                                                             <!-- <th>MT</th> -->
-                                                            <th>Action</th>
+                                                            <th><?=t('action_code')?></th>
                                                         </tr>
                                                     </thead>
                                                     <!-- Transport -->
@@ -509,18 +511,18 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                     <tbody id="dieselTable"></tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <th colspan="3">Incoming (&#76;) <i class="ri-information-line text-info" id="dieselIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
+                                                            <th colspan="3"><?=t('incoming_code')?> (&#76;) <i class="ri-information-line text-info" id="dieselIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
                                                             <th><input type="number" class="form-control" id="dieselIncoming" name="dieselIncoming" style="background-color:white;text-align: center;" value="0"></th>
                                                             <th></th>
                                                             <!-- <th>Last Meter Reading</th>
                                                             <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th> -->
-                                                            <th>Total</th>
+                                                            <th><?=t('total_code')?></th>
                                                             <th><input type="number" class="form-control" id="totalDiesel" name="totalDiesel" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
                                                         </tr>
                                                         <tr>
                                                             <th colspan="5"></th>
-                                                            <th>Total Usage</th>                                                            
+                                                            <th><?=t('total_usage_code')?></th>                                                            
                                                             <th><input type="number" class="form-control" id="totalDieselUsage" name="totalDieselUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
                                                         </tr>
@@ -529,36 +531,36 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Transport / Burner</h5>
-                                                    <button type="button" class="btn btn-danger add-other-diesel" id="addOtherDiesel">Add</button>
+                                                    <h5 class="card-title mb-0"><?=t('transport_code')?> / <?=t('burner_code')?></h5>
+                                                    <button type="button" class="btn btn-danger add-other-diesel" id="addOtherDiesel"><?=t('add_code')?></button>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
-                                                            <th>Type</th>
-                                                            <th>Vehicle No / Others</th>
-                                                            <th>1st Reading</th>
-                                                            <th>2nd Reading</th>
-                                                            <th>Usage</th>
-                                                            <th>Action</th>
+                                                            <th width="10%"><?=t('no_code')?></th>
+                                                            <th><?=t('type_code')?></th>
+                                                            <th><?=t('vehicle_no_others_code')?></th>
+                                                            <th><?=t('first_reading_code')?></th>
+                                                            <th><?=t('second_reading_code')?></th>
+                                                            <th><?=t('usage_code')?></th>
+                                                            <th><?=t('action_code')?></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="otherDieselTable"></tbody>
                                                     <tfoot>
                                                         <tr>
                                                             <th colspan="4"></th>
-                                                            <th>Total Transport Usage</th>
+                                                            <th><?=t('total_transport_usage_code')?></th>
                                                             <th><input type="number" class="form-control" id="otherDieselTotalTransportUsage" name="otherDieselTotalTransportUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
                                                         </tr>
                                                         <tr>
-                                                            <th colspan="2">Burner Usage</th>
+                                                            <th colspan="2"><?=t('burner_usage_code')?></th>
                                                             <th><input type="number" class="form-control" id="otherDieselBurnerUsage" name="otherDieselBurnerUsage" style="background-color:white;text-align: center;" value="0"></th>
                                                             <th></th>
-                                                            <th>Total Production</th>
+                                                            <th><?=t('total_production_code')?></th>
                                                             <th><input type="number" class="form-control" id="totalDieselProduction" name="totalDieselProduction" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
                                                         </tr>
@@ -575,8 +577,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Hotoil</h5>
-                                                    <button type="button" class="btn btn-danger add-hotoil" id="addHotoil">Add Hotoil</button>
+                                                    <h5 class="card-title mb-0"><?=t('hotoil_code')?></h5>
+                                                    <button type="button" class="btn btn-danger add-hotoil" id="addHotoil"><?=t('add_hotoil_code')?></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -585,14 +587,14 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
-                                                            <th>Hotoil</th>
-                                                            <th>Action</th>
+                                                            <th width="10%"><?=t('no_code')?></th>
+                                                            <th><?=t('hotoil_code')?></th>
+                                                            <th><?=t('action_code')?></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="hotoilTable"></tbody>
                                                     <tfoot>
-                                                        <th>Total</th>
+                                                        <th><?=t('total_code')?></th>
                                                         <th><input type="number" class="form-control" id="totalHotoil" name="totalHotoil" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
                                                     </tfoot>
@@ -608,8 +610,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Other Bitumen</h5>
-                                                    <button type="button" class="btn btn-danger add-pg-76" id="addpg76">Add</button>
+                                                    <h5 class="card-title mb-0"><?=t('other_bitumen_code')?></h5>
+                                                    <button type="button" class="btn btn-danger add-pg-76" id="addpg76"><?=t('add_code')?></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -618,20 +620,20 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th>Name</th>
-                                                            <th>Incoming</th>
-                                                            <th>Status</th>
-                                                            <!-- <th>Temperature (&deg;C)</th> -->
-                                                            <th>Level (mm)</th>
-                                                            <th>Actual Level (mm)</th>
+                                                            <th><?=t('name_code')?></th>
+                                                            <th><?=t('incoming_code')?></th>
+                                                            <th><?=t('status_code')?></th>
+                                                            <!-- <th><?=t('temperature_code')?> (&deg;C)</th> -->
+                                                            <th><?=t('level_code')?> (mm)</th>
+                                                            <th><?=t('actual_level_code')?> (mm)</th>
                                                             <th>MT</th>
-                                                            <th>Action</th>
+                                                            <th><?=t('action_code')?></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="pg76Table"></tbody>
                                                     <tfoot>
                                                         <th colspan="4"></th>
-                                                        <th>Total</th>
+                                                        <th><?=t('total_code')?></th>
                                                         <th><input type="number" class="form-control" id="totalPg76" name="totalPg76" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <!-- <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalLevel" name="totalLevel" style="background-color:white;text-align: center;" value="0" readonly></th> -->
@@ -649,8 +651,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Fiber & Additive</h5>
-                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre">Add</button>
+                                                    <h5 class="card-title mb-0"><?=t('fiber_additive_code')?></h5>
+                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre"><?=t('add_code')?></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -659,11 +661,11 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th>Name</th>
-                                                            <th>Type (kg/bag)</th>
-                                                            <th>No. of Bags</th>
-                                                            <th>Quantity (mt)</th>
-                                                            <th>Action</th>
+                                                            <th><?=t('name_code')?></th>
+                                                            <th><?=t('type_code')?> (kg/bag)</th>
+                                                            <th><?=t('no_of_bags_code')?></th>
+                                                            <th><?=t('quantity_code')?> (mt)</th>
+                                                            <th><?=t('action_code')?></th>
                                                         </tr>
                                                     </thead>
                                                     <tr>
@@ -709,7 +711,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <tbody>
                                                         <tr>
-                                                            <th>Aggregrates</th>
+                                                            <th><?=t('aggregates_code')?></th>
                                                             <th>40mm</th>
                                                             <th>28mm</th>
                                                             <th>20mm</th>
@@ -718,7 +720,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <th>QD</th>
                                                         </tr>
                                                         <tr>
-                                                            <td>Quantity (mt)</td>
+                                                            <td><?=t('quantity_code')?> (mt)</td>
                                                             <td><input type="number" class="form-control" id="40mm" name="40mm"></td>
                                                             <td><input type="number" class="form-control" id="28mm" name="28mm"></td>
                                                             <td><input type="number" class="form-control" id="20mm" name="20mm"></td>
@@ -727,16 +729,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <td><input type="number" class="form-control" id="QD" name="QD"></td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Emulsion</th>
+                                                            <th><?=t('emulsion_code')?></th>
                                                             <th>RS1-K</th>
                                                             <th>K1-40</th>
                                                             <th>SS1K</th>
-                                                            <th>Others</th>
-                                                            <th>Transport</th>
-                                                            <th>Burner</th>
+                                                            <th><?=t('others_code')?></th>
+                                                            <th><?=t('transport_code')?></th>
+                                                            <th><?=t('burner_code')?></th>
                                                         </tr>
                                                         <tr>
-                                                            <td>Quantity (dr)</td>
+                                                            <td><?=t('quantity_code')?> (dr)</td>
                                                             <td><input type="number" class="form-control" id="rs1k" name="rs1k"></td>
                                                             <td><input type="number" class="form-control" id="k140" name="k140"></td>
                                                             <td><input type="number" class="form-control" id="ss1k" name="ss1k"></td>
@@ -746,16 +748,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                         </tr>
                                                         <tr>
                                                             <th colspan="3">OPC</th>
-                                                            <th colspan="3">Lime/Filler</th>
+                                                            <th colspan="3"><?=t('lime_filler_code')?></th>
                                                             <th></th>
                                                         </tr>
                                                         <tr>
-                                                            <td>D/O No</td>
-                                                            <td>Incoming (mt)</td>
-                                                            <td>Quantity (mt)</td>
-                                                            <td>D/O No</td>
-                                                            <td>Incoming (mt)</td>
-                                                            <td>Quantity (mt)</td>
+                                                            <td><?=t('do_no_code')?></td>
+                                                            <td><?=t('incoming_code')?> (mt)</td>
+                                                            <td><?=t('quantity_code')?> (mt)</td>
+                                                            <td><?=t('do_no_code')?></td>
+                                                            <td><?=t('incoming_code')?> (mt)</td>
+                                                            <td><?=t('quantity_code')?> (mt)</td>
                                                             <td></td>
                                                         </tr>
                                                         <tr>
@@ -776,8 +778,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                             </div>
                             <div class="col-lg-12">
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-danger" id="submitSite">Submit</button>
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?=t('close_code')?></button>
+                                    <button type="button" class="btn btn-danger" id="submitSite"><?=t('submit_code')?></button>
                                 </div>
                             </div><!--end col-->                                                               
                         </form>
@@ -790,20 +792,20 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 <div class="modal-content">
                     <form role="form" id="cancelForm">
                         <div class="modal-header bg-gray-dark color-palette">
-                            <h4 class="modal-title">Cancel Stock Take</h4>
+                            <h4 class="modal-title"><?=t('cancel_stock_take_code')?></h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <input type="hidden" id="cancelId" name="id">
                             <div class="form-group">
-                                <label for="cancelReason">Cancel Reason *</label>
+                                <label for="cancelReason"><?=t('cancel_reason_code')?> *</label>
                                 <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3" required></textarea>
-                                <div class="invalid-feedback">Please fill in the cancel reason</div>
+                                <div class="invalid-feedback"><?=t('fill_cancel_reason_code')?></div>
                             </div>
                         </div>
                         <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger" id="submitCancel">Cancel Stock Take</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><?=t('close_code')?></button>
+                            <button type="button" class="btn btn-danger" id="submitCancel"><?=t('cancel_stock_take_code')?></button>
                         </div>
                     </form>
                 </div>
@@ -813,20 +815,20 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-gray-dark color-palette">
-                        <h4 class="modal-title">Bulk Refresh Stock Take</h4>
+                        <h4 class="modal-title"><?=t('bulk_refresh_stock_take_code')?></h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="bulkFromDate" class="form-label">From Date *</label>
-                            <input type="text" class="form-control" id="bulkFromDate" placeholder="Please Select">
+                            <label for="bulkFromDate" class="form-label"><?=t('from_date_code')?> *</label>
+                            <input type="text" class="form-control" id="bulkFromDate" placeholder="<?=t('please_select_code')?>">
                         </div>
                         <div class="mb-3">
-                            <label for="bulkToDate" class="form-label">To Date *</label>
-                            <input type="text" class="form-control" id="bulkToDate" placeholder="Please Select">
+                            <label for="bulkToDate" class="form-label"><?=t('to_date_code')?> *</label>
+                            <input type="text" class="form-control" id="bulkToDate" placeholder="<?=t('please_select_code')?>">
                         </div>
                         <div class="mb-3">
-                            <label for="bulkPlant" class="form-label">Plant</label>
+                            <label for="bulkPlant" class="form-label"><?=t('plant_code')?></label>
                             <select id="bulkPlant" class="form-select">
                                 <?php mysqli_data_seek($plant, 0); ?>
                                 <?php while($rowPlantB=mysqli_fetch_assoc($plant)){ ?>
@@ -835,18 +837,18 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="bulkBatchDrum" class="form-label">Batch/Drum</label>
+                            <label for="bulkBatchDrum" class="form-label"><?=t('batch_drum_code')?></label>
                             <select id="bulkBatchDrum" class="form-select">
                                 <option value="">-</option>
-                                <option value="Batch">Batch</option>
-                                <option value="Drum">Drum</option>
+                                <option value="Batch"><?=t('batch_code')?></option>
+                                <option value="Drum"><?=t('drum_code')?></option>
                             </select>
                         </div>
                         <div id="bulkProgress" class="text-muted small"></div>
                     </div>
                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-warning" id="startBulkRefresh">Start Refresh</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><?=t('close_code')?></button>
+                        <button type="button" class="btn btn-warning" id="startBulkRefresh"><?=t('start_refresh_code')?></button>
                     </div>
                 </div>
             </div>
@@ -856,12 +858,12 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 <div class="modal-content">
                     <form role="form" id="uploadForm">
                         <div class="modal-header bg-gray-dark color-palette">
-                            <h4 class="modal-title">Upload Excel File</h4>
+                            <h4 class="modal-title"><?=t('upload_excel_file_code')?></h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <input type="file" id="fileInput" accept=".xlsx,.xls">
-                            <button type="button" class="btn btn-info btn-sm" id="previewButton">Preview Data</button>
+                            <button type="button" class="btn btn-info btn-sm" id="previewButton"><?=t('preview_data_code')?></button>
                             <div id="sheetTabs" class="mt-3" style="display:none;">
                                 <ul class="nav nav-tabs" id="sheetTabList" role="tablist"></ul>
                             </div>
@@ -870,8 +872,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                             <input type="hidden" id="excelActiveSheet" name="excelActiveSheet">
                         </div>
                         <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger" id="submitBom">Save changes</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><?=t('close_code')?></button>
+                            <button type="button" class="btn btn-danger" id="submitBom"><?=t('save_changes_code')?></button>
                         </div>
                     </form>
                 </div>
@@ -881,7 +883,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             <div class="modal-dialog modal-xl" style="max-width: 50%;">
                 <div class="modal-content">
                     <div class="modal-header bg-gray-dark color-palette">
-                        <h4 class="modal-title">Error Log</h4>
+                        <h4 class="modal-title"><?=t('error_log_code')?></h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -911,8 +913,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             </td>
             <td>
                 <select class="form-select" id="bitumenStatus" name="bitumenStatus">
-                    <option value="Filled">Filled</option>
-                    <option value="Empty">Empty</option>
+                    <option value="Filled"><?=t('filled_code')?></option>
+                    <option value="Empty"><?=t('empty_code')?></option>
                 </select>
             </td>
             <td>
@@ -957,8 +959,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             </td>
             <td>
                 <select class="form-select" id="lfoStatus" name="lfoStatus">
-                    <option value="Filled">Filled</option>
-                    <option value="Empty">Empty</option>
+                    <option value="Filled"><?=t('filled_code')?></option>
+                    <option value="Empty"><?=t('empty_code')?></option>
                 </select>
             </td>
             <td>
@@ -999,8 +1001,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             </td>
             <td>
                 <select class="form-select" id="dieselStatus" name="dieselStatus">
-                    <option value="Filled">Filled</option>
-                    <option value="Empty">Empty</option>
+                    <option value="Filled"><?=t('filled_code')?></option>
+                    <option value="Empty"><?=t('empty_code')?></option>
                 </select>
             </td>
             <td>
@@ -1033,7 +1035,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             </td>
             <td>
                 <select class="form-select" id="otherDieselType" name="otherDieselType">
-                    <option value="Transport">Transport</option>
+                    <option value="Transport"><?=t('transport_code')?></option>
                     <!-- <option value="Hotoil">Hotoil</option> -->
                     <!-- <option value="Burner">Burner</option> -->
                 </select>
@@ -1117,8 +1119,8 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             </td>
             <td>
                 <select class="form-select" id="pg76Status" name="pg76Status">
-                    <option value="Filled">Filled</option>
-                    <option value="Empty">Empty</option>
+                    <option value="Filled"><?=t('filled_code')?></option>
+                    <option value="Empty"><?=t('empty_code')?></option>
                 </select>
             </td>
             <td style="display: none;">
@@ -1193,6 +1195,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
     <script type="text/javascript">
 
+    var MSG = <?= json_encode($translations, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
     var lfoRawMatCode = <?= json_encode($lfoRawMatCode ?? 'LFFO001') ?>;
@@ -1209,9 +1212,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
     var hotoilCount = $("#hotoilTable").find(".details").length;
     var pg76Count = $("#pg76Table").find(".details").length;
     var fibreCount = $("#fibreTable").find(".details").length;
-    var bitumenIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
-    var lfoIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
-    var dieselIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+    var bitumenIncomingTooltipText = MSG.incoming_tooltip_code;
+    var lfoIncomingTooltipText = MSG.incoming_tooltip_code;
+    var dieselIncomingTooltipText = MSG.incoming_tooltip_code;
     var bitumenLevels = [];
     var bulkRefreshing = false;
     var bulkQueue = [];
@@ -1227,7 +1230,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         // Initialize all Select2 elements in the modal
         $('#addModal select.select2').select2({
             allowClear: true,
-            placeholder: "Please Select",
+            placeholder: MSG.please_select_code,
             dropdownParent: $('#addModal') // Ensures dropdown is not cut off
         });
 
@@ -1338,7 +1341,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
-                                                    <i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit
+                                                    <i class="ri-edit-line align-bottom me-2 text-muted"></i> ${MSG.edit_code}
                                                 </a>
                                             </li>
                                         `;
@@ -1348,7 +1351,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item" onclick="printDeclaration(${data})">
-                                                    <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                    <i class="ri-printer-line align-bottom me-2 text-muted"></i> ${MSG.print_code}
                                                 </a>
                                             </li>
                                         `;
@@ -1358,7 +1361,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item" onclick="deactivate(${data})">
-                                                    <i class="ri-close-circle-line align-bottom me-2 text-muted"></i> Cancel
+                                                    <i class="ri-close-circle-line align-bottom me-2 text-muted"></i> ${MSG.cancel_code}
                                                 </a>
                                             </li>
                                         `;
@@ -1440,7 +1443,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
-                                                        <i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit
+                                                        <i class="ri-edit-line align-bottom me-2 text-muted"></i> ${MSG.edit_code}
                                                     </a>
                                                 </li>
                                             `;
@@ -1450,7 +1453,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item" onclick="printDeclaration(${data})">
-                                                        <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                        <i class="ri-printer-line align-bottom me-2 text-muted"></i> ${MSG.print_code}
                                                     </a>
                                                 </li>
                                             `;
@@ -1460,7 +1463,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item" onclick="deactivate(${data})">
-                                                        <i class="ri-close-circle-line align-bottom me-2 text-muted"></i> Cancel
+                                                        <i class="ri-close-circle-line align-bottom me-2 text-muted"></i> ${MSG.cancel_code}
                                                     </a>
                                                 </li>
                                             `;
@@ -1488,9 +1491,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             pg79Count = 0;
             fibreCount = 0;
 
-            bitumenIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
-            lfoIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
-            dieselIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+            bitumenIncomingTooltipText = MSG.incoming_tooltip_code;
+            lfoIncomingTooltipText = MSG.incoming_tooltip_code;
+            dieselIncomingTooltipText = MSG.incoming_tooltip_code;
 
             $('#bitumenIncomingTooltip').attr('title', bitumenIncomingTooltipText).tooltip();
             $('#lfoIncomingTooltip').attr('title', lfoIncomingTooltipText).tooltip();
@@ -1603,7 +1606,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $('#addModal .select2[required]').each(function () {
                 var select2Field = $(this);
                 var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
-                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>" + MSG.fill_field_code + "</span>";
 
                 // Check if the value is empty
                 if (select2Field.val() === "" || select2Field.val() === null) {
@@ -1635,12 +1638,12 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     }
                     else{
                         $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message || 'Failed to save');
+                        $("#failBtn").attr('data-toast-text', obj.message || MSG.failed_to_save_code);
                         $("#failBtn").click();
                     }
                 }).fail(function(){
                     $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', 'Failed to save. Please try again.');
+                    $("#failBtn").attr('data-toast-text', MSG.failed_save_try_again_code);
                     $("#failBtn").click();
                 });
             }
@@ -1677,14 +1680,14 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     }, 500);
                 }
                 else if(obj.status === 'failed'){
-                    toastr["error"](obj.message, "Failed:");
+                    toastr["error"](obj.message, MSG.failed_code);
                 }
                 else{
-                    toastr["error"]("Something wrong when activate", "Failed:");
+                    toastr["error"](MSG.something_wrong_code, MSG.failed_code);
                 }
             }).fail(function(error){
                 console.error("Error exporting PDF:", error);
-                alert("An error occurred while generating the PDF.");
+                alert(MSG.pdf_error_code);
             });
         });
 
@@ -2067,7 +2070,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
             $("#lfoTable").find('#lfoSupplier:last').attr('name', 'lfoSupplier['+lfoCount+']').attr("id", "lfoSupplier" + lfoCount).css("text-align", "center").select2({
                 allowClear: true,
-                placeholder: "Please Select",
+                placeholder: MSG.please_select_code,
                 dropdownParent: $('#lfoTable') // Prevents dropdown cutoff inside modals/tables
             }).val(asset ? asset.supplier_id || '' : '').trigger('change.select2');
             $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
@@ -2268,7 +2271,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             // // Initialize all Select2 elements in the modal
             // $('#addModal select.select2').select2({
             //     allowClear: true,
-            //     placeholder: "Please Select",
+            //     placeholder: MSG.please_select_code,
             //     dropdownParent: $('#addModal') // Ensures dropdown is not cut off
             // });
 
@@ -2553,7 +2556,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $("#pg76Table").find('#pg76No:last').attr('name', 'pg76No['+pg76Count+']').attr("id", "pg76No" + pg76Count).css("text-align", "center").val(pg76Count + 1);
             $("#pg76Table").find('#pg76Name:last').attr('name', 'pg76Name['+pg76Count+']').attr("id", "pg76Name" + pg76Count).css("text-align", "center").select2({
                 allowClear: true,
-                placeholder: "Please Select",
+                placeholder: MSG.please_select_code,
                 dropdownParent: $('#pg76Table') // Prevents dropdown cutoff inside modals/tables
             });;
             $("#pg76Table").find('#pg76Incoming:last').attr('name', 'pg76Incoming['+pg76Count+']').attr("id", "pg76Incoming" + pg76Count).css("text-align", "center");
@@ -2696,7 +2699,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         });
 
         $('#refreshBtn').on('click', function(){
-            if (!bulkRefreshing && !confirm('This will reset previous reading, incoming data and calculation. Continue?')){
+            if (!bulkRefreshing && !confirm(MSG.confirm_refresh_code)){
                 return;
             } 
             var declarationDate = $('#addModal').find('#datetime').val();
@@ -2742,16 +2745,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             var toDate = $('#bulkToDate').val();
 
             if (!fromDate || !toDate) {
-                $("#failBtn").attr('data-toast-text', 'Please select From and To date.');
+                $("#failBtn").attr('data-toast-text', MSG.select_from_to_date_code);
                 $("#failBtn").click();
                 return;
             }
-            if (!confirm('This will reset previous reading, incoming and calculation for every stock take in the date range. Continue?')) {
+            if (!confirm(MSG.confirm_bulk_refresh_code)) {
                 return;
             }
 
             $('#startBulkRefresh').prop('disabled', true);
-            $('#bulkProgress').text('Loading stock takes...');
+            $('#bulkProgress').text(MSG.loading_stock_takes_code);
             // Same list query as the table; oldest first so each record's previous reading is already refreshed
             $.post('php/filterBitumen.php', {
                 draw: 1,
@@ -2798,7 +2801,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
         $('#uploadModal').find('#previewButton').on('click', function() {
             var file = $('#fileInput')[0].files[0];
-            if (!file) { alert('Please select a file first.'); return; }
+            if (!file) { alert(MSG.select_file_first_code); return; }
             var reader = new FileReader();
             reader.onload = function(e) {
                 uploadWorkbook = XLSX.read(e.target.result, { type: 'array' });
@@ -2827,7 +2830,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
         $('#submitBom').on('click', function() {
             if (!uploadWorkbook || Object.keys(allSheetsData).length === 0) {
-                alert('Please upload and preview an Excel file first.');
+                alert(MSG.upload_preview_first_code);
                 return;
             }
             $('#spinnerLoading').show();
@@ -2873,7 +2876,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 },
                 error: function() {
                     $('#spinnerLoading').hide();
-                    alert('An error occurred while uploading.');
+                    alert(MSG.upload_error_code);
                 }
             });
         });
@@ -2907,12 +2910,12 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     $('#weightTable').DataTable().ajax.reload();
                 }
                 else {
-                    $("#failBtn").attr('data-toast-text', obj.message || 'Failed to cancel');
+                    $("#failBtn").attr('data-toast-text', obj.message || MSG.failed_to_cancel_code);
                     $("#failBtn").click();
                 }
             }).fail(function(){
                 $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', 'Failed to cancel, please try again');
+                $("#failBtn").attr('data-toast-text', MSG.failed_cancel_try_again_code);
                 $("#failBtn").click();
             });
         });
@@ -2931,17 +2934,17 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
 
     function processNextBulk(){
         if (bulkIndex >= bulkQueue.length) {
-            finishBulk('Refreshed ' + bulkQueue.length + ' stock take(s).', true);
+            finishBulk(MSG.refreshed_stock_takes_code.replace('{n}', bulkQueue.length), true);
             return;
         }
         var row = bulkQueue[bulkIndex];
-        $('#bulkProgress').text('Refreshing ' + (bulkIndex + 1) + ' / ' + bulkQueue.length + ' - ' + row.stock_take_no);
+        $('#bulkProgress').text(MSG.refreshing_code + ' ' + (bulkIndex + 1) + ' / ' + bulkQueue.length + ' - ' + row.stock_take_no);
 
         edit(row.id);
         whenIdle(function(){
             // Stop if the modal did not load this record, so the previous one is not saved again
             if ($('#addModal').find('#bitumenId').val() !== String(row.id)) {
-                finishBulk('Stopped: could not load ' + row.stock_take_no + '.', false);
+                finishBulk(MSG.could_not_load_code.replace('{no}', row.stock_take_no), false);
                 return;
             }
             $('#refreshBtn').trigger('click');
@@ -2959,10 +2962,10 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 processNextBulk();
             }
             else {
-                finishBulk('Stopped at ' + row.stock_take_no + ': ' + obj.message, false);
+                finishBulk(MSG.stopped_at_code.replace('{no}', row.stock_take_no) + ': ' + obj.message, false);
             }
         }).fail(function(){
-            finishBulk('Stopped at ' + row.stock_take_no + ': save failed.', false);
+            finishBulk(MSG.stopped_at_code.replace('{no}', row.stock_take_no) + ': ' + MSG.save_failed_code, false);
         });
     }
 
@@ -2992,7 +2995,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
         $('#excelSheetData').val(JSON.stringify(allSheetsData));
         var rows = allSheetsData[sheetName];
         if (!rows || rows.length === 0) {
-            $('#previewTable').html('<p class="text-muted">No data in this sheet.</p>');
+            $('#previewTable').html('<p class="text-muted">' + MSG.no_data_sheet_code + '</p>');
             return;
         }
         var headers = Object.keys(rows[0]);
@@ -3295,9 +3298,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             {
                 var obj = JSON.parse(data);
                 if(obj.status === 'success'){
-                    var bitumenIncomingTooltipText = 'Total incoming weight: ' + parseFloat(obj.message.bitumenIncoming || 0).toFixed(2) + ' MT (pulled from supplier weight from purchase)';
-                    var lfoIncomingTooltipText = 'Total incoming weight: ' + parseFloat(obj.message.lfoIncoming || 0).toFixed(2) + ' L (pulled from supplier weight from purchase)';
-                    var dieselIncomingTooltipText = 'Total incoming weight: ' + parseFloat(obj.message.dieselIncoming || 0).toFixed(2) + ' L (pulled from supplier weight from purchase)';
+                    var bitumenIncomingTooltipText = MSG.total_incoming_weight_code + ': ' + parseFloat(obj.message.bitumenIncoming || 0).toFixed(2) + ' MT (' + MSG.pulled_from_purchase_code + ')';
+                    var lfoIncomingTooltipText = MSG.total_incoming_weight_code + ': ' + parseFloat(obj.message.lfoIncoming || 0).toFixed(2) + ' L (' + MSG.pulled_from_purchase_code + ')';
+                    var dieselIncomingTooltipText = MSG.total_incoming_weight_code + ': ' + parseFloat(obj.message.dieselIncoming || 0).toFixed(2) + ' L (' + MSG.pulled_from_purchase_code + ')';
                     
                     $('#bitumenIncomingTooltip').tooltip('dispose').attr('title', bitumenIncomingTooltipText).tooltip();
                     $('#lfoIncomingTooltip').tooltip('dispose').attr('title', lfoIncomingTooltipText).tooltip();
@@ -3331,7 +3334,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             var rowWeight = parseFloat($(this).find('input[id^="lfoWeight"]').val()) || 0;
             var warn = $(this).find('.lfo-ratio-warn');
             if (rowWeight > 0 && (rowVolume / rowWeight) > 8) {
-                warn.text('Litre/Tonnage = ' + (rowVolume / rowWeight).toFixed(2) + ' (> 8)').show();
+                warn.text(MSG.litre_tonnage_code + ' = ' + (rowVolume / rowWeight).toFixed(2) + ' (> 8)').show();
             }
             else {
                 warn.text('').hide();
@@ -3484,7 +3487,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                         // Initialize all Select2 elements in the modal
                         $('#addModal select.select2').select2({
                             allowClear: true,
-                            placeholder: "Please Select",
+                            placeholder: MSG.please_select_code,
                             dropdownParent: $('#addModal') // Ensures dropdown is not cut off
                         });
 
@@ -3654,7 +3657,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 // Initialize all Select2 elements in the modal
                 $('#addModal select.select2').select2({
                     allowClear: true,
-                    placeholder: "Please Select",
+                    placeholder: MSG.please_select_code,
                     dropdownParent: $('#addModal') // Ensures dropdown is not cut off
                 });
 
