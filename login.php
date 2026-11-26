@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Include config file
         require_once "layouts/config.php";
         // Prepare a select statement
-        $sql = "SELECT id, employee_code, username, password, role, plant_id FROM Users WHERE username = ? AND status = 0";
+        $sql = "SELECT id, employee_code, username, password, role, plant_id, language FROM Users WHERE username = ? AND status = 0";
         
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Check if username exists, if yes then verify password
                 if (mysqli_stmt_num_rows($stmt) == 1) {
                     // Bind result variables
-                    mysqli_stmt_bind_result($stmt, $id, $code, $username, $hashed_password, $roles, $plant);
+                    mysqli_stmt_bind_result($stmt, $id, $code, $username, $hashed_password, $roles, $plant, $language);
                     if (mysqli_stmt_fetch($stmt)) {
                         if (password_verify($password, $hashed_password)) {
                             $plantlist = array();
@@ -73,6 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["username"] = $username;
                             $_SESSION["roles"] = $roles;
                             $_SESSION['userID']=$code;
+                            $_SESSION['language'] = $language ?: 'en';
 
                             if($plant != null){
                                 $plant_ids = json_decode($plant, true);

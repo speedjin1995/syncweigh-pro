@@ -5,18 +5,20 @@
 //session_start();
 // Include config file
 require_once "layouts/config.php";
+require_once "php/requires/translation.php";
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
-$stmt2 = $link->prepare("SELECT username, useremail from Users where id = ?");
+$stmt2 = $link->prepare("SELECT username, useremail, language from Users where id = ?");
 mysqli_stmt_bind_param($stmt2, "s", $id);
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
-mysqli_stmt_bind_result($stmt2, $name, $email);
+mysqli_stmt_bind_result($stmt2, $name, $email, $language);
 
 if (mysqli_stmt_fetch($stmt2)) {
     $useremail = $email;
     $username = $name;
+    $userLanguage = $language;
 }
 ?>
 
@@ -64,6 +66,18 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                     <label for="transactionDate" class="col-sm-4 col-form-label">Username</label>
                                                     <div class="col-sm-8">
                                                         <input type="text" class="form-control" id="username" name="userName" placeholder="Transaction ID" value="<?=$username ?>" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="language" class="col-sm-4 col-form-label">Language</label>
+                                                    <div class="col-sm-8">
+                                                        <select class="form-select" id="language" name="language">
+                                                            <?php foreach (TRANSLATION_LANGUAGES as $langCode => $langName) { ?>
+                                                                <option value="<?=$langCode ?>" <?php if (($userLanguage ?? 'en') == $langCode) { echo 'selected'; } ?>><?=$langName ?></option>
+                                                            <?php } ?>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>

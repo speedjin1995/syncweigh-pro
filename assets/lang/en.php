@@ -6,6 +6,7 @@
     $lang["t-companyProfile"]="Company Profile";
     $lang["t-cronjobSetup"]="Cronjob Setup";
     $lang["t-portSetup"]="Port Setup";
+    $lang["t-translation"]="Translation";
     $lang["t-myProfile"]="My Profile";
     $lang["t-changePassword"]="Change Password";
 

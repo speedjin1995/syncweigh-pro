@@ -4016,3 +4016,244 @@ DELIMITER ;
 
 -- 26/11/2026 --
 UPDATE permissions SET modules = JSON_ARRAY_APPEND(modules, '$', '35') WHERE id = 19 AND NOT JSON_CONTAINS(modules, '"35"');
+
+-- 27/11/2026 --
+CREATE TABLE `message_resource` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `message_key_code` text NOT NULL,
+  `en` text NOT NULL,
+  `zh` text NOT NULL,
+  `my` text DEFAULT NULL,
+  `ne` text DEFAULT NULL,
+  `status` int(1) NOT NULL DEFAULT 0,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `modified_by` varchar(50) DEFAULT NULL,
+  `modified_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `message_resource` (`message_key_code`, `en`, `zh`, `my`, `ne`) VALUES
+('add_new_code', 'Add New', '添加', 'Tambah', 'புதியதைச் சேர்க்கவும்'),
+('message_code_code', 'Message Code', '留言代码', 'Kod Mesej', 'செய்தி முக்கிய குறியீடு'),
+('edit_code', 'Edit', '编辑', 'Tukar', 'திருத்தவும்'),
+('delete_code', 'Delete', '删除', 'Padam', 'நீக்கு'),
+('dispatch_code', 'Sales', '销售', 'Jualan', 'விற்பனை'),
+('receiving_code', 'Purchase', '采购', 'Pembelian', 'கொள்முதல்'),
+('miscellaneous_code', 'Miscellaneous', '各种各样的', 'Macam-macam', 'இதர'),
+('pending_container_weighing_code', 'Pending Container Weighing', '待称重集装箱', 'Menunggu Penimbangan Bekas', 'நிலுவையில் உள்ள கொள்கலன் எடையிடுதல்'),
+('pending_lorry_weighing_code', 'Pending Lorry Weighing', '待称重卡车', 'Menunggu Penimbangan Lori', 'நிலுவையில் உள்ள லாரி எடையிடுதல்'),
+('customer_code', 'Customer', '顾客', 'Customer', 'ग्राहक'),
+('supplier_code', 'Supplier', '供应商', 'Pembekal', 'आपूर्तिकर्ता'),
+('product_code', 'Item', '物品', 'Item', 'பொருள்'),
+('weighing_report_code', 'Weighing Report', '称重报告', 'Laporan Timbangan', 'तौल रिपोर्ट'),
+('staff_code', 'Staff', '职员', 'Pekerja\r\n', 'कर्मचारी'),
+('master_data_code', 'Master Data', '主要数据', 'Data Penting', 'मूल तथ्यांक'),
+('message_resource_code', 'Message Resources', '翻译', 'Terjemah', 'अनुवाद गर्नुहोस्'),
+('setting_code', 'Settings', '设置', 'Tetapan', 'सेटिङहरू'),
+('company_profile_code', 'Company Profile', '公司简介', 'Profil Syarikat', 'कम्पनी प्रोफइल'),
+('profile_code', 'Profiles', '简介', 'Profil', 'प्रोफाइल'),
+('change_password_code', 'Change Password', '更改密码', 'Tukar kata laluan', 'पासवर्ड परिवर्तन गर्नुहोस्'),
+('logout_code', 'Logout', '登出', 'Log keluar', 'बाहिर निस्कनु'),
+('vehicle_code', 'Vehicles', '汽车', 'Kenderaan', 'सवारी साधन'),
+('transporter_code', 'Transporter', '运输者', 'Transport', 'ट्रान्सपोर्टर'),
+('plant_code', 'Plant', '厂区', 'Plant', 'தொழிற்சாலை'),
+('from_date_code', 'From Date', '从', 'Dari', 'मिति देखि'),
+('daily_weighing_code', 'Daily Weighing', '重量称重', 'Timbang Berat', 'तौल तौल'),
+('weighing_code', 'Weighing', '称重', 'Menimbang', 'तौल गर्दै'),
+('to_date_code', 'To Date', '到', 'Hingga', 'मिति सम्म'),
+('search_code', 'Search', '搜索', 'Cari', 'खोज्नुहोस्'),
+('destination_code', 'Destination', '目的地', 'Destinasi', 'இலக்கு'),
+('raw_material_code', 'Item', '物品', 'Item', 'பொருள்'),
+('search_records_code', 'Search Records', '搜索记录', 'Cari Rekod', 'रेकर्ड खोज्नुहोस्'),
+('batch_drum_code', 'Batch/Drum', '批次/桶', 'Kelompok/Dram', 'ब्याच/ड्रम'),
+('batch_code', 'Batch', '批次', 'Kelompok', 'ब्याच'),
+('drum_code', 'Drum', '桶', 'Dram', 'ड्रम'),
+('stock_take_code', 'Stock Take', '盘点', 'Ambil Stok', 'स्टक गणना'),
+('upload_bom_list_code', 'Upload Bom List', '上传物料清单', 'Muat Naik Senarai BOM', 'BOM सूची अपलोड गर्नुहोस्'),
+('refresh_code', 'Refresh', '刷新', 'Muat Semula', 'रिफ्रेस गर्नुहोस्'),
+('add_stock_take_code', 'Add Stock Take', '添加盘点', 'Tambah Ambil Stok', 'स्टक गणना थप्नुहोस्'),
+('no_code', 'No', '编号', 'No', 'क्र.सं.'),
+('stock_take_no_code', 'Stock Take No', '盘点编号', 'No Ambil Stok', 'स्टक गणना नम्बर'),
+('declaration_date_code', 'Declaration Date', '申报日期', 'Tarikh Pengisytiharan', 'घोषणा मिति'),
+('remarks_code', 'Remarks', '备注', 'Catatan', 'कैफियत'),
+('action_code', 'Action', '操作', 'Tindakan', 'कार्य'),
+('refresh_previous_tooltip_code', 'Refresh Previous Stock Take & Incoming', '刷新上次盘点和进货', 'Muat Semula Ambil Stok Sebelum & Masuk', 'अघिल्लो स्टक गणना र आगमन रिफ्रेस गर्नुहोस्'),
+('assigned_on_save_code', 'Assigned on save', '保存时分配', 'Diberikan semasa simpan', 'सेभ गर्दा तोकिन्छ'),
+('by_batch_drum_code', 'By-Batch/By-Drum', '按批次/按桶', 'Ikut Kelompok/Ikut Dram', 'ब्याच अनुसार/ड्रम अनुसार'),
+('please_select_code', 'Please Select', '请选择', 'Sila Pilih', 'कृपया छान्नुहोस्'),
+('date_code', 'Date', '日期', 'Tarikh', 'मिति'),
+('time_code', 'Time', '时间', 'Masa', 'समय'),
+('bitumen_code', 'Bitumen', '沥青', 'Bitumen', 'बिटुमेन'),
+('add_bitumen_code', 'Add Bitumen', '添加沥青', 'Tambah Bitumen', 'बिटुमेन थप्नुहोस्'),
+('name_code', 'Name', '名称', 'Nama', 'नाम'),
+('status_code', 'Status', '状态', 'Status', 'स्थिति'),
+('temperature_code', 'Temperature', '温度', 'Suhu', 'तापक्रम'),
+('level_code', 'Level', '液位', 'Paras', 'तह'),
+('actual_level_code', 'Actual Level', '实际液位', 'Paras Sebenar', 'वास्तविक तह'),
+('incoming_code', 'Incoming', '进货', 'Masuk', 'आगमन'),
+('total_code', 'Total', '总计', 'Jumlah', 'जम्मा'),
+('previous_reading_code', 'Previous Reading', '上次读数', 'Bacaan Sebelum', 'अघिल्लो रिडिङ'),
+('add_lfo_code', 'Add LFO', '添加轻燃油', 'Tambah LFO', 'LFO थप्नुहोस्'),
+('volume_code', 'Volume', '体积', 'Isipadu', 'आयतन'),
+('weight_code', 'Weight', '重量', 'Berat', 'तौल'),
+('total_usage_code', 'Total Usage', '总用量', 'Jumlah Penggunaan', 'कुल प्रयोग'),
+('diesel_code', 'Diesel', '柴油', 'Diesel', 'डिजेल'),
+('add_diesel_code', 'Add Diesel', '添加柴油', 'Tambah Diesel', 'डिजेल थप्नुहोस्'),
+('transport_code', 'Transport', '运输', 'Pengangkutan', 'ढुवानी'),
+('burner_code', 'Burner', '燃烧器', 'Pembakar', 'बर्नर'),
+('add_code', 'Add', '添加', 'Tambah', 'थप्नुहोस्'),
+('type_code', 'Type', '类型', 'Jenis', 'प्रकार'),
+('vehicle_no_others_code', 'Vehicle No / Others', '车牌号 / 其他', 'No Kenderaan / Lain-lain', 'सवारी नम्बर / अन्य'),
+('first_reading_code', '1st Reading', '第一次读数', 'Bacaan Pertama', 'पहिलो रिडिङ'),
+('second_reading_code', '2nd Reading', '第二次读数', 'Bacaan Kedua', 'दोस्रो रिडिङ'),
+('usage_code', 'Usage', '用量', 'Penggunaan', 'प्रयोग'),
+('total_transport_usage_code', 'Total Transport Usage', '运输总用量', 'Jumlah Penggunaan Pengangkutan', 'कुल ढुवानी प्रयोग'),
+('burner_usage_code', 'Burner Usage', '燃烧器用量', 'Penggunaan Pembakar', 'बर्नर प्रयोग'),
+('total_production_code', 'Total Production', '总产量', 'Jumlah Pengeluaran', 'कुल उत्पादन'),
+('hotoil_code', 'Hotoil', '导热油', 'Minyak Panas', 'तातो तेल'),
+('add_hotoil_code', 'Add Hotoil', '添加导热油', 'Tambah Minyak Panas', 'तातो तेल थप्नुहोस्'),
+('other_bitumen_code', 'Other Bitumen', '其他沥青', 'Bitumen Lain', 'अन्य बिटुमेन'),
+('fiber_additive_code', 'Fiber & Additive', '纤维和添加剂', 'Gentian & Bahan Tambah', 'फाइबर र एडिटिभ'),
+('no_of_bags_code', 'No. of Bags', '袋数', 'Bilangan Beg', 'झोलाको संख्या'),
+('quantity_code', 'Quantity', '数量', 'Kuantiti', 'परिमाण'),
+('aggregates_code', 'Aggregates', '骨料', 'Agregat', 'एग्रिगेट'),
+('emulsion_code', 'Emulsion', '乳化沥青', 'Emulsi', 'इमल्सन'),
+('others_code', 'Others', '其他', 'Lain-lain', 'अन्य'),
+('lime_filler_code', 'Lime/Filler', '石灰/填料', 'Kapur/Pengisi', 'चुन/फिलर'),
+('do_no_code', 'D/O No', '送货单号', 'No D/O', 'D/O नम्बर'),
+('close_code', 'Close', '关闭', 'Tutup', 'बन्द गर्नुहोस्'),
+('submit_code', 'Submit', '提交', 'Hantar', 'पेश गर्नुहोस्'),
+('cancel_stock_take_code', 'Cancel Stock Take', '取消盘点', 'Batal Ambil Stok', 'स्टक गणना रद्द गर्नुहोस्'),
+('cancel_reason_code', 'Cancel Reason', '取消原因', 'Sebab Pembatalan', 'रद्द गर्ने कारण'),
+('fill_cancel_reason_code', 'Please fill in the cancel reason', '请填写取消原因', 'Sila isi sebab pembatalan', 'कृपया रद्द गर्ने कारण भर्नुहोस्'),
+('bulk_refresh_stock_take_code', 'Bulk Refresh Stock Take', '批量刷新盘点', 'Muat Semula Pukal Ambil Stok', 'स्टक गणना एकमुष्ट रिफ्रेस'),
+('start_refresh_code', 'Start Refresh', '开始刷新', 'Mula Muat Semula', 'रिफ्रेस सुरु गर्नुहोस्'),
+('upload_excel_file_code', 'Upload Excel File', '上传Excel文件', 'Muat Naik Fail Excel', 'एक्सेल फाइल अपलोड गर्नुहोस्'),
+('preview_data_code', 'Preview Data', '预览数据', 'Pratonton Data', 'डाटा पूर्वावलोकन'),
+('save_changes_code', 'Save changes', '保存更改', 'Simpan perubahan', 'परिवर्तन सेभ गर्नुहोस्'),
+('error_log_code', 'Error Log', '错误日志', 'Log Ralat', 'त्रुटि लग'),
+('filled_code', 'Filled', '已装满', 'Penuh', 'भरिएको'),
+('empty_code', 'Empty', '空', 'Kosong', 'खाली'),
+('incoming_tooltip_code', 'Total incoming weight is pulled from supplier weight from purchase', '进货总重量取自采购的供应商重量', 'Jumlah berat masuk diambil daripada berat pembekal dalam pembelian', 'कुल आगमन तौल खरिदको आपूर्तिकर्ता तौलबाट लिइन्छ'),
+('total_incoming_weight_code', 'Total incoming weight', '进货总重量', 'Jumlah berat masuk', 'कुल आगमन तौल'),
+('pulled_from_purchase_code', 'pulled from supplier weight from purchase', '取自采购的供应商重量', 'diambil daripada berat pembekal dalam pembelian', 'खरिदको आपूर्तिकर्ता तौलबाट लिइएको'),
+('fill_field_code', 'Please fill in the field.', '请填写此字段。', 'Sila isi ruangan ini.', 'कृपया यो फिल्ड भर्नुहोस्।'),
+('failed_to_save_code', 'Failed to save', '保存失败', 'Gagal menyimpan', 'सेभ गर्न असफल'),
+('failed_save_try_again_code', 'Failed to save. Please try again.', '保存失败，请重试。', 'Gagal menyimpan. Sila cuba lagi.', 'सेभ गर्न असफल। कृपया फेरि प्रयास गर्नुहोस्।'),
+('failed_code', 'Failed:', '失败：', 'Gagal:', 'असफल:'),
+('something_wrong_code', 'Something went wrong', '出现问题', 'Sesuatu tidak kena', 'केही गडबड भयो'),
+('pdf_error_code', 'An error occurred while generating the PDF.', '生成PDF时出错。', 'Ralat berlaku semasa menjana PDF.', 'PDF बनाउँदा त्रुटि भयो।'),
+('confirm_refresh_code', 'This will reset previous reading, incoming data and calculation. Continue?', '这将重置上次读数、进货数据和计算。是否继续？', 'Ini akan menetapkan semula bacaan sebelum, data masuk dan pengiraan. Teruskan?', 'यसले अघिल्लो रिडिङ, आगमन डाटा र गणना रिसेट गर्नेछ। जारी राख्ने?'),
+('select_from_to_date_code', 'Please select From and To date.', '请选择开始和结束日期。', 'Sila pilih tarikh Dari dan Hingga.', 'कृपया सुरु र अन्तिम मिति छान्नुहोस्।'),
+('confirm_bulk_refresh_code', 'This will reset previous reading, incoming and calculation for every stock take in the date range. Continue?', '这将重置日期范围内每个盘点的上次读数、进货和计算。是否继续？', 'Ini akan menetapkan semula bacaan sebelum, data masuk dan pengiraan untuk setiap ambil stok dalam julat tarikh. Teruskan?', 'यसले मिति दायराभित्रका सबै स्टक गणनाको अघिल्लो रिडिङ, आगमन र गणना रिसेट गर्नेछ। जारी राख्ने?'),
+('loading_stock_takes_code', 'Loading stock takes...', '正在加载盘点...', 'Memuatkan ambil stok...', 'स्टक गणना लोड हुँदैछ...'),
+('select_file_first_code', 'Please select a file first.', '请先选择文件。', 'Sila pilih fail dahulu.', 'कृपया पहिले फाइल छान्नुहोस्।'),
+('upload_preview_first_code', 'Please upload and preview an Excel file first.', '请先上传并预览Excel文件。', 'Sila muat naik dan pratonton fail Excel dahulu.', 'कृपया पहिले एक्सेल फाइल अपलोड र पूर्वावलोकन गर्नुहोस्।'),
+('upload_error_code', 'An error occurred while uploading.', '上传时出错。', 'Ralat berlaku semasa memuat naik.', 'अपलोड गर्दा त्रुटि भयो।'),
+('failed_to_cancel_code', 'Failed to cancel', '取消失败', 'Gagal membatalkan', 'रद्द गर्न असफल'),
+('failed_cancel_try_again_code', 'Failed to cancel, please try again', '取消失败，请重试', 'Gagal membatalkan, sila cuba lagi', 'रद्द गर्न असफल, कृपया फेरि प्रयास गर्नुहोस्'),
+('refreshed_stock_takes_code', 'Refreshed {n} stock take(s).', '已刷新 {n} 个盘点。', '{n} ambil stok telah dimuat semula.', '{n} स्टक गणना रिफ्रेस भयो।'),
+('refreshing_code', 'Refreshing', '正在刷新', 'Memuat semula', 'रिफ्रेस हुँदैछ'),
+('could_not_load_code', 'Stopped: could not load {no}.', '已停止：无法加载 {no}。', 'Dihentikan: tidak dapat memuatkan {no}.', 'रोकियो: {no} लोड गर्न सकिएन।'),
+('stopped_at_code', 'Stopped at {no}', '在 {no} 停止', 'Dihentikan pada {no}', '{no} मा रोकियो'),
+('save_failed_code', 'save failed.', '保存失败。', 'gagal disimpan.', 'सेभ असफल।'),
+('no_data_sheet_code', 'No data in this sheet.', '此工作表没有数据。', 'Tiada data dalam helaian ini.', 'यो पानामा डाटा छैन।'),
+('litre_tonnage_code', 'Litre/Tonnage', '升/吨', 'Liter/Tan', 'लिटर/टन'),
+('print_code', 'Print', '打印', 'Cetak', 'प्रिन्ट गर्नुहोस्'),
+('cancel_code', 'Cancel', '取消', 'Batal', 'रद्द गर्नुहोस्'),
+('translation_code', 'Translation', '翻译', 'Terjemahan', 'अनुवाद'),
+('add_new_translation_code', 'Add New Translation', '添加翻译', 'Tambah Terjemahan Baharu', 'नयाँ अनुवाद थप्नुहोस्'),
+('edit_translation_code', 'Edit Translation', '编辑翻译', 'Sunting Terjemahan', 'अनुवाद सम्पादन गर्नुहोस्'),
+('message_key_code_code', 'Message Key Code', '消息键代码', 'Kod Kunci Mesej', 'सन्देश कुञ्जी कोड'),
+('english_code', 'English', '英文', 'Bahasa Inggeris', 'अंग्रेजी'),
+('chinese_code', 'Chinese', '中文', 'Bahasa Cina', 'चिनियाँ'),
+('malay_code', 'Malay', '马来文', 'Bahasa Melayu', 'मलय'),
+('nepali_code', 'Nepali', '尼泊尔文', 'Bahasa Nepal', 'नेपाली'),
+('confirm_delete_translation_code', 'Are you sure you want to delete this translation?', '确定要删除此翻译吗？', 'Adakah anda pasti mahu memadam terjemahan ini?', 'के तपाईं यो अनुवाद मेटाउन निश्चित हुनुहुन्छ?'),
+('record_not_found_code', 'Record not found', '找不到记录', 'Rekod tidak dijumpai', 'रेकर्ड फेला परेन'),
+('english_required_code', 'English text is required', '必须填写英文', 'Teks Bahasa Inggeris diperlukan', 'अंग्रेजी पाठ आवश्यक छ'),
+('updated_successfully_code', 'Updated Successfully!!', '更新成功！', 'Berjaya dikemas kini!', 'सफलतापूर्वक अद्यावधिक भयो!'),
+('added_successfully_code', 'Added Successfully!!', '添加成功！', 'Berjaya ditambah!', 'सफलतापूर्वक थपियो!'),
+('deleted_code', 'Deleted', '已删除', 'Dipadam', 'मेटाइयो'),
+('invalid_key_code_code', 'Message key code may only contain letters, numbers and underscores', '消息键代码只能包含字母、数字和下划线', 'Kod kunci mesej hanya boleh mengandungi huruf, nombor dan garis bawah', 'सन्देश कुञ्जी कोडमा अक्षर, अंक र अन्डरस्कोर मात्र हुन सक्छ'),
+('key_code_exists_code', 'Message key code already exists', '消息键代码已存在', 'Kod kunci mesej sudah wujud', 'सन्देश कुञ्जी कोड पहिले नै छ'),
+('no_permission_code', 'You do not have permission to do this', '您没有执行此操作的权限', 'Anda tiada kebenaran untuk melakukan ini', 'तपाईंलाई यो गर्ने अनुमति छैन'),
+('menu_code', 'Menu', '菜单', 'Menu', 'मेनु'),
+('dashboard_code', 'Dashboard', '仪表板', 'Papan Pemuka', 'ड्यासबोर्ड'),
+('weight_weighing_code', 'Weight Weighing', '称重', 'Penimbangan Berat', 'तौल गर्ने'),
+('accounting_code', 'Accounting', '会计', 'Perakaunan', 'लेखा'),
+('sales_order_code', 'Sales Order', '销售订单', 'Pesanan Jualan', 'बिक्री अर्डर'),
+('delivery_order_code', 'Delivery Order', '送货单', 'Pesanan Penghantaran', 'डेलिभरी अर्डर'),
+('purchase_order_code', 'Purchase Order', '采购订单', 'Pesanan Belian', 'खरिद अर्डर'),
+('goods_received_code', 'Goods Received', '收货', 'Barang Diterima', 'प्राप्त सामान'),
+('stock_management_code', 'Stock Management', '库存管理', 'Pengurusan Stok', 'स्टक व्यवस्थापन'),
+('stock_take_log_code', 'Stock Take Log', '盘点日志', 'Log Ambil Stok', 'स्टक गणना लग'),
+('inventory_code', 'Inventory', '库存', 'Inventori', 'मौज्दात'),
+('asset_management_code', 'Asset Management', '资产管理', 'Pengurusan Aset', 'सम्पत्ति व्यवस्थापन'),
+('calculation_setup_code', 'Calculation Setup', '计算设置', 'Tetapan Pengiraan', 'गणना सेटअप'),
+('products_code', 'Product', '产品', 'Produk', 'उत्पादन'),
+('raw_materials_code', 'Raw Materials', '原材料', 'Bahan Mentah', 'कच्चा पदार्थ'),
+('unit_code', 'Unit', '单位', 'Unit', 'एकाइ'),
+('reason_code', 'Reason', '原因', 'Sebab', 'कारण'),
+('site_code', 'Site', '工地', 'Tapak', 'साइट'),
+('sales_representative_code', 'Sales Representative', '销售代表', 'Wakil Jualan', 'बिक्री प्रतिनिधि'),
+('report_code', 'Report', '报告', 'Laporan', 'रिपोर्ट'),
+('sales_report_code', 'Sales Report', '销售报告', 'Laporan Jualan', 'बिक्री रिपोर्ट'),
+('purchase_report_code', 'Purchase Report', '采购报告', 'Laporan Belian', 'खरिद रिपोर्ट'),
+('public_report_code', 'Public Report', '公共报告', 'Laporan Awam', 'सार्वजनिक रिपोर्ट'),
+('user_management_code', 'User Management', '用户管理', 'Pengurusan Pengguna', 'प्रयोगकर्ता व्यवस्थापन'),
+('user_setup_code', 'User Setup', '用户设置', 'Tetapan Pengguna', 'प्रयोगकर्ता सेटअप'),
+('roles_code', 'Roles', '角色', 'Peranan', 'भूमिकाहरू'),
+('modules_code', 'Modules', '模块', 'Modul', 'मोड्युलहरू'),
+('permissions_code', 'Permissions', '权限', 'Kebenaran', 'अनुमतिहरू'),
+('audit_log_code', 'Audit Log', '审计日志', 'Log Audit', 'अडिट लग'),
+('api_log_code', 'Api Log', '接口日志', 'Log API', 'API लग'),
+('cronjob_setup_code', 'Cronjob Setup', '定时任务设置', 'Tetapan Cronjob', 'क्रनजब सेटअप'),
+('port_setup_code', 'Port Setup', '端口设置', 'Tetapan Port', 'पोर्ट सेटअप'),
+('my_profile_code', 'My Profile', '我的资料', 'Profil Saya', 'मेरो प्रोफाइल'),
+('sop_code', 'SOP', '标准作业程序', 'SOP', 'SOP'),
+('hardware_setup_code', 'Hardware Setup', '硬件设置', 'Tetapan Perkakasan', 'हार्डवेयर सेटअप'),
+('help_code', 'Help', '帮助', 'Bantuan', 'सहायता');
+
+ALTER TABLE `Users` ADD `language` VARCHAR(5) NOT NULL DEFAULT 'en';
+ALTER TABLE `Users_Log` ADD `language` VARCHAR(5) NULL DEFAULT NULL AFTER `plant_id`;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_USERS` AFTER INSERT ON `Users`
+ FOR EACH ROW INSERT INTO Users_Log (
+    user_id, employee_code, username, name, useremail, status, password, plant_id, language, action_id, action_by, event_date
+)
+VALUES (
+    NEW.id, NEW.employee_code, NEW.username, NEW.name, NEW.useremail, NEW.status, NEW.password, NEW.plant_id, NEW.language, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_USERS` BEFORE UPDATE ON `Users`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Users_Log table
+    INSERT INTO Users_Log (
+        user_id, employee_code, username, name, useremail, status, password, plant_id, language, action_id, action_by, event_date
+    )
+    VALUES (
+        NEW.id, NEW.employee_code, NEW.username, NEW.name, NEW.useremail, NEW.status, NEW.password, NEW.plant_id, NEW.language, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+INSERT INTO `modules` (`id`, `name`, `category`) VALUES
+(40, 'Translation', 'Setting');
+
+UPDATE permissions SET modules = JSON_ARRAY_APPEND(modules, '$', '40') WHERE id IN (5, 6, 7) AND NOT JSON_CONTAINS(modules, '"40"');
