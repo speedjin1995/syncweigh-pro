@@ -1,0 +1,107 @@
+<?php
+require_once __DIR__ . '/../requires/permissions.php';
+require_once __DIR__ . '/../services/ProductService.php';
+
+/**
+ * ProductController
+ *
+ * Handles product requests coming through php/modules/Product/index.php.
+ * The request's "action" field picks the handler:
+ *
+ *   stockTakeList      products in the Stock Take List for a plant and Batch/Drum
+ *   saveStockTakeSort  save the drag-and-drop order of that list
+ */
+class ProductController
+{
+    const MODULE = 'Master Data';
+    const SUB_MODULE = 'Product';
+
+    private $db;
+    private $products;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $this->products = new ProductService($db);
+    }
+
+    public function handleRequest()
+    {
+        if (!isset($_SESSION['id'])) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Unauthorized']);
+        }
+
+        $action = $_POST['action'] ?? ($_GET['action'] ?? '');
+
+        try {
+            switch ($action) {
+                case 'stockTakeList':
+                    $this->stockTakeList();
+                    break;
+                case 'saveStockTakeSort':
+                    $this->saveStockTakeSort();
+                    break;
+                default:
+                    $this->jsonResponse(['status' => 'failed', 'message' => 'Invalid action']);
+            }
+        } catch (Throwable $e) {
+            $this->jsonResponse(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /* ---------------- Stock Take List ---------------- */
+
+    private function stockTakeList()
+    {
+        $this->requirePermission(['edit']);
+        $this->validateListKey($plantId, $batchDrum);
+
+        $rows = $this->products->getStockTakeList($plantId, $batchDrum);
+        $this->jsonResponse(['status' => 'success', 'data' => $rows]);
+    }
+
+    private function saveStockTakeSort()
+    {
+        $this->requirePermission(['edit']);
+        $this->validateListKey($plantId, $batchDrum);
+
+        $productIds = $_POST['productIds'] ?? [];
+        if (!is_array($productIds) || count($productIds) === 0) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'No products to save']);
+        }
+
+        $this->products->saveStockTakeListSort($plantId, $batchDrum, $productIds);
+        $this->jsonResponse(['status' => 'success', 'message' => 'Stock take list order saved']);
+    }
+
+    /* ---------------- Helpers ---------------- */
+
+    private function validateListKey(&$plantId, &$batchDrum)
+    {
+        $plantId = $_POST['plant'] ?? '';
+        $batchDrum = $_POST['batchDrum'] ?? '';
+
+        if (!ctype_digit((string) $plantId) || !in_array($batchDrum, ['Batch', 'Drum'], true)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Plant and Batch/Drum are required']);
+        }
+    }
+
+    private function can(array $permissions)
+    {
+        return hasModulePermission(self::MODULE, self::SUB_MODULE, $permissions);
+    }
+
+    private function requirePermission(array $permissions)
+    {
+        if (!$this->can($permissions)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'You do not have permission to do this']);
+        }
+    }
+
+    private function jsonResponse($data)
+    {
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+}
