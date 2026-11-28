@@ -139,7 +139,7 @@ if (empty($_POST["totalLfoUsage"])) {
 if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     $lfoData = [];
     $lfoNo = $_POST["lfoNo"];
-    $lfoSupplier = $_POST["lfoSupplier"];
+    $lfoSupplier = isset($_POST["lfoSupplier"]) ? $_POST["lfoSupplier"] : [];
     $lfoAssetId = $_POST["lfoAssetId"];
     $lfoName = $_POST["lfoName"];
     $lfoStatus = $_POST["lfoStatus"];
@@ -152,7 +152,7 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     foreach ($lfoNo as $key => $no) {
         $lfoData[] = array(
             "no" => $no,
-            "lfoSupplier" => $lfoSupplier[$key],
+            "lfoSupplier" => (isset($lfoSupplier[$key]) && $lfoSupplier[$key] !== '') ? $lfoSupplier[$key] : '-',
             "lfoAssetId" => $lfoAssetId[$key],
             "lfoName" => $lfoName[$key],
             "lfoStatus" => $lfoStatus[$key],
