@@ -12,6 +12,7 @@
     $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $stlProducts = $db->query("SELECT id, product_code, name FROM Product WHERE status = '0' ORDER BY name ASC");
 ?>
 
 <head>
@@ -332,7 +333,7 @@
                                     </div><!-- /.modal -->
 
                                     <div class="modal fade" id="stockTakeListModal" tabindex="-1">
-                                        <div class="modal-dialog modal-lg">
+                                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-gray-dark color-palette">
                                                     <h4 class="modal-title">Stock Take List (Stock Analysis Report Order)</h4>
@@ -342,7 +343,7 @@
                                                     <div class="row mb-3">
                                                         <div class="col-md-6">
                                                             <label class="form-label">Plant</label>
-                                                            <select class="form-select" id="stlPlant">
+                                                            <select class="form-select select2" style="width: 100%;" id="stlPlant">
                                                                 <option value="">Please Select</option>
                                                                 <?php $plant->data_seek(0); while($rowStlPlant = mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowStlPlant['id'] ?>"><?=htmlspecialchars($rowStlPlant['name'])?></option>
@@ -351,13 +352,27 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="form-label">By-Batch/By-Drum</label>
-                                                            <select class="form-select" id="stlBatchDrum">
+                                                            <select class="form-select select2" style="width: 100%;" id="stlBatchDrum">
                                                                 <option value="Batch">By-Batch</option>
                                                                 <option value="Drum">By-Drum</option>
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <small class="text-muted">Drag the <i class="ri-drag-move-2-line"></i> handle to reorder, then click Save Order.</small>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-9">
+                                                            <label class="form-label">Add Product</label>
+                                                            <select class="form-select select2" style="width: 100%;" id="stlProduct">
+                                                                <option value="">Please Select</option>
+                                                                <?php while($rowStlProduct = mysqli_fetch_assoc($stlProducts)){ ?>
+                                                                    <option value="<?=$rowStlProduct['id'] ?>" data-code="<?=htmlspecialchars($rowStlProduct['product_code'])?>" data-name="<?=htmlspecialchars($rowStlProduct['name'])?>"><?=htmlspecialchars($rowStlProduct['product_code'].' - '.$rowStlProduct['name'])?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-3 d-flex align-items-end">
+                                                            <button type="button" class="btn btn-success w-100" id="stlAdd">Add</button>
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted">Drag the <i class="ri-drag-move-2-line"></i> handle to reorder, use <i class="fa fa-times"></i> to remove, then click Save.</small>
                                                     <table class="table table-bordered table-striped align-middle mt-2" id="stlTable">
                                                         <thead>
                                                             <tr>
@@ -366,6 +381,7 @@
                                                                 <th>Product Code</th>
                                                                 <th>Product Name</th>
                                                                 <th width="15%">60/70 %</th>
+                                                                <th width="5%"></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody></tbody>
@@ -373,7 +389,7 @@
                                                 </div>
                                                 <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-danger" id="stlSave">Save Order</button>
+                                                    <button type="button" class="btn btn-danger" id="stlSave">Save</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -1091,21 +1107,87 @@ $(function () {
                 return;
             }
             $.each(obj.data, function(i, r){
-                var $tr = $('<tr>').attr('data-product-id', r.product_id);
-                $tr.append('<td class="stl-handle" style="cursor:move;"><i class="ri-drag-move-2-line"></i></td>');
-                $tr.append($('<td class="stl-no">').text(i + 1));
-                $tr.append($('<td>').text(r.product_code));
-                $tr.append($('<td>').text(r.product_name));
-                $tr.append($('<td>').text(r.percentage === null ? '-' : r.percentage));
-                $tbody.append($tr);
+                stlAddRow(r.product_id, r.product_code, r.product_name, r.percentage);
             });
         }, 'json');
     }
+
+    function stlAddRow(productId, code, name, percentage){
+        var $tr = $('<tr>').attr('data-product-id', productId);
+        $tr.append('<td class="stl-handle" style="cursor:move;"><i class="ri-drag-move-2-line"></i></td>');
+        $tr.append('<td class="stl-no"></td>');
+        $tr.append($('<td>').text(code));
+        $tr.append($('<td>').text(name));
+        // BOM value is per 1 MT; the Stock Declaration prints it x100
+        $tr.append($('<td>').text(percentage === null ? '-' : (parseFloat(percentage) * 100).toFixed(2) + '%'));
+        $tr.append('<td><button type="button" class="btn btn-danger btn-sm stl-remove"><i class="fa fa-times"></i></button></td>');
+        $('#stlTable tbody').append($tr);
+        stlRenumber();
+    }
+
+    $('#stlPlant, #stlBatchDrum, #stlProduct').select2({
+        placeholder: "Please Select",
+        dropdownParent: $('#stockTakeListModal')
+    });
+
+    $('#stockTakeListModal .select2-container .select2-selection--single').css({
+        'padding-top': '4px',
+        'padding-bottom': '4px',
+        'height': 'auto'
+    });
+
+    $('#stockTakeListModal .select2-container .select2-selection__arrow').css({
+        'padding-top': '33px',
+        'height': 'auto'
+    });
+
+    $('#stlAdd').on('click', function(){
+        var $opt = $('#stlProduct option:selected');
+        var productId = $opt.val();
+        if($('#stlPlant').val() === '' || productId === ''){
+            $("#failBtn").attr('data-toast-text', 'Select a plant and a product first');
+            $("#failBtn").click();
+            return;
+        }
+        if($('#stlTable tbody tr[data-product-id="' + productId + '"]').length > 0){
+            $("#failBtn").attr('data-toast-text', 'Product is already in the list');
+            $("#failBtn").click();
+            return;
+        }
+        var code = $opt.data('code');
+        var name = $opt.data('name');
+        $('#stlProduct').val('').trigger('change');
+        $.post('php/modules/Product/index.php', {
+            action: 'stockTakePercentage',
+            plant: $('#stlPlant').val(),
+            batchDrum: $('#stlBatchDrum').val(),
+            productId: productId
+        }, function(obj){
+            if(obj.status !== 'success'){
+                $("#failBtn").attr('data-toast-text', obj.message);
+                $("#failBtn").click();
+                return;
+            }
+            stlAddRow(productId, code, name, obj.percentage);
+        }, 'json');
+    });
+
+    $('#stlTable').on('click', '.stl-remove', function(){
+        $(this).closest('tr').remove();
+        stlRenumber();
+    });
 
     var stlSortable = Sortable.create($('#stlTable tbody')[0], {
         handle: '.stl-handle',
         animation: 150,
         onEnd: stlRenumber
+    });
+
+    $('#stockTakeListModal').on('hidden.bs.modal', function(){
+        $('#stlPlant').val('').trigger('change');
+        $('#stlBatchDrum').val('Batch').trigger('change');
+        $('#stlProduct').val('').trigger('change');
+        $('#stlTable tbody').empty();
     });
 
     $('#stockTakeListBtn').on('click', function(){
@@ -1115,12 +1197,14 @@ $(function () {
     $('#stlPlant, #stlBatchDrum').on('change', stlLoad);
 
     $('#stlSave').on('click', function(){
+        if($('#stlPlant').val() === ''){
+            $("#failBtn").attr('data-toast-text', 'Select a plant first');
+            $("#failBtn").click();
+            return;
+        }
         var ids = $('#stlTable tbody tr').map(function(){
             return $(this).data('product-id');
         }).get();
-        if(ids.length === 0){
-            return;
-        }
         $.post('php/modules/Product/index.php', {
             action: 'saveStockTakeSort',
             plant: $('#stlPlant').val(),
@@ -1130,6 +1214,7 @@ $(function () {
             if(obj.status === 'success'){
                 $("#successBtn").attr('data-toast-text', obj.message);
                 $("#successBtn").click();
+                stlLoad();
             }else{
                 $("#failBtn").attr('data-toast-text', obj.message);
                 $("#failBtn").click();
