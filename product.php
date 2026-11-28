@@ -646,15 +646,20 @@ $(function () {
         placeholder: "Please Select",
         dropdownParent: $('#addModal') // Ensures dropdown is not cut off
     });
+    
+    $('#stockTakeListModal .select2').select2({
+        placeholder: "Please Select",
+        dropdownParent: $('#stockTakeListModal') // Ensures dropdown is not cut off
+    });
 
     // Apply custom styling to Select2 elements in addModal
-    $('#addModal .select2-container .select2-selection--single').css({
+    $('.select2-container .select2-selection--single').css({
         'padding-top': '4px',
         'padding-bottom': '4px',
         'height': 'auto'
     });
 
-    $('#addModal .select2-container .select2-selection__arrow').css({
+    $('.select2-container .select2-selection__arrow').css({
         'padding-top': '33px',
         'height': 'auto'
     });
@@ -1086,59 +1091,80 @@ $(function () {
         uomNoCount++;
     });
 
-    // Stock Take List ordering (Stock Analysis report)
-    function stlRenumber(){
-        $('#stlTable tbody tr').each(function(i){
-            $(this).find('.stl-no').text(i + 1);
-        });
-    }
+    $('#uploadExcel').on('click', function(){
+        $('#uploadModal').modal('show');
 
-    function stlLoad(){
-        var plant = $('#stlPlant').val();
-        var batchDrum = $('#stlBatchDrum').val();
-        var $tbody = $('#stlTable tbody').empty();
-        if(plant === ''){
-            return;
-        }
-        $.post('php/modules/Product/index.php', {action: 'stockTakeList', plant: plant, batchDrum: batchDrum}, function(obj){
-            if(obj.status !== 'success'){
-                $("#failBtn").attr('data-toast-text', obj.message);
-                $("#failBtn").click();
-                return;
+        $('#uploadForm').validate({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
             }
-            $.each(obj.data, function(i, r){
-                stlAddRow(r.product_id, r.product_code, r.product_name, r.percentage);
-            });
-        }, 'json');
-    }
-
-    function stlAddRow(productId, code, name, percentage){
-        var $tr = $('<tr>').attr('data-product-id', productId);
-        $tr.append('<td class="stl-handle" style="cursor:move;"><i class="ri-drag-move-2-line"></i></td>');
-        $tr.append('<td class="stl-no"></td>');
-        $tr.append($('<td>').text(code));
-        $tr.append($('<td>').text(name));
-        // BOM value is per 1 MT; the Stock Declaration prints it x100
-        $tr.append($('<td>').text(percentage === null ? '-' : (parseFloat(percentage) * 100).toFixed(2) + '%'));
-        $tr.append('<td><button type="button" class="btn btn-danger btn-sm stl-remove"><i class="fa fa-times"></i></button></td>');
-        $('#stlTable tbody').append($tr);
-        stlRenumber();
-    }
-
-    $('#stlPlant, #stlBatchDrum, #stlProduct').select2({
-        placeholder: "Please Select",
-        dropdownParent: $('#stockTakeListModal')
+        });
     });
 
-    $('#stockTakeListModal .select2-container .select2-selection--single').css({
-        'padding-top': '4px',
-        'padding-bottom': '4px',
-        'height': 'auto'
+    $('#exportExcel').on('click', function(){
+        window.open("php/exportMasterData.php?selectedValue=Product");
     });
 
-    $('#stockTakeListModal .select2-container .select2-selection__arrow').css({
-        'padding-top': '33px',
-        'height': 'auto'
+    $('#uploadModal').find('#previewButton').on('click', function(){
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            var data = e.target.result;
+            // Process data and display preview
+            displayPreview(data);
+        };
+
+        reader.readAsBinaryString(file);
+    });
+
+    $('#multiDeactivate').on('click', function () {
+        $('#spinnerLoading').show();
+        var selectedIds = []; // An array to store the selected 'id' values
+
+        $("#productTable tbody input[type='checkbox']").each(function () {
+            if (this.checked) {
+                selectedIds.push($(this).val());
+            }
+        });
+
+        if (selectedIds.length > 0) {
+            if (confirm('Are you sure you want to cancel these items?')) {
+                $.post('php/deleteProduct.php', {userID: selectedIds, type: 'MULTI'}, function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        toastr["success"](obj.message, "Success:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                });
+            }
+
+            $('#spinnerLoading').hide();
+        } 
+        else {
+            // Optionally, you can display a message or take another action if no IDs are selected
+            alert("Please select at least one product to delete.");
+            $('#spinnerLoading').hide();
+        }     
     });
 
     $('#stlAdd').on('click', function(){
@@ -1221,83 +1247,46 @@ $(function () {
             }
         }, 'json');
     });
-
-    $('#uploadExcel').on('click', function(){
-        $('#uploadModal').modal('show');
-
-        $('#uploadForm').validate({
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
-    });
-
-    $('#exportExcel').on('click', function(){
-        window.open("php/exportMasterData.php?selectedValue=Product");
-    });
-
-    $('#uploadModal').find('#previewButton').on('click', function(){
-        var fileInput = document.getElementById('fileInput');
-        var file = fileInput.files[0];
-        var reader = new FileReader();
-        
-        reader.onload = function(e) {
-            var data = e.target.result;
-            // Process data and display preview
-            displayPreview(data);
-        };
-
-        reader.readAsBinaryString(file);
-    });
-
-    $('#multiDeactivate').on('click', function () {
-        $('#spinnerLoading').show();
-        var selectedIds = []; // An array to store the selected 'id' values
-
-        $("#productTable tbody input[type='checkbox']").each(function () {
-            if (this.checked) {
-                selectedIds.push($(this).val());
-            }
-        });
-
-        if (selectedIds.length > 0) {
-            if (confirm('Are you sure you want to cancel these items?')) {
-                $.post('php/deleteProduct.php', {userID: selectedIds, type: 'MULTI'}, function(data){
-                    var obj = JSON.parse(data);
-                    
-                    if(obj.status === 'success'){
-                        table.ajax.reload();
-                        toastr["success"](obj.message, "Success:");
-                        $('#spinnerLoading').hide();
-                    }
-                    else if(obj.status === 'failed'){
-                        toastr["error"](obj.message, "Failed:");
-                        $('#spinnerLoading').hide();
-                    }
-                    else{
-                        toastr["error"]("Something wrong when activate", "Failed:");
-                        $('#spinnerLoading').hide();
-                    }
-                });
-            }
-
-            $('#spinnerLoading').hide();
-        } 
-        else {
-            // Optionally, you can display a message or take another action if no IDs are selected
-            alert("Please select at least one product to delete.");
-            $('#spinnerLoading').hide();
-        }     
-    });
 });
+
+// Stock Take List ordering (Stock Analysis report)
+function stlRenumber(){
+    $('#stlTable tbody tr').each(function(i){
+        $(this).find('.stl-no').text(i + 1);
+    });
+}
+
+function stlLoad(){
+    var plant = $('#stlPlant').val();
+    var batchDrum = $('#stlBatchDrum').val();
+    var $tbody = $('#stlTable tbody').empty();
+    if(plant === ''){
+        return;
+    }
+    $.post('php/modules/Product/index.php', {action: 'stockTakeList', plant: plant, batchDrum: batchDrum}, function(obj){
+        if(obj.status !== 'success'){
+            $("#failBtn").attr('data-toast-text', obj.message);
+            $("#failBtn").click();
+            return;
+        }
+        $.each(obj.data, function(i, r){
+            stlAddRow(r.product_id, r.product_code, r.product_name, r.percentage);
+        });
+    }, 'json');
+}
+
+function stlAddRow(productId, code, name, percentage){
+    var $tr = $('<tr>').attr('data-product-id', productId);
+    $tr.append('<td class="stl-handle" style="cursor:move;"><i class="ri-drag-move-2-line"></i></td>');
+    $tr.append('<td class="stl-no"></td>');
+    $tr.append($('<td>').text(code));
+    $tr.append($('<td>').text(name));
+    // BOM value is per 1 MT; the Stock Declaration prints it x100
+    $tr.append($('<td>').text(percentage === null ? '-' : (parseFloat(percentage) * 100).toFixed(2) + '%'));
+    $tr.append('<td><button type="button" class="btn btn-danger btn-sm stl-remove"><i class="fa fa-times"></i></button></td>');
+    $('#stlTable tbody').append($tr);
+    stlRenumber();
+}
 
 function edit(id){
     $('#spinnerLoading').show();
