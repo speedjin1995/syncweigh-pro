@@ -564,7 +564,7 @@
             </td>
             <td>
                 <select class="form-control select2" style="width: 100%; background-color:white;" id="plant" name="plant">
-                    <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                    <?php $plant->data_seek(0); while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                         <option value="<?=$rowPlant['id'] ?>" data-name="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name']?></option>
                     <?php } ?>
                 </select>
