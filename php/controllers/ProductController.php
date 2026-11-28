@@ -9,7 +9,8 @@ require_once __DIR__ . '/../services/ProductService.php';
  * The request's "action" field picks the handler:
  *
  *   stockTakeList      products in the Stock Take List for a plant and Batch/Drum
- *   saveStockTakeSort  save the drag-and-drop order of that list
+ *   stockTakePercentage 60/70 percentage of one product for a plant and Batch/Drum
+ *   saveStockTakeSort  save that list (members and drag-and-drop order)
  */
 class ProductController
 {
@@ -38,6 +39,9 @@ class ProductController
                 case 'stockTakeList':
                     $this->stockTakeList();
                     break;
+                case 'stockTakePercentage':
+                    $this->stockTakePercentage();
+                    break;
                 case 'saveStockTakeSort':
                     $this->saveStockTakeSort();
                     break;
@@ -60,18 +64,39 @@ class ProductController
         $this->jsonResponse(['status' => 'success', 'data' => $rows]);
     }
 
+    private function stockTakePercentage()
+    {
+        $this->requirePermission(['edit']);
+        $this->validateListKey($plantId, $batchDrum);
+
+        $productId = $_POST['productId'] ?? '';
+        if (!ctype_digit((string) $productId)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Invalid product']);
+        }
+
+        $percentage = $this->products->getProductPercentage((int) $productId, $plantId, $batchDrum);
+        $this->jsonResponse(['status' => 'success', 'percentage' => $percentage]);
+    }
+
     private function saveStockTakeSort()
     {
         $this->requirePermission(['edit']);
         $this->validateListKey($plantId, $batchDrum);
 
+        // Empty is allowed: it clears the list
         $productIds = $_POST['productIds'] ?? [];
-        if (!is_array($productIds) || count($productIds) === 0) {
-            $this->jsonResponse(['status' => 'failed', 'message' => 'No products to save']);
+        if (!is_array($productIds)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Invalid products']);
         }
 
-        $this->products->saveStockTakeListSort($plantId, $batchDrum, $productIds);
-        $this->jsonResponse(['status' => 'success', 'message' => 'Stock take list order saved']);
+        foreach ($productIds as $productId) {
+            if (!ctype_digit((string) $productId)) {
+                $this->jsonResponse(['status' => 'failed', 'message' => 'Invalid products']);
+            }
+        }
+
+        $this->products->saveStockTakeList($plantId, $batchDrum, array_values(array_unique($productIds)));
+        $this->jsonResponse(['status' => 'success', 'message' => 'Stock take list saved']);
     }
 
     /* ---------------- Helpers ---------------- */

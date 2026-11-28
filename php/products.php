@@ -127,9 +127,8 @@ if (isset($_POST['productCode'])) {
                             $bm_stmt->close();
                         }
 
-                        $stl_stmt = $db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) SELECT ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM Stock_Take_List WHERE plant_id = ? AND product_id = ? AND batch_drum = ?)");
-                        $sort = 1;
-
+                        // New rows go to the end of their plant + Batch/Drum list
+                        $stl_stmt = $db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) SELECT ?, ?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM Stock_Take_List WHERE plant_id = ? AND batch_drum = ?) FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM Stock_Take_List WHERE plant_id = ? AND product_id = ? AND batch_drum = ?)");
                         # Delete all existing product rawmat records tied to the product id then reinsert
                         if ($delete_stmt = $db->prepare("UPDATE Product_RawMat SET status=? WHERE product_id=?")){
                             $delete_stmt->bind_param('ss', $deleteStatus, $productId);
@@ -151,9 +150,8 @@ if (isset($_POST['productCode'])) {
                                     }
 
                                     if (isset($bitumenRawMatIds[$rawMats[$key]]) && $stl_stmt) {
-                                        $stl_stmt->bind_param('sssssss', $plant[$key], $productId, $batchDrum[$key], $sort, $plant[$key], $productId, $batchDrum[$key]);
+                                        $stl_stmt->bind_param('ssssssss', $plant[$key], $productId, $batchDrum[$key], $plant[$key], $batchDrum[$key], $plant[$key], $productId, $batchDrum[$key]);
                                         $stl_stmt->execute();
-                                        $sort++;
                                     }
                                 }
 
@@ -257,9 +255,8 @@ if (isset($_POST['productCode'])) {
                             $bm_stmt->close();
                         }
 
-                        $stl_stmt = $db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) SELECT ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM Stock_Take_List WHERE plant_id = ? AND product_id = ? AND batch_drum = ?)");
-                        $sort = 1;
-
+                        // New rows go to the end of their plant + Batch/Drum list
+                        $stl_stmt = $db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) SELECT ?, ?, ?, (SELECT COALESCE(MAX(sort), 0) + 1 FROM Stock_Take_List WHERE plant_id = ? AND batch_drum = ?) FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM Stock_Take_List WHERE plant_id = ? AND product_id = ? AND batch_drum = ?)");
                         foreach ($no as $key => $rawMatNo) {
                             if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
                                 $product_stmt->bind_param('ssssssss', $productId, $rawMats[$key], $productRawMatCode[$key], $rawMatBasicUom[$key], $rawMatBasicUomUnitId[$key], $rawMatWeight[$key], $plant[$key], $batchDrum[$key]);
@@ -268,9 +265,8 @@ if (isset($_POST['productCode'])) {
                             }
 
                             if (isset($bitumenRawMatIds[$rawMats[$key]]) && $stl_stmt) {
-                                $stl_stmt->bind_param('sssssss', $plant[$key], $productId, $batchDrum[$key], $sort, $plant[$key], $productId, $batchDrum[$key]);
+                                $stl_stmt->bind_param('ssssssss', $plant[$key], $productId, $batchDrum[$key], $plant[$key], $batchDrum[$key], $plant[$key], $productId, $batchDrum[$key]);
                                 $stl_stmt->execute();
-                                $sort++;
                             }
                         }
 

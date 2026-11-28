@@ -46,7 +46,8 @@ if(isset($_POST['plantId'], $_POST['batchDrum'], $_POST['level'], $_POST['temp']
                 }
 
                 $volume = getVolumeFromLevel($db, $calculationIdLevel, $level);
-                $sg = getSG($db, $calculationIdSG, $temp);
+                // $sg = getSG($db, $calculationIdSG, $temp);
+                $sg=1; 
                 $tcf = getTCF($db, $calculationIdSG, $temp);
 
                 if ($volume === null || $sg === null) {

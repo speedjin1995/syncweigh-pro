@@ -21,12 +21,7 @@ class ProductService
      */
     public function getStockTakeList($plantId, $batchDrum)
     {
-        // Same 60/70 raw mat lookup as printStockDeclaration.php
-        $rawMatId = 0;
-        $result = $this->db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code IN ('BTBI001', '3001/001') AND status = 0 LIMIT 1");
-        if ($result && ($row = $result->fetch_assoc())) {
-            $rawMatId = (int) $row['id'];
-        }
+        $rawMatId = $this->getBitumenRawMatId();
 
         $sql = "SELECT STL.product_id, P.product_code, P.name AS product_name, PRW.raw_mat_basic_uom AS percentage
                 FROM Stock_Take_List STL
@@ -54,23 +49,73 @@ class ProductService
     }
 
     /**
-     * Saves the list order: sort = position in $productIds, starting at 1.
-     * All-or-nothing; the caller has already validated the input.
+     * 60/70 percentage of one product for a plant and Batch/Drum, or null when its
+     * BOM has no 60/70 row.
      */
-    public function saveStockTakeListSort($plantId, $batchDrum, array $productIds)
+    public function getProductPercentage($productId, $plantId, $batchDrum)
     {
-        $stmt = $this->db->prepare("UPDATE Stock_Take_List SET sort = ? WHERE plant_id = ? AND product_id = ? AND batch_drum = ?");
+        $rawMatId = $this->getBitumenRawMatId();
+
+        $stmt = $this->db->prepare("SELECT raw_mat_basic_uom FROM Product_RawMat
+                WHERE product_id = ? AND plant_id = ? AND batch_drum = ? AND status = 0 AND raw_mat_id = ? LIMIT 1");
         if (!$stmt) {
             throw new RuntimeException($this->db->error);
         }
 
+        $stmt->bind_param('iisi', $productId, $plantId, $batchDrum, $rawMatId);
+        if (!$stmt->execute()) {
+            $error = $stmt->error;
+            $stmt->close();
+            throw new RuntimeException($error);
+        }
+
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        return $row ? $row['raw_mat_basic_uom'] : null;
+    }
+
+    // Same 60/70 raw mat lookup as printStockDeclaration.php
+    private function getBitumenRawMatId()
+    {
+        $result = $this->db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code IN ('BTBI001', '3001/001') AND status = 0 LIMIT 1");
+        if ($result && ($row = $result->fetch_assoc())) {
+            return (int) $row['id'];
+        }
+        return 0;
+    }
+
+    /**
+     * Replaces the list for a plant and Batch/Drum: sort = position in $productIds,
+     * starting at 1. All-or-nothing; the caller has already validated the input.
+     * Hard delete is fine here: the table has no status column and uploadBomList.php
+     * rebuilds it the same way.
+     */
+    public function saveStockTakeList($plantId, $batchDrum, array $productIds)
+    {
+        $deleteStmt = $this->db->prepare("DELETE FROM Stock_Take_List WHERE plant_id = ? AND batch_drum = ?");
+        if (!$deleteStmt) {
+            throw new RuntimeException($this->db->error);
+        }
+
+        $insertStmt = $this->db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) VALUES (?, ?, ?, ?)");
+        if (!$insertStmt) {
+            $error = $this->db->error;
+            $deleteStmt->close();
+            throw new RuntimeException($error);
+        }
+
         $this->db->begin_transaction();
         try {
+            $deleteStmt->bind_param('is', $plantId, $batchDrum);
+            if (!$deleteStmt->execute()) {
+                throw new RuntimeException($deleteStmt->error);
+            }
+
             foreach (array_values($productIds) as $index => $productId) {
                 $sort = $index + 1;
-                $stmt->bind_param('iiis', $sort, $plantId, $productId, $batchDrum);
-                if (!$stmt->execute()) {
-                    throw new RuntimeException($stmt->error);
+                $insertStmt->bind_param('iisi', $plantId, $productId, $batchDrum, $sort);
+                if (!$insertStmt->execute()) {
+                    throw new RuntimeException($insertStmt->error);
                 }
             }
             $this->db->commit();
@@ -78,7 +123,8 @@ class ProductService
             $this->db->rollback();
             throw $e;
         } finally {
-            $stmt->close();
+            $deleteStmt->close();
+            $insertStmt->close();
         }
     }
 }
