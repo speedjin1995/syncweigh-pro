@@ -133,6 +133,10 @@ if ($type == "MULTI"){
                                 if ($row4 = $result3->fetch_assoc()) {
                                     $qty = (float) $row2['supplier_weight'] * (float) $row4['rate'];
                                     $amt = $qty * $unitPrice;
+                                } else if (strtoupper(trim($uom)) === 'MT') {
+                                    // No KG rate row: default 1 MT = 1000 KG
+                                    $qty = (float) $row2['supplier_weight'] * 0.001;
+                                    $amt = $qty * $unitPrice;
                                 }
                                 $update_stmt->close();
                             }
@@ -342,6 +346,10 @@ if ($type == "MULTI"){
                             
                             if ($row4 = $result3->fetch_assoc()) {
                                 $qty = (float) $row['supplier_weight'] * (float) $row4['rate'];
+                                $amt = $qty * $unitPrice;
+                            } else if (strtoupper(trim($uom)) === 'MT') {
+                                // No KG rate row: default 1 MT = 1000 KG
+                                $qty = (float) $row['supplier_weight'] * 0.001;
                                 $amt = $qty * $unitPrice;
                             }
                             $update_stmt->close();

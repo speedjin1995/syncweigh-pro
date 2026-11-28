@@ -48,8 +48,6 @@ if(isset($_POST['purchaseOrder']) && $_POST['purchaseOrder'] != null && $_POST['
     $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['purchaseOrder'])."'";
 }
 
-require_once 'requires/lookup.php';
-
 if (!$companyKey || !isset($config[$companyKey])) {
     echo json_encode([
         "status" => "failed",
@@ -119,6 +117,9 @@ if ($type == "MULTI"){
                         $result2 = $update_stmt->get_result();
                         if ($row4 = $result2->fetch_assoc()) {
                             $qty = (float) $row2['nett_weight1'] * (float) $row4['rate'];
+                        } else if (strtoupper(trim($uom)) === 'MT') {
+                            // No KG rate row: default 1 MT = 1000 KG
+                            $qty = (float) $row2['nett_weight1'] * 0.001;
                         }
                         $update_stmt->close();
                     }
@@ -321,6 +322,9 @@ if ($type == "MULTI"){
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
                         $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
+                    } else if (strtoupper(trim($uom)) === 'MT') {
+                        // No KG rate row: default 1 MT = 1000 KG
+                        $qty = (float) $row['nett_weight1'] * 0.001;
                     }
                     $update_stmt->close();
                 }
@@ -520,6 +524,9 @@ if ($type == "MULTI"){
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
                         $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
+                    } else if (strtoupper(trim($uom)) === 'MT') {
+                        // No KG rate row: default 1 MT = 1000 KG
+                        $qty = (float) $row['nett_weight1'] * 0.001;
                     }
                     $update_stmt->close();
                 }
